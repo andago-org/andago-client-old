@@ -1,0 +1,8 @@
+{
+  "name": "andago-client",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue",
+  "id": "0fd7607a"
+}
