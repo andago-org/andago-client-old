@@ -1,6 +1,6 @@
 {
-	"appId": "io.ionic.starter",
-	"appName": "andago-client",
-	"webDir": "dist",
-	"bundledWebRuntime": false
+  "appId": "com.andago.client",
+  "appName": "AndaGo",
+  "webDir": "dist",
+  "bundledWebRuntime": false
 }
