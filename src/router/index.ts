@@ -4,6 +4,14 @@ import TabsPage from '../views/MainPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
+    path: '/sign-in',
+    component: () => import('@/views/sign-in/SignInPage.vue')
+  },
+  {
+    path: '/code-verify',
+    component: () => import('@/views/sign-in/CodeVerifyPage.vue')
+  },
+  {
     path: '/',
     redirect: '/tabs/tab1'
   },

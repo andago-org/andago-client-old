@@ -9,7 +9,7 @@ import { ref } from 'vue';
 import { 
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonInput
 } from '@ionic/vue';
-import AutoComplete from '@/components/AutoComplete.vue';
+import AutoComplete from '@/components/AddressSearchModal.vue.js';
 
 const sampleData: string[] = [
   'Apple',
