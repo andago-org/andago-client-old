@@ -1,6 +1,6 @@
 {
   "appId": "com.andago.client",
   "appName": "AndaGo",
-  "webDir": "public",
+  "webDir": "dist",
   "bundledWebRuntime": false
 }
