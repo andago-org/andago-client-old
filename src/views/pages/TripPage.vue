@@ -10,16 +10,19 @@
       <ion-grid>
         <ion-row>
           <ion-col>
-            <ion-searchbar :search-icon="location" placeholder="Pick-Up" @ion-focus="openModal"></ion-searchbar>
-            <AddressSearchModal v-model:isOpen="isPickUpModalOpen" :items="sampleData" title="Pick-Up Location"
-              placeholder="Search for address" @selected="onItemSelected"></AddressSearchModal>
+            <ion-searchbar :search-icon="location" placeholder="Pick-Up" @ion-focus="openPickUpModal"
+              :value="pickUpLocation.name"></ion-searchbar>
+            <AddressSearchModal v-model:value="pickUpLocation" v-model:isOpen="isPickUpModalOpen" title="Pick-Up Location"
+              placeholder="Search for address"></AddressSearchModal>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col>
-            <ion-searchbar :search-icon="navigate" placeholder="Drop-Off"></ion-searchbar>
-            <AddressSearchModal v-model:isOpen="isDropOffModalOpen" :items="sampleData" title="Drop-Off Location"
-              placeholder="Search for address" @selected="onItemSelected"></AddressSearchModal>
+            <ion-searchbar :search-icon="navigate" placeholder="Drop-Off" @ion-focus="openDropOffModal"
+              :value="dropOffLocation.name"></ion-searchbar>
+            <AddressSearchModal v-model:value="dropOffLocation" v-model:isOpen="isDropOffModalOpen"
+              title="Drop-Off Location" placeholder="Search for address">
+            </AddressSearchModal>
           </ion-col>
         </ion-row>
         <ion-row>
@@ -39,29 +42,28 @@ import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonItem, IonButton,
   IonGrid, IonRow, IonCol,
 } from '@ionic/vue';
-
+import TripDetailsModal from '@/components/TripDetailsModal.vue';
+import { Place } from '@/interfaces/types';
+import { useMainStore } from '@/store';
 import { location, navigate } from 'ionicons/icons';
 
 import AddressSearchModal from '@/components/AddressSearchModal.vue';
 
-const sampleData = [
-  '123 Main St',
-  '456 Elm St',
-  '789 Oak St',
-  '135 Maple St',
-  '246 Willow St',
-  '357 Pine St',
-  '864 Spruce St',
-];
+const store = useMainStore();
 
 const isPickUpModalOpen = ref(false);
 const isDropOffModalOpen = ref(false);
 
-const openModal = () => {
+const pickUpLocation = ref<Place>({} as Place);
+const dropOffLocation = ref<Place>({} as Place);
+
+// const tripQuery = 
+
+const openPickUpModal = () => {
   isPickUpModalOpen.value = true;
 };
 
-const onItemSelected = (item: string) => {
-  console.log('Selected address:', item);
+const openDropOffModal = () => {
+  isDropOffModalOpen.value = true;
 };
 </script>

@@ -13,8 +13,11 @@
       v-model="searchText"></ion-searchbar>
 
     <ion-list>
-      <ion-item :key="result" v-for="result in results" button>
-        <ion-label>{{ result }}</ion-label>
+      <ion-item :key="place.name" v-for="place in places" @click="setValue(place)" button>
+        <ion-label>
+          <h2>{{ place.name }}</h2>
+          <p>{{ place.formatted_address }}</p>
+        </ion-label>
       </ion-item>
     </ion-list>
   </ion-modal>
@@ -26,14 +29,13 @@ import {
   IonTitle, IonLabel
 } from '@ionic/vue';
 import { defineProps, ref, defineEmits, computed } from 'vue';
-import axios from 'axios';
+import { useMainStore } from '@/store';
+import { Place } from '@/interfaces/types';
+
+const store = useMainStore();
 
 const props = defineProps({
   isOpen: Boolean,
-  items: {
-    type: Array as () => string[],
-    default: () => ([] as unknown) as string[],
-  },
   placeholder: {
     type: String,
     default: 'Search',
@@ -42,9 +44,18 @@ const props = defineProps({
     type: String,
     default: 'Title',
   },
+  value: {
+    type: Object,
+    default: {} as Place,
+  },
 });
 
-const emit = defineEmits(['selected', 'update:isOpen']);
+const emit = defineEmits(['update:value', 'selected', 'update:isOpen']);
+
+const setValue = (place: Place) => {
+  emit('update:value', place);
+  closeModal();
+};
 
 const closeModal = () => {
   emit('update:isOpen', false);
@@ -52,30 +63,17 @@ const closeModal = () => {
 
 const searchText = ref('');
 
-const data = computed(() => props.items);
-const results = ref(props.items);
+const places = ref<Place[]>([]);
 
 const handleChange = async (event: Event) => {
   const query = searchText.value.toLowerCase();
-  if (query === '') {
-    results.value = [];
-    return;
-  }
+  // if (query === '') {
+  //   results.value = [];
+  //   return;
+  // }
 
-  try {
-    const response = await axios.get('https://maps.googleapis.com/maps/api/place/textsearch/json', {
-      params: {
-        key: process.env.VUE_APP_GOOGLE_MAPS_API_KEY,
-        query,
-      },
-    });
-    const predictions = response.data.results.map((result: any) => result.formatted_address);
-    results.value = predictions;
-  } catch (error) {
-    console.error(error);
-    results.value = [];
-  }
+  places.value = await store.getPlaces(query);
 
-  // results.value = data.value.filter(d => d.toLowerCase().indexOf(query) > -1);
+  // console.log(places.value);
 };
 </script>

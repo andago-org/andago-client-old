@@ -26,9 +26,11 @@ import './theme/variables.css';
 import GoogleMapsPlacesPlugin from './plugins/google-maps-api';
 
 import { createPinia } from 'pinia'
+import piniaPersist from 'pinia-plugin-persist'
 import { useMainStore } from './store'
 
 const pinia = createPinia()
+pinia.use(piniaPersist)
 
 const app = createApp(App)
   .use(IonicVue)

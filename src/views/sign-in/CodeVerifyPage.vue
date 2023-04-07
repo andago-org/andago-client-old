@@ -13,13 +13,13 @@
           @keypress="onKeyPress" />
       </ion-item>
 
-      <ion-button expand="block" :disabled="!isValidVerificationCode" @click="submitCode">Submit</ion-button>
+      <ion-button expand="block" :disabled="!isValidVerificationCode" @click="login">Submit</ion-button>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { IonInput, IonButton, IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel } from '@ionic/vue';
 
 import { useMainStore } from '@/store';
@@ -30,17 +30,20 @@ const verificationCode = ref('');
 
 const isValidVerificationCode = ref(false);
 
+watch(verificationCode, (newValue, oldValue) => {
+  isValidVerificationCode.value = verificationCode.value.length === 6;
+  // do something else
+});
+
 function onKeyPress(event: KeyboardEvent) {
   if (!/[0-9]/.test(event.key) || verificationCode.value.length > 5) {
     event.preventDefault();
   }
-
-  isValidVerificationCode.value = verificationCode.value.length === 6;
 }
 
-function submitCode() {
+function login() {
   // Submit verification code logic here
-  store.verifyCode(verificationCode.value);
+  store.login(verificationCode.value);
 }
 
 </script>

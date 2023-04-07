@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
+import { useMainStore } from '@/store'
 import TabsPage from '../views/MainPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
@@ -42,6 +43,28 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  const mainStore = useMainStore()
+
+  if (mainStore.user) {
+    // User is logged in, allow the navigation to proceed to the requested route
+    if (to.path === '/sign-in') {
+      // User is already logged in, redirect to the default route
+      next('/')
+    } else {
+      next()
+    }
+  } else {
+    // User is not logged in, redirect to the sign-in page
+    if (to.path === '/sign-in') {
+      // Already on the sign-in page, allow the navigation to proceed
+      next()
+    } else {
+      next('/sign-in')
+    }
+  }
 })
 
 export default router

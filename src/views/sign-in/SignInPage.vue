@@ -13,7 +13,7 @@
         <ion-icon v-if="isValidPhoneNumber" name="checkmark-circle" color="success"></ion-icon>
       </ion-item>
 
-      <ion-button expand="block" :disabled="!canSignIn" @click="sendCode">Sign In</ion-button>
+      <ion-button expand="block" :disabled="!canSignIn" @click="tryLogin">Sign In</ion-button>
     </ion-content>
   </ion-page>
 </template>
@@ -39,8 +39,8 @@ function onKeyPress(event: KeyboardEvent) {
 
 const store = useMainStore();
 
-function sendCode() {
-  store.sendCode(phoneNumber.value);
+function tryLogin() {
+  store.tryLogin(phoneNumber.value);
 }
 
 watch(phoneNumber, (newVal, oldVal) => {

@@ -13,6 +13,7 @@
     "@capacitor/android": "^4.7.1",
     "@capacitor/app": "4.1.1",
     "@capacitor/core": "^4.7.1",
+    "@capacitor/geolocation": "^4.1.0",
     "@capacitor/haptics": "4.1.0",
     "@capacitor/ios": "^4.7.1",
     "@capacitor/keyboard": "4.1.1",
@@ -25,6 +26,7 @@
     "ionicons": "^6.0.3",
     "libphonenumber-js": "^1.10.24",
     "pinia": "^2.0.33",
+    "pinia-plugin-persist": "^1.0.0",
     "vue": "^3.2.21",
     "vue-router": "^4.0.12",
     "vue3-google-map": "^0.15.0"
