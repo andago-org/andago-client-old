@@ -4,6 +4,7 @@
   "webDir": "dist",
   "bundledWebRuntime": false,
   "android": {
-    "autoincrement_versioncode": true
+    "versionCode": "autoincrement",
+    "versionName": "autoincrement"
   }
 }
