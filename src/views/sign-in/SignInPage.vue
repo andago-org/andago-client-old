@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Sign In</ion-title>
+        <ion-title>Sign Inss</ion-title>
       </ion-toolbar>
     </ion-header>
 
