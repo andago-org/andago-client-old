@@ -2,5 +2,8 @@
   "appId": "com.andago.client",
   "appName": "AndaGo",
   "webDir": "dist",
-  "bundledWebRuntime": false
+  "bundledWebRuntime": false,
+  "android": {
+    "autoincrement_versioncode": true
+  }
 }
