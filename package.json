@@ -8,7 +8,7 @@
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
-    "appflow:build": "npm run build && capacitor sync && capacitor copy && capacitor open android --external --no-launch"
+    "appflow:build": "export VERSION_CODE=$BUILD_NUMBER && npm run build && capacitor sync && capacitor copy && capacitor open android --external --no-launch"
   },
   "dependencies": {
     "@capacitor/android": "^4.7.1",
