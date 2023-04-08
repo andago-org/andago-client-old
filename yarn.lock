@@ -3649,6 +3649,13 @@ copy-webpack-plugin@^9.0.1:
     schema-utils "^3.1.1"
     serialize-javascript "^6.0.0"
 
+cordova-plugin-ionic@5.5.3:
+  version "5.5.3"
+  resolved "https://registry.npmjs.org/cordova-plugin-ionic/-/cordova-plugin-ionic-5.5.3.tgz"
+  integrity sha512-b7gycwVk9/TX5NabZCjUg27J2pik/zF2jd3rEhTQUyn3KOx10tT9M0PXoORlnOw4wviQVQ2MvgxM9zlHK+96ow==
+  dependencies:
+    typescript "3.8.3"
+
 core-js-compat@^3.25.1, core-js-compat@^3.8.3:
   version "3.29.1"
   resolved "https://registry.npmjs.org/core-js-compat/-/core-js-compat-3.29.1.tgz"
@@ -8837,6 +8844,11 @@ typescript@*, typescript@^4.3.5, "typescript@>= 2.7", "typescript@>= 3.x", types
   version "4.9.5"
   resolved "https://registry.npmjs.org/typescript/-/typescript-4.9.5.tgz"
   integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==
+
+typescript@3.8.3:
+  version "3.8.3"
+  resolved "https://registry.npmjs.org/typescript/-/typescript-3.8.3.tgz"
+  integrity sha512-MYlEfn5VrLNsgudQTVJeNaQFUAI7DkhnOjdpAp4T+ku1TfQClewlbSuTVHiA+8skNBgaf02TL/kLOvig4y3G8w==
 
 unicode-canonical-property-names-ecmascript@^2.0.0:
   version "2.0.0"
