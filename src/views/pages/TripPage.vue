@@ -49,7 +49,7 @@ import { location, navigate } from 'ionicons/icons';
 
 import AddressSearchModal from '@/components/AddressSearchModal.vue';
 
-const store = useMainStore();
+// const store = useMainStore();
 
 const isPickUpModalOpen = ref(false);
 const isDropOffModalOpen = ref(false);
