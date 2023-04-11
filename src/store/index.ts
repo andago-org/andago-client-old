@@ -33,7 +33,7 @@ export const useMainStore = defineStore({
         const phoneNumberTemp = "+6" + phoneNumber;
         this.setHeaders();
         const response = await axiosInstance.post("/auth/tryLogin", { phoneNumber: phoneNumberTemp });
-
+        console.log(response.status);
         // Check for success
         if (response.status === 200) {
           this.phoneNumber = phoneNumberTemp;

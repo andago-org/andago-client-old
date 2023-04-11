@@ -48,20 +48,28 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const mainStore = useMainStore()
 
-  if (mainStore.user) {
+  if (mainStore.user)
+  {
     // User is logged in, allow the navigation to proceed to the requested route
-    if (to.path === '/sign-in') {
+    if (to.path === '/sign-in')
+    {
       // User is already logged in, redirect to the default route
       next('/')
-    } else {
+    }
+    else
+    {
       next()
     }
-  } else {
+  }
+  else
+  {
     // User is not logged in, redirect to the sign-in page
-    if (to.path === '/sign-in') {
+    if (to.path === '/sign-in' || to.path === '/code-verify') {
       // Already on the sign-in page, allow the navigation to proceed
       next()
-    } else {
+    }
+    else
+    {
       next('/sign-in')
     }
   }
