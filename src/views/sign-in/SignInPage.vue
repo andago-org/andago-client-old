@@ -28,7 +28,7 @@ import {
 
 import { useMainStore } from '@/store';
 
-const a = ref("process.env.VUE_APP_API_BASE_URL");
+const a = ref(process.env.VUE_APP_API_BASE_URL);
 
 const phoneNumber = ref('');
 
