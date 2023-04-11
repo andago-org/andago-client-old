@@ -3,6 +3,7 @@
     <ion-header>
       <ion-toolbar>
         <ion-title>Sign In</ion-title>
+        <p>{{ a }}</p>
       </ion-toolbar>
     </ion-header>
 
@@ -26,6 +27,8 @@ import {
 } from '@ionic/vue';
 
 import { useMainStore } from '@/store';
+
+const a = ref("process.env.VUE_APP_API_BASE_URL");
 
 const phoneNumber = ref('');
 
