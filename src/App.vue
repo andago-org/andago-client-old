@@ -18,6 +18,6 @@ if (store.token !== '') {
 }
 
 store.testGet();
-store.testSet();
+// store.testSet();
 
 </script>
