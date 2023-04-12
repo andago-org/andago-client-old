@@ -5,6 +5,11 @@
   "bundledWebRuntime": false,
   "android": {
     "versionCode": "autoincrement",
-    "versionName": "autoincrement"
+    "versionName": "autoincrement",
+    "webContentsDebuggingEnabled": true
+  },
+  "server": {
+    "url": "http://localhost:8100",
+    "cleartext": true
   }
 }
