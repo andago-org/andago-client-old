@@ -160,7 +160,7 @@ export const useMainStore = defineStore({
           // Check for success
           if (response.status === 200) {
             this.user = response.data.user;
-
+            console.log(this.user)
             router.push({ path: '/' });
           }
 
