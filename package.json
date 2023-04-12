@@ -17,6 +17,7 @@
     "@capacitor/haptics": "4.1.0",
     "@capacitor/ios": "^4.7.1",
     "@capacitor/keyboard": "4.1.1",
+    "@capacitor/preferences": "^4.0.2",
     "@capacitor/status-bar": "4.1.1",
     "@googlemaps/js-api-loader": "^1.15.1",
     "@ionic/vue": "^6.6.3",
@@ -33,7 +34,7 @@
     "vue3-google-map": "^0.15.0"
   },
   "devDependencies": {
-    "@capacitor/cli": "^4.7.1",
+    "@capacitor/cli": "^4.7.3",
     "@types/googlemaps": "^3.43.3",
     "@types/jest": "^27.0.2",
     "@typescript-eslint/eslint-plugin": "^5.6.0",

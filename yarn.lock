@@ -992,10 +992,10 @@
   resolved "https://registry.npmjs.org/@capacitor/app/-/app-4.1.1.tgz"
   integrity sha512-SJcJA1rhFQyeH6eLfUEbdKkHzAwzahJNVPNXmU88fdmXpMgM2dJGzZj1vrm6e21aQq+Z4aBVLJ2RCdj92zD7wg==
 
-"@capacitor/cli@^4.7.1":
-  version "4.7.1"
-  resolved "https://registry.npmjs.org/@capacitor/cli/-/cli-4.7.1.tgz"
-  integrity sha512-cUEMci4KBb8gwIDXaO9F2Woz1wnugB/vVq2sRVy8+fzOfhmHlxweuH+h9RktDkpceVi+COfxYw/VPjg1wjC1tA==
+"@capacitor/cli@^4.7.3":
+  version "4.7.3"
+  resolved "https://registry.npmjs.org/@capacitor/cli/-/cli-4.7.3.tgz"
+  integrity sha512-/9Vjl0A91UjRA0b8a5YCqHfHcM50vQ3Fh0typ3ScwYZhg3shkFtB03e8liAD/u0rhr/MerN8VGgN75QNEXN0Lg==
   dependencies:
     "@ionic/cli-framework-output" "^2.2.5"
     "@ionic/utils-fs" "^3.1.6"
@@ -1041,6 +1041,11 @@
   version "4.1.1"
   resolved "https://registry.npmjs.org/@capacitor/keyboard/-/keyboard-4.1.1.tgz"
   integrity sha512-fdC7u2TeG4BqwC0LnPnhOdya31C4QKdhk/8pc5lxI9X5jyYAetMCN1kEkKa7KREw4DdzXotJt27B9BXxAza6og==
+
+"@capacitor/preferences@^4.0.2":
+  version "4.0.2"
+  resolved "https://registry.npmjs.org/@capacitor/preferences/-/preferences-4.0.2.tgz"
+  integrity sha512-HgcRkMdVHSIV3TeQLZFmCaCeMWQ25wLyZZ7dA2f8Rw81Q1Nroxsi7HxTEGNqrWKSN9PNKBJD8vChr6eB2GNtZg==
 
 "@capacitor/status-bar@4.1.1":
   version "4.1.1"

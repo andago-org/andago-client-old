@@ -4,6 +4,7 @@ import router from '@/router';
 import { User } from '@/interfaces/models';
 import { Geolocation } from '@capacitor/geolocation';
 import { TripDetails } from '@/interfaces/types';
+import { Preferences } from '@capacitor/preferences';
 
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
@@ -65,6 +66,8 @@ export const useMainStore = defineStore({
           this.token = response.data.token;
           this.user = response.data.user;
 
+          this.setUserToken(response.data.user);
+
           this.setHeaders();
 
           router.push({
@@ -87,8 +90,7 @@ export const useMainStore = defineStore({
     
         // Check for success
         if (response.status === 200) {
-          this.token = "";
-          this.user = null;
+          this.removeUser()
 
           router.push({
             path: '/sign-in',
@@ -150,7 +152,53 @@ export const useMainStore = defineStore({
     {
       axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
       axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';
-    }
+    },
+
+    async getUser(): Promise<void> {
+      try {
+        this.setHeaders();
+        const response = await axiosInstance.post("/auth/getUser");
+    
+        // Check for success
+        if (response.status === 200) {
+          console.log(response.data);
+
+          this.user = response.data.user;
+        }
+
+        return response.data;
+
+      } catch (error) {
+        console.error('Error performing the request:', error);
+        // Handle the error (e.g., show an error message or retry the request)
+      }
+    },
+
+    removeUser() {
+      this.user = null;
+      this.clearUserToken();
+    },
+
+    async loadFromStorage() {
+      const { value } = await Preferences.get({ key: 'token' })
+      if (value) {
+        this.token = value
+      }
+    },
+
+    async saveToStorage() {
+      await Preferences.set({ key: 'token', value: this.token })
+    },
+
+    setUserToken(token: string) {
+      this.token = token
+      this.saveToStorage()
+    },
+
+    clearUserToken() {
+      this.token = ""
+      this.saveToStorage()
+    },
   },
   persist: {
     enabled: true,
