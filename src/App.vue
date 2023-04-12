@@ -11,7 +11,7 @@ import { useMainStore } from '@/store';
 const store = useMainStore();
 
 store.loadFromStorage();
-
+console.log("Check if token exists")
 if (store.token !== '') {
   console.log(store.token)
   store.getUser();

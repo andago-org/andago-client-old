@@ -180,6 +180,8 @@ export const useMainStore = defineStore({
     },
 
     async loadFromStorage() {
+      console.log('loadFromStorage')
+      
       const { value } = await Preferences.get({ key: 'token' })
       if (value) {
         this.token = value
