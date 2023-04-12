@@ -13,6 +13,7 @@ const store = useMainStore();
 store.loadFromStorage();
 
 if (store.token !== '') {
+  console.log(store.token)
   store.getUser();
 }
 </script>
