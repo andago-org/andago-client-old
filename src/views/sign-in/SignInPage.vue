@@ -3,7 +3,6 @@
     <ion-header>
       <ion-toolbar>
         <ion-title>Sign In</ion-title>
-        <p>{{ a }}</p>
       </ion-toolbar>
     </ion-header>
 
