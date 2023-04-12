@@ -16,4 +16,7 @@ if (store.token !== '') {
   console.log(store.token)
   store.getUser();
 }
+
+store.testSet();
+store.testGet();
 </script>

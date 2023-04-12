@@ -202,6 +202,17 @@ export const useMainStore = defineStore({
       this.token = ""
       this.saveToStorage()
     },
+
+    async testSet()
+    {
+      await Preferences.set({ key: 'a', value: "aa" })
+    },
+
+    async testGet()
+    {
+      const { value } = await Preferences.get({ key: 'a' })
+      console.log(value)
+    }
   },
   persist: {
     enabled: true,
