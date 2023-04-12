@@ -159,7 +159,7 @@ export const useMainStore = defineStore({
         axiosInstance.post("/auth/getUser").then((response) => { 
           // Check for success
           if (response.status === 200) {
-            this.user = response.data.user;
+            this.user = response.data;
             console.log(this.user)
             router.push({ path: '/' });
           }
