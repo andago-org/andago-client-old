@@ -184,6 +184,7 @@ export const useMainStore = defineStore({
 
       const { value } = await Preferences.get({ key: 'token' })
       if (value) {
+        console.log("Get token:" + value);
         this.token = value
       }
     },
