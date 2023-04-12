@@ -17,6 +17,7 @@ if (store.token !== '') {
   store.getUser();
 }
 
-store.testSet();
 store.testGet();
+store.testSet();
+
 </script>
