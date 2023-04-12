@@ -66,7 +66,7 @@ export const useMainStore = defineStore({
           this.token = response.data.token;
           this.user = response.data.user;
 
-          this.setUserToken(response.data.user);
+          this.setUserToken(this.token);
 
           this.setHeaders();
 
