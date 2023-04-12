@@ -138,7 +138,6 @@ export const useMainStore = defineStore({
     
         // Check for success
         if (response.status === 200) {
-          console.log(response.data)
           return response.data as TripDetails;
         }
       } catch (error) {
@@ -154,20 +153,19 @@ export const useMainStore = defineStore({
       axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';
     },
 
-    async getUser(): Promise<void> {
+    async getUser(): Promise<any> {
       try {
         this.setHeaders();
-        const response = await axiosInstance.post("/auth/getUser");
-    
-        // Check for success
-        if (response.status === 200) {
-          console.log(response.data);
+        axiosInstance.post("/auth/getUser").then((response) => { 
+          // Check for success
+          if (response.status === 200) {
+            this.user = response.data.user;
 
-          this.user = response.data.user;
-        }
+            router.push({ path: '/' });
+          }
 
-        return response.data;
-
+          return response.data;
+        });
       } catch (error) {
         console.error('Error performing the request:', error);
         // Handle the error (e.g., show an error message or retry the request)
@@ -180,12 +178,14 @@ export const useMainStore = defineStore({
     },
 
     async loadFromStorage() {
-      console.log('loadFromStorage')
-
       const { value } = await Preferences.get({ key: 'token' })
       if (value) {
-        console.log("Get token:" + value);
         this.token = value
+
+        if (this.token != "")
+        {
+          this.user = await this.getUser();
+        }
       }
     },
 
@@ -195,7 +195,6 @@ export const useMainStore = defineStore({
 
     setUserToken(token: string) {
       this.token = token
-      console.log('setUserToken:' + token)
       this.saveToStorage()
     },
 
@@ -212,7 +211,6 @@ export const useMainStore = defineStore({
     async testGet()
     {
       const { value } = await Preferences.get({ key: 'a' })
-      console.log(value)
     }
   },
   persist: {
