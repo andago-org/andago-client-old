@@ -35,6 +35,14 @@ android {
             debuggable true
         }
     }
+
+    allprojects {
+        repositories {
+            maven {
+                url "https://dl.cloudsmith.io/public/cometchat/cometchat-pro-android/maven/"
+            }
+        }
+    }
 }
 
 repositories {

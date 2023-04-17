@@ -9,7 +9,7 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-searchbar :debounce="1000" @ionChange="handleChange($event)" :placeholder="placeholder"
+    <ion-searchbar :debounce="1000" @ionChange="handleChange()" :placeholder="placeholder"
       v-model="searchText"></ion-searchbar>
 
     <ion-list>
@@ -28,13 +28,13 @@ import {
   IonItem, IonList, IonSearchbar, IonModal, IonHeader, IonToolbar, IonButton, IonButtons,
   IonTitle, IonLabel
 } from '@ionic/vue';
-import { defineProps, ref, defineEmits, computed } from 'vue';
+import { defineProps, ref, defineEmits } from 'vue';
 import { useMainStore } from '@/store';
 import { Place } from '@/interfaces/types';
 
 const store = useMainStore();
 
-const props = defineProps({
+defineProps({
   isOpen: Boolean,
   placeholder: {
     type: String,
@@ -65,7 +65,7 @@ const searchText = ref('');
 
 const places = ref<Place[]>([]);
 
-const handleChange = async (event: Event) => {
+const handleChange = async () => {
   const query = searchText.value.toLowerCase();
   // if (query === '') {
   //   results.value = [];

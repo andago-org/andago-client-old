@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Tab 2</ion-title>
+        <ion-title>Trip</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -27,7 +27,8 @@
         </ion-row>
         <ion-row>
           <ion-col>
-            <ion-button expand="block">Confirm</ion-button>
+            <ion-button expand="block" @click="openTripDetailsModal">Confirm</ion-button>
+            <TripDetailsModal v-model:isOpen="isTripDetailsModalOpen" :tripDetails="tripDetails"></TripDetailsModal>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -39,25 +40,26 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import {
-  IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonItem, IonButton,
+  IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonButton,
   IonGrid, IonRow, IonCol,
 } from '@ionic/vue';
 import TripDetailsModal from '@/components/TripDetailsModal.vue';
-import { Place } from '@/interfaces/types';
-import { useMainStore } from '@/store';
+import { Place, TripDetails } from '@/interfaces/types';
 import { location, navigate } from 'ionicons/icons';
 
 import AddressSearchModal from '@/components/AddressSearchModal.vue';
 
-const store = useMainStore();
+// const store = useMainStore();
 
 const isPickUpModalOpen = ref(false);
 const isDropOffModalOpen = ref(false);
 
+const isTripDetailsModalOpen = ref(false);
+
 const pickUpLocation = ref<Place>({} as Place);
 const dropOffLocation = ref<Place>({} as Place);
 
-// const tripQuery = 
+const tripDetails = ref({} as TripDetails);
 
 const openPickUpModal = () => {
   isPickUpModalOpen.value = true;
@@ -66,4 +68,12 @@ const openPickUpModal = () => {
 const openDropOffModal = () => {
   isDropOffModalOpen.value = true;
 };
+
+const openTripDetailsModal = () => {
+  isTripDetailsModalOpen.value = true;
+};
+
+// const confirmTrip = () => {
+//   store.createCheckoutSession();
+// };
 </script>

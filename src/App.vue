@@ -6,11 +6,9 @@
 
 <script setup lang="ts">
 import { IonApp, IonRouterOutlet } from '@ionic/vue';
-import { useMainStore } from '@/store';
+import { useMainStore } from './store';
 
-const store = useMainStore();
+const mainStore = useMainStore()
 
-store.loadFromStorage();
-
-
+mainStore.loadFromStorage();
 </script>

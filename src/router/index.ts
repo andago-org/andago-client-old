@@ -14,7 +14,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/',
-    redirect: '/tabs/tab1'
+    redirect: '/tabs/profile'
   },
   {
     path: '/tabs/',
@@ -22,21 +22,29 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: '',
-        redirect: '/tabs/tab1'
+        redirect: '/tabs/profile'
       },
       {
-        path: 'tab1',
+        path: 'profile',
         component: () => import('@/views/pages/ProfilePage.vue')
       },
       {
-        path: 'tab2',
+        path: 'trip',
         component: () => import('@/views/pages/TripPage.vue')
       },
       {
-        path: 'tab3',
+        path: 'chat',
         component: () => import('@/views/pages/ChatPage.vue')
+      },
+      {
+        path: 'settings',
+        component: () => import('@/views/pages/SettingsPage.vue')
       }
     ]
+  },
+  {
+    path: '/driver',
+    component: () => import('@/views/driver/DriverPage.vue')
   }
 ]
 
@@ -46,33 +54,27 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const mainStore = useMainStore()
+  const mainStore = useMainStore();
+  const userToken = mainStore.token;
+  const driverMode = mainStore.driverMode;
 
-  if (mainStore.user)
-  {
-    // User is logged in, allow the navigation to proceed to the requested route
-    if (to.path === '/sign-in')
-    {
-      // User is already logged in, redirect to the default route
-      next('/')
+  if (userToken) {
+    if (driverMode && to.path !== '/driver') {
+      next('/driver');
+    } else if (!driverMode && (to.path === '/sign-in' || to.path === '/driver')) {
+      next('/');
+    } else {
+      next();
     }
-    else
-    {
-      next()
-    }
-  }
-  else
-  {
-    // User is not logged in, redirect to the sign-in page
-    if (to.path === '/sign-in' || to.path === '/code-verify') {
-      // Already on the sign-in page, allow the navigation to proceed
-      next()
-    }
-    else
-    {
-      next('/sign-in')
+  } else {
+    if (to.path === '/code-verify') {
+      next();
+    } else if (to.path !== '/sign-in') {
+      next('/sign-in');
+    } else {
+      next();
     }
   }
-})
+});
 
 export default router

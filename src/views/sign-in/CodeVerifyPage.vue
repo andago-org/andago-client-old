@@ -30,7 +30,7 @@ const verificationCode = ref('');
 
 const isValidVerificationCode = ref(false);
 
-watch(verificationCode, (newValue, oldValue) => {
+watch(verificationCode, () => {
   isValidVerificationCode.value = verificationCode.value.length === 6;
   // do something else
 });

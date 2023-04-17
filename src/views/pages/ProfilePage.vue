@@ -28,8 +28,7 @@
   </ion-page>
 </template>
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed } from 'vue';
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton,
   IonList, IonItem, IonLabel, IonText,
@@ -42,8 +41,6 @@ const store = useMainStore();
 const user = computed<User | null>(() => store.user);
 
 const creditWallet = computed(() => store.creditWallet);
-
-const router = useRouter();
 
 function logout() {
   store.logout()

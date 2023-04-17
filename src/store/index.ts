@@ -5,6 +5,9 @@ import { User } from '@/interfaces/models';
 import { Geolocation } from '@capacitor/geolocation';
 import { TripDetails } from '@/interfaces/types';
 import { Preferences } from '@capacitor/preferences';
+import { loadStripe } from '@stripe/stripe-js';
+import { CometChat } from "@cometchat-pro/chat";
+import { Coordinate } from '@/interfaces/types';
 
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
@@ -21,6 +24,9 @@ export const useMainStore = defineStore({
     token: "" as string,
     user: null as User | null,
     creditWallet: 0 as number,
+    driverMode: false as boolean,
+    coordinate: null as Coordinate | null,
+    fakeGeolocation: false as boolean,
   }),
   getters: {
     getPhoneNumber(): string {
@@ -33,8 +39,14 @@ export const useMainStore = defineStore({
       try {
         const phoneNumberTemp = "+6" + phoneNumber;
         this.setHeaders();
-        const response = await axiosInstance.post("/auth/tryLogin", { phoneNumber: phoneNumberTemp });
-        console.log(response.status);
+
+        const data = {
+          phoneNumber: phoneNumberTemp,
+          driverMode: this.driverMode,
+        }
+
+        const response = await axiosInstance.post("/auth/tryLogin", data);
+        
         // Check for success
         if (response.status === 200) {
           this.phoneNumber = phoneNumberTemp;
@@ -70,9 +82,17 @@ export const useMainStore = defineStore({
 
           this.setHeaders();
 
-          router.push({
-            path: '/',
-          });
+          if (this.driverMode) {
+            router.push({
+              path: '/driver',
+            });
+          }
+          else
+          {
+            router.push({
+              path: '/',
+            });
+          }
         }
 
         return response.data;
@@ -91,6 +111,8 @@ export const useMainStore = defineStore({
         // Check for success
         if (response.status === 200) {
           this.removeUser()
+          Preferences.remove({ key: 'data' })
+          this.driverMode = false;
 
           router.push({
             path: '/sign-in',
@@ -107,15 +129,21 @@ export const useMainStore = defineStore({
 
     async getPlaces(query: string): Promise<any> {
       try {
+        console.log("getPlaces")
         this.setHeaders();
-        const position = await Geolocation.getCurrentPosition();
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-    
+
+        let position = { latitude: this.coordinate?.latitude, longitude: this.coordinate?.longitude } as Coordinate;
+        
+        if (!this.fakeGeolocation) {
+          const currentPosition = await Geolocation.getCurrentPosition();
+
+          position = { latitude: currentPosition.coords.latitude, longitude: currentPosition.coords.longitude } as Coordinate;
+        }
+
         const data = {
           query: query,
-          lat: lat,
-          lng: lng
+          lat: position.latitude,
+          lng: position.longitude
         }
     
         const response = await axiosInstance.post("/maps/getPlaces", data);
@@ -160,7 +188,10 @@ export const useMainStore = defineStore({
           // Check for success
           if (response.status === 200) {
             this.user = response.data;
-            console.log(this.user)
+            
+            this.initializeCometChat();
+            this.loginCometChatUser();
+
             router.push({ path: '/' });
           }
 
@@ -178,9 +209,16 @@ export const useMainStore = defineStore({
     },
 
     async loadFromStorage() {
-      const { value } = await Preferences.get({ key: 'token' })
-      if (value) {
-        this.token = value
+      const { value } = await Preferences.get({ key: 'data' })
+      const { value: driverMode } = await Preferences.get({ key: 'driverMode' })
+
+      const data = JSON.parse(value || '{}');
+
+      this.driverMode = driverMode === 'true' || false;
+
+      if (data) {
+        this.token = data.token;
+        
 
         if (this.token != "")
         {
@@ -190,7 +228,13 @@ export const useMainStore = defineStore({
     },
 
     async saveToStorage() {
-      await Preferences.set({ key: 'token', value: this.token })
+      const data = {
+        token: this.token,
+      }
+
+      await Preferences.set({ key: 'driverMode', value: this.driverMode.toString() })
+
+      await Preferences.set({ key: 'data', value: JSON.stringify(data) })
     },
 
     setUserToken(token: string) {
@@ -203,15 +247,95 @@ export const useMainStore = defineStore({
       this.saveToStorage()
     },
 
-    async testSet()
-    {
-      await Preferences.set({ key: 'a', value: "aa" })
+    async createCheckoutSession(): Promise<any> {
+      try {
+        this.setHeaders();
+        const response = await axiosInstance.post("/payment/createCheckoutSession");
+    
+        // Check for success
+        if (response.status === 200) {
+          const sessionId = response.data.sessionId;
+
+          const stripe = await loadStripe(process.env.VUE_APP_STRIPE_PUBLISHABLE_KEY); // Your Stripe publishable key
+
+          if (stripe != null)
+          {
+            const { error } = await stripe.redirectToCheckout({
+                sessionId,
+            });
+
+            if (error) {
+                console.error(error);
+                // Handle any errors
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error performing the request:', error);
+        // Handle the error (e.g., show an error message or retry the request)
+      }  
     },
 
-    async testGet()
+    initializeCometChat()
     {
-      const { value } = await Preferences.get({ key: 'a' })
-    }
+      const appID = process.env.VUE_APP_COMETCHAT_APP_ID;
+      const region = process.env.VUE_APP_COMETCHAT_REGION;
+      const appSetting: CometChat.AppSettings = new CometChat.AppSettingsBuilder()
+        .subscribePresenceForAllUsers()
+        .setRegion(region)
+        .autoEstablishSocketConnection(true)
+        .build();
+
+      CometChat.init(appID, appSetting).then(
+        (initialized: boolean) => {
+          console.log("Initialization completed successfully", initialized);
+        }, (error: CometChat.CometChatException) => {
+          console.log("Initialization failed with error:", error);
+        }
+      );
+    },
+
+    loginCometChatUser()
+    {
+      const user = this.user || {} as User;
+
+      const authKey = process.env.VUE_APP_COMETCHAT_AUTH_KEY;
+      const uid = user.id.toString();
+      const name = user.name || "User";
+
+      let cometUser: CometChat.User;
+
+      CometChat.login(uid, authKey).then(
+        user => {
+          console.log("Login Successful:", { user });
+
+          cometUser = user;
+        },
+        error => {
+          console.log("Login failed with exception:", { error });    
+
+          cometUser = new CometChat.User(uid);
+
+          cometUser.setName(name);
+
+          CometChat.createUser(cometUser, authKey).then(
+            (user: CometChat.User) => {
+              console.log("user created", user);
+
+              CometChat.login(uid, authKey).then(
+                user => {
+                  console.log("Login Successful:", { user });
+        
+                  cometUser = user;
+                }
+              )
+            }, (error: CometChat.CometChatException) => {
+              console.log("error", error);
+            }
+          );
+        }
+      );
+    },
   },
   persist: {
     enabled: true,

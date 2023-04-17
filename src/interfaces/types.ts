@@ -16,3 +16,8 @@ export interface TripDetails {
   duration: string;
   fare: string;
 }
+
+export interface Coordinate {
+  latitude: number;
+  longitude: number;
+}
