@@ -1,0 +1,18 @@
+{
+	"appId": "com.andago.client",
+	"appName": "AndaGo",
+	"webDir": "dist",
+	"bundledWebRuntime": false,
+	"android": {
+		"versionCode": "autoincrement",
+		"versionName": "autoincrement",
+		"webContentsDebuggingEnabled": true
+	},
+	"server": {
+		"url": "http://localhost:8080",
+		"cleartext": true,
+		"allowNavigation": [
+			"*"
+		]
+	}
+}
