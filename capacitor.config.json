@@ -9,7 +9,6 @@
     "webContentsDebuggingEnabled": true
   },
   "server": {
-    "url": "http://localhost:8080",
     "cleartext": true,
     "allowNavigation": [
       "*"
