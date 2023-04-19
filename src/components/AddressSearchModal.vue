@@ -52,8 +52,18 @@ defineProps({
 
 const emit = defineEmits(['update:value', 'selected', 'update:isOpen']);
 
-const setValue = (place: Place) => {
-  emit('update:value', place);
+const setValue = (place: any) => {
+  const _place = {
+    place_id: place.place_id,
+    name: place.name,
+    formatted_address: place.formatted_address,
+    coordinate: {
+      latitude: place.geometry.location.lat,
+      longitude: place.geometry.location.lng,
+    },
+  };
+
+  emit('update:value', _place);
   closeModal();
 };
 
@@ -63,7 +73,7 @@ const closeModal = () => {
 
 const searchText = ref('');
 
-const places = ref<Place[]>([]);
+const places = ref<any[]>([]);
 
 const handleChange = async () => {
   const query = searchText.value.toLowerCase();

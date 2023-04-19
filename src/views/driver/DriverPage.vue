@@ -23,45 +23,8 @@
         Logout
       </ion-button>
 
-      <ion-card v-if="tripDetailsVisible">
-        <ion-card-header>
-          <ion-card-title>Trip Details</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-list>
-            <ion-item>
-              <ion-label>Pick-Up:</ion-label>
-              <ion-note slot="end">{{ tripDetails.pickUp }}</ion-note>
-            </ion-item>
-            <ion-item>
-              <ion-label>Drop-Off:</ion-label>
-              <ion-note slot="end">{{ tripDetails.dropOff }}</ion-note>
-            </ion-item>
-            <ion-item>
-              <ion-label>Distance:</ion-label>
-              <ion-note slot="end">{{ tripDetails.distance }} km</ion-note>
-            </ion-item>
-            <ion-item>
-              <ion-label>Fare:</ion-label>
-              <ion-note slot="end">{{ tripDetails.fare }}</ion-note>
-            </ion-item>
-            <ion-item>
-              <ion-label>Estimated Duration:</ion-label>
-              <ion-note slot="end">{{ tripDetails.estimatedDuration }}</ion-note>
-            </ion-item>
-          </ion-list>
-          <ion-grid>
-            <ion-row>
-              <ion-col>
-                <ion-button :color="'primary'" expand="block" @click="acceptTripDetails()">Accept</ion-button>
-              </ion-col>
-              <ion-col>
-                <ion-button :color="'secondary'" expand="block" @click="declineTripDetails()">Decline</ion-button>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-        </ion-card-content>
-      </ion-card>
+      <DriverJobModal v-model:isOpen="driverJobModelOpen" :tripDetails="tripDetails" @accept="accept" @decline="decline">
+      </DriverJobModal>
     </ion-content>
   </ion-page>
 </template>
@@ -72,44 +35,76 @@ import {
   IonCardTitle, IonCardContent, IonButton, IonList, IonItem, IonLabel, IonNote,
   IonIcon, IonToggle, IonText, IonGrid, IonRow, IonCol
 } from '@ionic/vue';
+import DriverJobModal from '@/components/DriverJobModal.vue';
 import { ref } from 'vue';
 import { useMainStore } from '@/store';
+import { TripDetails, Place } from '@/interfaces/types';
 import * as turf from '@turf/turf';
+import Pusher from 'pusher-js';
 
 const mainStore = useMainStore();
 
-const tripDetails = ref({
-  pickUp: 'Location name & Address',
-  dropOff: 'Location name & Address',
-  distance: '2',
-  fare: 'RM 2.00',
-  estimatedDuration: '1 hour 30 minutes',
-});
+const tripDetails = ref({} as TripDetails);
 
 const driverAvailable = ref(false);
-const tripDetailsVisible = ref(true);
+const driverJobModelOpen = ref(false);
 
 function logout() {
   mainStore.logout();
 }
 
-function toggleDriverAvailability() {
-  driverAvailable.value = !driverAvailable.value;
-}
+// function toggleDriverAvailability() {
+//   driverAvailable.value = !driverAvailable.value;
+// }
 
-function toggleTripDetailsVisibility() {
-  tripDetailsVisible.value = !tripDetailsVisible.value;
-}
+// function toggleTripDetailsVisibility() {
+//   tripDetailsVisible.value = !tripDetailsVisible.value;
+// }
 
-function acceptTripDetails() {
+function accept() {
   // Accept the trip details here
-  tripDetailsVisible.value = false;
+  driverJobModelOpen.value = false;
 }
 
-function declineTripDetails() {
+function decline() {
   // Decline
-  tripDetailsVisible.value = false;
+  driverJobModelOpen.value = false;
 }
+
+const pusher = new Pusher('a294542618ad0c79d7b7', {
+  cluster: 'ap1'
+});
+
+const channel = pusher.subscribe('main-channel');
+channel.bind('main-event', function (event: any) {
+  console.log(event);
+
+  const data = event.data;
+
+  tripDetails.value = {
+    pickUp: {
+      name: data.pickup_place.name,
+      formatted_address: data.pickup_place.address,
+      coordinate: {
+        latitude: data.pickup_place.latitude,
+        longitude: data.pickup_place.longitude,
+      },
+    } as Place,
+    dropOff: {
+      name: data.dropoff_place.name,
+      formatted_address: data.dropoff_place.address,
+      coordinate: {
+        latitude: data.dropoff_place.latitude,
+        longitude: data.dropoff_place.longitude,
+      },
+    } as Place,
+    distance: data.distance,
+    duration: data.duration,
+    fare: data.fare,
+  } as TripDetails;
+
+  driverJobModelOpen.value = true;
+});
 </script>
 
 <style scoped>

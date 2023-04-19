@@ -11,53 +11,60 @@
         <ion-row>
           <ion-col>
             <ion-searchbar :search-icon="location" placeholder="Pick-Up" @ion-focus="openPickUpModal"
-              :value="pickUpLocation.name"></ion-searchbar>
-            <AddressSearchModal v-model:value="pickUpLocation" v-model:isOpen="isPickUpModalOpen" title="Pick-Up Location"
+              :value="pickUp.name"></ion-searchbar>
+            <AddressSearchModal v-model:value="pickUp" v-model:isOpen="isPickUpModalOpen" title="Pick-Up Location"
               placeholder="Search for address"></AddressSearchModal>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col>
             <ion-searchbar :search-icon="navigate" placeholder="Drop-Off" @ion-focus="openDropOffModal"
-              :value="dropOffLocation.name"></ion-searchbar>
-            <AddressSearchModal v-model:value="dropOffLocation" v-model:isOpen="isDropOffModalOpen"
-              title="Drop-Off Location" placeholder="Search for address">
+              :value="dropOff.name"></ion-searchbar>
+            <AddressSearchModal v-model:value="dropOff" v-model:isOpen="isDropOffModalOpen" title="Drop-Off Location"
+              placeholder="Search for address">
             </AddressSearchModal>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col>
-            <ion-button expand="block" @click="openTripDetailsModal">Confirm</ion-button>
-            <TripDetailsModal v-model:isOpen="isTripDetailsModalOpen" :tripDetails="tripDetails"></TripDetailsModal>
+            <ion-button expand="block" @click="getTripDetails">Confirm</ion-button>
+            <TripDetailsModal v-model:isOpen="isTripDetailsModalOpen" v-model:tripDetails="tripDetails"
+              @confirm="createTrip">
+            </TripDetailsModal>
+
+            <ion-loading :is-open="searchDriversLoadingOpen" class="searchDriversLoading" message="Searching for Drivers"
+              duration="30000">
+            </ion-loading>
           </ion-col>
         </ion-row>
       </ion-grid>
-
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, } from 'vue';
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonButton,
-  IonGrid, IonRow, IonCol,
+  IonGrid, IonRow, IonCol, IonLoading
 } from '@ionic/vue';
 import TripDetailsModal from '@/components/TripDetailsModal.vue';
 import { Place, TripDetails } from '@/interfaces/types';
 import { location, navigate } from 'ionicons/icons';
-
+import { useMainStore } from '@/store';
 import AddressSearchModal from '@/components/AddressSearchModal.vue';
 
-// const store = useMainStore();
+const store = useMainStore();
 
 const isPickUpModalOpen = ref(false);
 const isDropOffModalOpen = ref(false);
 
 const isTripDetailsModalOpen = ref(false);
 
-const pickUpLocation = ref<Place>({} as Place);
-const dropOffLocation = ref<Place>({} as Place);
+const searchDriversLoadingOpen = ref(false);
+
+const pickUp = ref<Place>({} as Place);
+const dropOff = ref<Place>({} as Place);
 
 const tripDetails = ref({} as TripDetails);
 
@@ -73,7 +80,17 @@ const openTripDetailsModal = () => {
   isTripDetailsModalOpen.value = true;
 };
 
-// const confirmTrip = () => {
-//   store.createCheckoutSession();
-// };
+const getTripDetails = async () => {
+  tripDetails.value = await store.getTripDetails(pickUp.value, dropOff.value)
+
+  openTripDetailsModal();
+};
+
+const createTrip = () => {
+  store.createTrip(tripDetails.value);
+
+  searchDriversLoadingOpen.value = true;
+};
+
+
 </script>

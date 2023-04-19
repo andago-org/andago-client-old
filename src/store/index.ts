@@ -3,11 +3,10 @@ import axios from 'axios';
 import router from '@/router';
 import { User } from '@/interfaces/models';
 import { Geolocation } from '@capacitor/geolocation';
-import { TripDetails } from '@/interfaces/types';
+import { TripDetails, Coordinate, Place, TripRequest } from '@/interfaces/types';
 import { Preferences } from '@capacitor/preferences';
 import { loadStripe } from '@stripe/stripe-js';
 import { CometChat } from "@cometchat-pro/chat";
-import { Coordinate } from '@/interfaces/types';
 
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
@@ -105,19 +104,16 @@ export const useMainStore = defineStore({
 
     async logout(): Promise<void> {
       try {
+        this.removeUser()
+        Preferences.remove({ key: 'data' })
+        this.driverMode = false;
+
         this.setHeaders();
         const response = await axiosInstance.post("/auth/logout");
-    
-        // Check for success
-        if (response.status === 200) {
-          this.removeUser()
-          Preferences.remove({ key: 'data' })
-          this.driverMode = false;
-
-          router.push({
-            path: '/sign-in',
-          });
-        }
+        
+        router.push({
+          path: '/sign-in',
+        });
 
         return response.data;
 
@@ -129,7 +125,6 @@ export const useMainStore = defineStore({
 
     async getPlaces(query: string): Promise<any> {
       try {
-        console.log("getPlaces")
         this.setHeaders();
 
         let position = { latitude: this.coordinate?.latitude, longitude: this.coordinate?.longitude } as Coordinate;
@@ -150,7 +145,6 @@ export const useMainStore = defineStore({
     
         // Check for success
         if (response.status === 200) {
-          // console.log(response.data.results)
           return response.data.results;
         }
       } catch (error) {
@@ -159,10 +153,16 @@ export const useMainStore = defineStore({
       }
     },
 
-    async getTripDetails(): Promise<any> {
+    async getTripDetails(pickUp: Place, dropOff: Place): Promise<any> {
       try {
         this.setHeaders();
-        const response = await axiosInstance.get("/maps/getTripDetails");
+        
+        const data = {
+          pickUp: pickUp,
+          dropOff: dropOff,
+        }
+
+        const response = await axiosInstance.post("/maps/getTripDetails", data);
     
         // Check for success
         if (response.status === 200) {
@@ -273,7 +273,7 @@ export const useMainStore = defineStore({
       } catch (error) {
         console.error('Error performing the request:', error);
         // Handle the error (e.g., show an error message or retry the request)
-      }  
+      }
     },
 
     initializeCometChat()
@@ -336,6 +336,28 @@ export const useMainStore = defineStore({
         }
       );
     },
+
+    async createTrip(tripDetails: TripDetails): Promise<any> {
+      try {
+        this.setHeaders();
+
+        const data = {
+          tripDetails: tripDetails,
+        }
+
+        const response = await axiosInstance.post("/trips/createTrip", data);
+    
+        // Check for success
+        if (response.status === 200) {
+          console.log("Trip created", response.data);
+          return response.data;
+        }
+      } catch (error) {
+        console.error('Error performing the request:', error);
+        // Handle the error (e.g., show an error message or retry the request)
+      }
+    }
+
   },
   persist: {
     enabled: true,

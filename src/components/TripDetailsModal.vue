@@ -14,23 +14,35 @@
       <ion-list>
         <ion-item>
           <ion-label>Pick-Up</ion-label>
-          <ion-note slot="end">{{ tripDetails.origin }}</ion-note>
+          <ion-text>
+            <h4>{{ tripDetails.pickUp.name }}</h4>
+            <p>{{ tripDetails.pickUp.formatted_address }}</p>
+          </ion-text>
         </ion-item>
         <ion-item>
           <ion-label>Drop-Off</ion-label>
-          <ion-note slot="end">{{ tripDetails.destination }}</ion-note>
+          <ion-text>
+            <h4>{{ tripDetails.dropOff.name }}</h4>
+            <p>{{ tripDetails.dropOff.formatted_address }}</p>
+          </ion-text>
         </ion-item>
         <ion-item>
           <ion-label>Distance</ion-label>
-          <ion-note slot="end">{{ tripDetails.distance }} km</ion-note>
+          <ion-text>
+            <h2>{{ tripDetails.distance }}</h2>
+          </ion-text>
         </ion-item>
         <ion-item>
           <ion-label>Fare</ion-label>
-          <ion-note slot="end">RM {{ tripDetails.fare }}</ion-note>
+          <ion-text>
+            <h2>{{ tripDetails.fare }}</h2>
+          </ion-text>
         </ion-item>
         <ion-item>
           <ion-label>Estimated Duration</ion-label>
-          <ion-note slot="end">{{ tripDetails.duration }}</ion-note>
+          <ion-text>
+            <h2>{{ tripDetails.duration }}</h2>
+          </ion-text>
         </ion-item>
       </ion-list>
 
@@ -45,8 +57,6 @@
         </ion-row>
       </ion-grid>
     </ion-content>
-
-
   </ion-modal>
 </template>
 
@@ -54,7 +64,7 @@
 import { defineProps, defineEmits } from 'vue';
 import {
   IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel,
-  IonNote, IonButton, IonButtons, IonGrid, IonRow, IonCol
+  IonButton, IonButtons, IonGrid, IonRow, IonCol, IonText
 } from '@ionic/vue';
 import { TripDetails } from '@/interfaces/types';
 
@@ -63,6 +73,10 @@ defineProps({
   tripDetails: {
     type: Object as () => TripDetails,
     required: true
+  },
+  test: {
+    type: String,
+    default: 'test'
   }
 });
 

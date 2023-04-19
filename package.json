@@ -29,9 +29,11 @@
     "cordova-plugin-ionic": "5.5.3",
     "core-js": "^3.6.5",
     "ionicons": "^6.0.3",
+    "laravel-echo": "^1.15.0",
     "libphonenumber-js": "^1.10.24",
     "pinia": "^2.0.33",
     "pinia-plugin-persist": "^1.0.0",
+    "pusher-js": "^8.0.2",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6",
     "vue3-google-map": "^0.15.0"
