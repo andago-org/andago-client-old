@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Trip</ion-title>
+        <ion-title>Trip Test</ion-title>
       </ion-toolbar>
     </ion-header>
 
