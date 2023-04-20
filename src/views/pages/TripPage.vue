@@ -5,15 +5,21 @@
         <ion-title>Trip</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content :fullscreen="true">
 
-      <ion-grid>
+    <ion-content :fullscreen="true">
+      <n-carousel draggable>
+        <img v-for="i in 4" :key="i" class="carousel-img" src="@/img/splash.png">
+      </n-carousel>
+
+      <ion-grid class="navigationPanel">
         <ion-row>
           <ion-col>
             <ion-searchbar :search-icon="location" placeholder="Pick-Up" @ion-focus="openPickUpModal"
-              :value="pickUp.name"></ion-searchbar>
+              :value="pickUp.name">
+            </ion-searchbar>
             <AddressSearchModal v-model:value="pickUp" v-model:isOpen="isPickUpModalOpen" title="Pick-Up Location"
-              placeholder="Search for address"></AddressSearchModal>
+              placeholder="Search for address">
+            </AddressSearchModal>
           </ion-col>
         </ion-row>
         <ion-row>
@@ -48,6 +54,7 @@ import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonButton,
   IonGrid, IonRow, IonCol, IonLoading
 } from '@ionic/vue';
+import { NCarousel } from 'naive-ui';
 import TripDetailsModal from '@/components/TripDetailsModal.vue';
 import { Place, TripDetails } from '@/interfaces/types';
 import { location, navigate } from 'ionicons/icons';
@@ -94,3 +101,17 @@ const createTrip = () => {
 
 
 </script>
+
+<style scoped>
+.navigationPanel {
+  position: fixed;
+  bottom: 24px;
+  width: 100%;
+}
+
+.carousel-img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+}
+</style>
