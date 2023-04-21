@@ -48,7 +48,6 @@ import { defineProps, defineEmits } from 'vue';
 import { IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonNote, IonButton, IonButtons, IonGrid, IonRow, IonCol } from '@ionic/vue';
 import { TripDetails } from '@/interfaces/types';
 
-
 defineProps({
   isOpen: Boolean,
   tripDetails: {

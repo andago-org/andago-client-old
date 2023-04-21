@@ -23,8 +23,6 @@ import '@ionic/vue/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
-import GoogleMapsPlacesPlugin from './plugins/google-maps-api';
-
 import { createPinia } from 'pinia'
 import piniaPersist from 'pinia-plugin-persist'
 import { useMainStore } from './store'
@@ -39,8 +37,6 @@ const app = createApp(App)
 ;
 
 app.provide('mainStore', useMainStore())
-
-app.use(GoogleMapsPlacesPlugin, { apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY });
 
 router.isReady().then(() => {
   app.mount('#app');

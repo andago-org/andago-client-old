@@ -11,8 +11,9 @@
 
     <ion-content>
       <div class="map-container">
-
+        
       </div>
+
       <ion-list>
         <ion-item>
           <ion-label>Pick-Up</ion-label>
