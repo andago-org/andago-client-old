@@ -89,7 +89,7 @@ const openTripDetailsModal = () => {
 
 const getTripDetails = async () => {
   tripDetails.value = await store.getTripDetails(pickUp.value, dropOff.value)
-
+  console.log(tripDetails.value)
   openTripDetailsModal();
 };
 

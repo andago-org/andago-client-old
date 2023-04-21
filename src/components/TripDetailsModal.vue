@@ -10,9 +10,15 @@
     </ion-header>
 
     <ion-content>
-      <div class="map-container">
-        
-      </div>
+        <GoogleMap id="map" api-key="AIzaSyA-T6S3baY4-AZuTSc9Fryb9fCH8Ihi0Uc"
+          :center="pickUpLocation"
+          :zoom="15"
+          :fullscreenControl="false"
+          :disableDefaultUI="true"
+        >
+          <Marker v-if="pickUpLocation != null" :options="{ position: pickUpLocation }" />
+          <Marker v-if="dropOffLocation != null" :options="{ position: dropOffLocation }" />
+        </GoogleMap>
 
       <ion-list>
         <ion-item>
@@ -64,14 +70,32 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits, ref, watch } from 'vue';
 import {
   IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel,
   IonButton, IonButtons, IonGrid, IonRow, IonCol, IonText
 } from '@ionic/vue';
 import { TripDetails } from '@/interfaces/types';
+import { GoogleMap, Marker } from "vue3-google-map";
 
-defineProps({
+const pickUpLocation = ref(null);
+const dropOffLocation = ref(null);
+
+watch(
+  () => props.tripDetails,
+  (newValue, oldValue) => {
+    pickUpLocation.value = {
+      lat: newValue.pickUp.coordinate.latitude,
+      lng: newValue.pickUp.coordinate.longitude
+    };
+    dropOffLocation.value = {
+      lat: newValue.dropOff.coordinate.latitude,
+      lng: newValue.dropOff.coordinate.longitude
+    };
+  },
+);
+
+const props = defineProps({
   isOpen: Boolean,
   tripDetails: {
     type: Object as () => TripDetails,
@@ -94,9 +118,14 @@ function confirmModal() {
 }
 </script>
 
-<style scoped>
-.map-container {
+<style>
+#map {
   height: 250px;
   background-color: #f5f5f5;
 }
+
+.gmnoprint, .gm-fullscreen-control, .gm-control-active {
+  display: none !important;
+}
+
 </style>
