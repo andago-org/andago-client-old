@@ -9,16 +9,16 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content>
-        <GoogleMap id="map" api-key="AIzaSyA-T6S3baY4-AZuTSc9Fryb9fCH8Ihi0Uc"
-          :center="pickUpLocation"
-          :zoom="15"
-          :fullscreenControl="false"
-          :disableDefaultUI="true"
-        >
-          <Marker v-if="pickUpLocation != null" :options="{ position: pickUpLocation }" />
-          <Marker v-if="dropOffLocation != null" :options="{ position: dropOffLocation }" />
-        </GoogleMap>
+    <ion-content scroll-y scroll="true" style="height: calc(100% - 56px);">
+      <GoogleMap id="map" api-key="AIzaSyA-T6S3baY4-AZuTSc9Fryb9fCH8Ihi0Uc"
+        :center="pickUpLocation"
+        :zoom="15"
+        :fullscreenControl="false"
+        :disableDefaultUI="true"
+      >
+        <Marker v-if="pickUpLocation != null" :options="{ position: pickUpLocation }" />
+        <Marker v-if="dropOffLocation != null" :options="{ position: dropOffLocation }" />
+      </GoogleMap>
 
       <ion-list>
         <ion-item>
@@ -42,31 +42,48 @@
           </ion-text>
         </ion-item>
         <ion-item>
+          <ion-label>Estimated Duration</ion-label>
+          <ion-text>
+            <h2>{{ tripDetails.duration }}</h2>
+          </ion-text>
+        </ion-item>
+        <ion-item>
+          <ion-label>Wallet Balance</ion-label>
+          <ion-button :strong="true" color="primary" @click="openTopUpModal">Top Up</ion-button>
+          
+          <ion-text>
+            <h2>{{ tripDetails.balance }}</h2>
+          </ion-text>
+        </ion-item>
+        <ion-item>
           <ion-label>Fare</ion-label>
           <ion-text>
             <h2>{{ tripDetails.fare }}</h2>
           </ion-text>
         </ion-item>
         <ion-item>
-          <ion-label>Estimated Duration</ion-label>
-          <ion-text>
-            <h2>{{ tripDetails.duration }}</h2>
+          <ion-label>After Payment</ion-label>
+          <ion-text :color="tripDetails.result >= 0 ? 'dark' : 'danger'">
+            <h2>{{ tripDetails.result }}</h2>
           </ion-text>
         </ion-item>
       </ion-list>
 
       <ion-grid>
-        <ion-row class="ion-align-items-end">
+        <ion-row>
           <ion-col>
-            <ion-button expand="block" :strong="true" color="primary" @click="confirmModal">Confirm</ion-button>
+            <ion-button :strong="true" expand="block" color="primary" @click="confirmModal">Confirm</ion-button>
           </ion-col>
           <ion-col>
-            <ion-button expand="block" :strong="true" color="secondary" @click="closeModal">Cancel</ion-button>
+            <ion-button :strong="true" expand="block" color="secondary" @click="closeModal">Cancel</ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
     </ion-content>
+    <TopUpModal v-model:isOpen="topUpModalOpen"></TopUpModal>
   </ion-modal>
+
+  
 </template>
 
 <script setup lang="ts">
@@ -77,6 +94,7 @@ import {
 } from '@ionic/vue';
 import { TripDetails } from '@/interfaces/types';
 import { GoogleMap, Marker } from "vue3-google-map";
+import { TopUpModal } from '@/components/TopUpModal.vue';
 
 const pickUpLocation = ref(null);
 const dropOffLocation = ref(null);
@@ -95,6 +113,8 @@ watch(
   },
 );
 
+const topUpModalOpen = ref(false);
+
 const props = defineProps({
   isOpen: Boolean,
   tripDetails: {
@@ -109,6 +129,10 @@ const props = defineProps({
 
 const emit = defineEmits(['update:isOpen', 'confirm', 'cancel']);
 
+function openTopUpModal() {
+  topUpModalOpen.value = true;
+}
+
 function closeModal() {
   emit('update:isOpen', false);
 }
@@ -120,7 +144,7 @@ function confirmModal() {
 
 <style>
 #map {
-  height: 250px;
+  height: 200px;
   background-color: #f5f5f5;
 }
 
