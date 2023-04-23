@@ -1,7 +1,7 @@
 export interface Place {
   place_id: string;
   name: string;
-  formatted_address: string;
+  address: string;
   coordinate: Coordinate;
 }
 
@@ -16,9 +16,11 @@ export interface TripDetails {
   distance: string;
   duration: string;
   fare: string;
+  balance: string;
+  result: string;
 }
 
 export interface Coordinate {
-  latitude: number;
-  longitude: number;
+  lat: number;
+  lng: number;
 }

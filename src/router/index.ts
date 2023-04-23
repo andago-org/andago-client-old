@@ -30,11 +30,11 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'trip',
-        component: () => import('@/views/pages/TripPage.vue')
+        component: () => import('@/views/trip/TripPage.vue')
       },
       {
         path: 'chat',
-        component: () => import('@/views/pages/ChatPage.vue')
+        component: () => import('@/views/pages/TestPage.vue')
       },
       {
         path: 'settings',

@@ -56,10 +56,10 @@ const setValue = (place: any) => {
   const _place = {
     place_id: place.place_id,
     name: place.name,
-    formatted_address: place.formatted_address,
+    address: place.formatted_address,
     coordinate: {
-      latitude: place.geometry.location.lat,
-      longitude: place.geometry.location.lng,
+      lat: place.geometry.location.lat,
+      lng: place.geometry.location.lng,
     },
   };
 
@@ -77,13 +77,7 @@ const places = ref<any[]>([]);
 
 const handleChange = async () => {
   const query = searchText.value.toLowerCase();
-  // if (query === '') {
-  //   results.value = [];
-  //   return;
-  // }
 
   places.value = await store.getPlaces(query);
-
-  // console.log(places.value);
 };
 </script>

@@ -16,7 +16,7 @@
           <ion-input type="number" v-model="topUpAmount"></ion-input>
         </ion-item>
       </ion-list>
-      
+
       <ion-grid>
         <ion-row>
           <ion-col>

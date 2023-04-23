@@ -3,7 +3,7 @@ import axios from 'axios';
 import router from '@/router';
 import { User } from '@/interfaces/models';
 import { Geolocation } from '@capacitor/geolocation';
-import { TripDetails, Coordinate, Place, TripRequest } from '@/interfaces/types';
+import { TripDetails, Coordinate, Place } from '@/interfaces/types';
 import { Preferences } from '@capacitor/preferences';
 import { loadStripe } from '@stripe/stripe-js';
 import { CometChat } from "@cometchat-pro/chat";
@@ -24,8 +24,15 @@ export const useMainStore = defineStore({
     user: null as User | null,
     creditWallet: 0 as number,
     driverMode: false as boolean,
-    coordinate: null as Coordinate | null,
+    coordinate: { lat: 0, lng: 0 } as Coordinate,
     fakeGeolocation: false as boolean,
+    pickUpPlace: { place_id: '', name: '', address: '', coordinate: { lat: 0, lng: 0 } as Coordinate } as Place,
+    dropOffPlace: { place_id: '', name: '', address: '', coordinate: { lat: 0, lng: 0 } as Coordinate } as Place,
+    walletBalance: 0 as number,
+    distance: 0 as number,
+    duration: '0 min' as string,
+    fare: 0 as number,
+    // tripDetails: null as TripDetails | null,
   }),
   getters: {
     getPhoneNumber(): string {
@@ -127,18 +134,18 @@ export const useMainStore = defineStore({
       try {
         this.setHeaders();
 
-        let position = { latitude: this.coordinate?.latitude, longitude: this.coordinate?.longitude } as Coordinate;
+        let position = { lat: this.coordinate?.lat, lng: this.coordinate?.lng } as Coordinate;
         
         if (!this.fakeGeolocation) {
           const currentPosition = await Geolocation.getCurrentPosition();
 
-          position = { latitude: currentPosition.coords.latitude, longitude: currentPosition.coords.longitude } as Coordinate;
+          position = { lat: currentPosition.coords.latitude, lng: currentPosition.coords.longitude } as Coordinate;
         }
 
         const data = {
           query: query,
-          lat: position.latitude,
-          lng: position.longitude
+          lat: position.lat,
+          lng: position.lng
         }
     
         const response = await axiosInstance.post("/maps/getPlaces", data);
