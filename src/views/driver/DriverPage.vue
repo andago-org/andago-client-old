@@ -81,27 +81,27 @@ channel.bind('main-event', function (event: any) {
 
   const data = event.data;
 
-  tripDetails.value = {
-    pickUp: {
-      name: data.pickup_place.name,
-      formatted_address: data.pickup_place.address,
-      coordinate: {
-        latitude: data.pickup_place.latitude,
-        longitude: data.pickup_place.longitude,
-      },
-    } as Place,
-    dropOff: {
-      name: data.dropoff_place.name,
-      formatted_address: data.dropoff_place.address,
-      coordinate: {
-        latitude: data.dropoff_place.latitude,
-        longitude: data.dropoff_place.longitude,
-      },
-    } as Place,
-    distance: data.distance,
-    duration: data.duration,
-    fare: data.fare,
-  } as TripDetails;
+  // tripDetails.value = {
+  //   pickUp: {
+  //     name: data.pickup_place.name,
+  //     formatted_address: data.pickup_place.address,
+  //     coordinate: {
+  //       latitude: data.pickup_place.latitude,
+  //       longitude: data.pickup_place.longitude,
+  //     },
+  //   } as Place,
+  //   dropOff: {
+  //     name: data.dropoff_place.name,
+  //     formatted_address: data.dropoff_place.address,
+  //     coordinate: {
+  //       latitude: data.dropoff_place.latitude,
+  //       longitude: data.dropoff_place.longitude,
+  //     },
+  //   } as Place,
+  //   distance: data.distance,
+  //   duration: data.duration,
+  //   fare: data.fare,
+  // } as TripDetails;
 
   driverJobModelOpen.value = true;
 });

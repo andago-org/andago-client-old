@@ -100,7 +100,7 @@ const directionsResult = ref(null);
 const googleMap = ref(null as any);
 
 onMounted(() => {
-  googleMaps.load(process.env.VUE_APP_GOOGLE_MAPS_API_KEY).then((maps: any) => {
+  googleMaps.load().then((maps: any) => {
     googleMap.value = new maps.Map(document.getElementById("map"), {
       center: center,
       zoom: zoom,

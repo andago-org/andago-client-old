@@ -2,9 +2,9 @@ import { Loader } from '@googlemaps/js-api-loader';
 
 let googleMaps: any = null;
 
-const loadGoogleMaps = (apiKey: string) => {
+const loadGoogleMaps = () => {
   const loader = new Loader({
-    apiKey: apiKey,
+    apiKey: "AIzaSyA-T6S3baY4-AZuTSc9Fryb9fCH8Ihi0Uc",
     version: 'weekly',
     libraries: ['places']
   });
