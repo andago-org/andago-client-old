@@ -3,10 +3,11 @@ import axios from 'axios';
 import router from '@/router';
 import { User } from '@/interfaces/models';
 import { Geolocation } from '@capacitor/geolocation';
-import { TripDetails, Coordinate, Place } from '@/interfaces/types';
+import { TripDetails, Coordinate, Place, Vehicle } from '@/interfaces/types';
 import { Preferences } from '@capacitor/preferences';
 import { loadStripe } from '@stripe/stripe-js';
 import { CometChat } from "@cometchat-pro/chat";
+import { version } from 'vue';
 
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
@@ -22,6 +23,7 @@ export const useMainStore = defineStore({
     phoneNumber: "" as string,
     token: "" as string,
     user: null as User | null,
+    selectedVehicle: null as Vehicle | null,
     creditWallet: 0 as number,
     driverMode: false as boolean,
     coordinate: { lat: 0, lng: 0 } as Coordinate,
@@ -258,13 +260,13 @@ export const useMainStore = defineStore({
       try {
         this.setHeaders();
         const response = await axiosInstance.post("/payment/createCheckoutSession");
-    
+        
         // Check for success
         if (response.status === 200) {
           const sessionId = response.data.sessionId;
-
+          
           const stripe = await loadStripe(process.env.VUE_APP_STRIPE_PUBLISHABLE_KEY); // Your Stripe publishable key
-
+          
           if (stripe != null)
           {
             const { error } = await stripe.redirectToCheckout({
@@ -363,7 +365,47 @@ export const useMainStore = defineStore({
         console.error('Error performing the request:', error);
         // Handle the error (e.g., show an error message or retry the request)
       }
-    }
+    },
+
+    async getVehicles(): Promise<any> {
+      try {
+        this.setHeaders();
+
+        const response = await axiosInstance.get("/vehicles");
+    
+        // Check for success
+        if (response.status === 200) {
+          
+          console.log(response.data);
+
+          return response.data as Vehicle[];
+        }
+      } catch (error) {
+        console.error('Error performing the request:', error);
+        // Handle the error (e.g., show an error message or retry the request)
+      }
+    },
+
+    async createVehicle(vehicle: Vehicle): Promise<any> {
+      try {
+        this.setHeaders();
+
+        const data = {
+            name: vehicle.name,
+        }
+
+        const response = await axiosInstance.post("/vehicles", data);
+    
+        // Check for success
+        if (response.status === 200) {
+          
+          return response.data as Vehicle[];
+        }
+      } catch (error) {
+        console.error('Error performing the request:', error);
+        // Handle the error (e.g., show an error message or retry the request)
+      }
+    },
 
   },
   persist: {

@@ -23,6 +23,9 @@ import '@ionic/vue/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
+// Default theme
+import '@splidejs/vue-splide/css';
+
 import { createPinia } from 'pinia'
 import piniaPersist from 'pinia-plugin-persist'
 import { useMainStore } from './store'

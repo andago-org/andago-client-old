@@ -5,6 +5,12 @@ export interface Place {
   coordinate: Coordinate;
 }
 
+export interface Vehicle {
+  id: number,
+  name: string,
+  editMode: boolean,
+}
+
 export interface TripRequest {
   origin: Place;
   destination: Place;

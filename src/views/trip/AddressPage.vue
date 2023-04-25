@@ -7,11 +7,59 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
-      <n-carousel draggable>
-        <img v-for="i in 4" :key="i" class="carousel-img" src="@/img/splash.png">
-      </n-carousel>
+      <Splide :options="{ rewind: true }" aria-label="My Favorite Images">
+        <SplideSlide v-for="i in 4" :key="i">
+          <img src="@/img/splash.png" alt="Sample 1">
+        </SplideSlide>
+      </Splide>
 
-      <ion-grid class="navigationPanel">
+    </ion-content>
+
+    <ion-footer>
+
+
+      <ion-grid>
+        <ion-row>
+          <ion-card style="width: 100%; padding: 0 20px  20px 20px">
+            <ion-card-header>
+              <ion-text class="ion-text-center">
+                <h3>Selected Car</h3>
+              </ion-text>
+            </ion-card-header>
+
+            <ion-card-content>
+              <ion-card v-if="store.selectedVehicle">
+                <ion-grid>
+                  <ion-row>
+                    <ion-col size="auto">
+                      <ion-icon :icon="car" size="large"></ion-icon>
+                    </ion-col>
+                    <ion-col>
+                      <ion-card-title>Car Number</ion-card-title>
+                      <ion-card-subtitle>Car Model</ion-card-subtitle>
+                    </ion-col>
+                    <ion-col size="auto" class="ion-align-items-center">
+                      <ion-checkbox :checked="true"></ion-checkbox>
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+              </ion-card>
+              <ion-card v-else style="padding: 0 10px 10px 10px">
+                <n-empty description="You don't have car added yet, go Manage your cars">
+
+                </n-empty>
+              </ion-card>
+            </ion-card-content>
+
+            <ion-nav-link router-direction="forward" :component="VehiclePage">
+              <ion-button expand="block">Manage</ion-button>
+            </ion-nav-link>
+
+            <!-- <ion-button fill="clear">Action 1</ion-button>
+            <ion-button fill="clear">Action 2</ion-button> -->
+          </ion-card>
+        </ion-row>
+
         <ion-row>
           <ion-col>
             <ion-searchbar :search-icon="location" placeholder="Pick-Up" @ion-focus="openPickUpModal"
@@ -44,7 +92,7 @@
           </ion-col>
         </ion-row>
       </ion-grid>
-    </ion-content>
+    </ion-footer>
   </ion-page>
 </template>
 
@@ -52,16 +100,20 @@
 import { ref, } from 'vue';
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonButton,
-  IonGrid, IonRow, IonCol, IonLoading, IonNavLink
+  IonGrid, IonRow, IonCol, IonLoading, IonNavLink, IonFooter, IonCard, IonCardHeader,
+  IonCardTitle, IonCardSubtitle, IonCardContent, IonIcon, IonText, IonCheckbox
 } from '@ionic/vue';
-import { NCarousel } from 'naive-ui';
+// import { NCarousel } from 'naive-ui';
 import TripDetailsModal from '@/components/TripDetailsModal.vue';
 import { Place, TripDetails } from '@/interfaces/types';
 import { location, navigate } from 'ionicons/icons';
 import { useMainStore } from '@/store';
 import AddressSearchModal from '@/components/AddressSearchModal.vue';
 import PreviewPage from './PreviewPage.vue';
-
+import VehiclePage from '../vehicle/VehiclePage.vue';
+import { car } from 'ionicons/icons';
+import { Splide, SplideSlide } from '@splidejs/vue-splide';
+import { NEmpty } from 'naive-ui';
 
 const store = useMainStore();
 
@@ -104,16 +156,8 @@ const createTrip = () => {
 
 </script>
 
-<style scoped>
-.navigationPanel {
-  position: fixed;
-  bottom: 24px;
-  width: 100%;
-}
-
-.carousel-img {
-  width: 100%;
-  height: 240px;
-  object-fit: cover;
+<style>
+ion-checkbox {
+  --size: 24px
 }
 </style>

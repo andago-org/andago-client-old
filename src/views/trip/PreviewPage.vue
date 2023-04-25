@@ -17,6 +17,7 @@
             <p>{{ store.pickUpPlace.address }}</p>
           </ion-text>
         </ion-item>
+
         <ion-item>
           <ion-label>Drop-Off</ion-label>
           <ion-text>
@@ -24,50 +25,28 @@
             <p>{{ store.dropOffPlace.address }}</p>
           </ion-text>
         </ion-item>
-        <ion-item>
-          <ion-label>Distance</ion-label>
-          <ion-text>
-            <h2>{{ store.distance }} km</h2>
-          </ion-text>
-        </ion-item>
-        <ion-item>
-          <ion-label>Estimated Duration</ion-label>
-          <ion-text>
-            <h2>{{ store.duration }}</h2>
-          </ion-text>
-        </ion-item>
-        <ion-item>
-          <ion-label>Wallet Balance</ion-label>
-          <ion-button :strong="true" color="primary" @click="openTopUpModal">Top Up</ion-button>
-
-          <ion-text>
-            <h2>{{ store.walletBalance }}</h2>
-          </ion-text>
-        </ion-item>
-        <ion-item>
-          <ion-label>Fare</ion-label>
-          <ion-text>
-            <h2>RM {{ store.fare }}</h2>
-          </ion-text>
-        </ion-item>
-        <ion-item>
-          <ion-label>After Payment</ion-label>
-          <ion-text :color="walletBalanceAfterPayment >= 0 ? 'dark' : 'danger'">
-            <h2>{{ walletBalanceAfterPayment }}</h2>
-          </ion-text>
-        </ion-item>
       </ion-list>
     </ion-content>
 
     <ion-footer>
+      <ion-list>
+        <ion-item v-for="item in checkoutDetails" :key="item.label" lines="none" style="max-height: 36px">
+          <ion-icon :icon="item.icon" slot="start"></ion-icon>
+          <ion-text>
+            {{ item.label }}
+          </ion-text>
+          <ion-text slot="end">{{ item.value }}</ion-text>
+        </ion-item>
+      </ion-list>
+
       <ion-grid>
         <ion-row>
           <ion-col>
             <ion-button :strong="true" expand="block" color="primary"
-              @click="googleMaps.calculateRoute">Confirm</ion-button>
+              @click="store.createCheckoutSession">Confirm</ion-button>
           </ion-col>
-          <ion-col>
 
+          <ion-col>
             <ion-nav-link router-direction="back">
               <ion-button :strong="true" expand="block" color="secondary">Cancel</ion-button>
             </ion-nav-link>
@@ -82,14 +61,38 @@
 import { defineProps, defineEmits, ref, computed, watch, onMounted, onUpdated, nextTick } from 'vue';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonBackButton,
-  IonButton, IonButtons, IonGrid, IonRow, IonCol, IonText, IonPage, IonFooter, IonNavLink
+  IonButton, IonButtons, IonGrid, IonRow, IonCol, IonText, IonPage, IonFooter, IonNavLink, IonIcon
 } from '@ionic/vue';
 import { Place } from '@/interfaces/types';
 import googleMaps from '@/plugins/google-map';
 // import TopUpModal from '@/components/TopUpModal.vue';
 import { useMainStore } from '@/store';
+import { walletOutline, cashOutline, timeOutline, carOutline } from 'ionicons/icons';
 
 const store = useMainStore();
+
+const checkoutDetails = [
+  {
+    icon: walletOutline,
+    label: 'Wallet Credit',
+    value: computed(() => store.walletBalance),
+  },
+  {
+    icon: cashOutline,
+    label: 'Fare Amount',
+    value: computed(() => store.fare),
+  },
+  {
+    icon: timeOutline,
+    label: 'Estimated Time',
+    value: computed(() => store.walletBalance),
+  },
+  {
+    icon: carOutline,
+    label: 'Trip Distance',
+    value: computed(() => store.walletBalance),
+  },
+]
 
 const center = store.pickUpPlace.coordinate;
 const zoom = 5;
