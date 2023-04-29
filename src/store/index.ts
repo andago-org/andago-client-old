@@ -407,6 +407,22 @@ export const useMainStore = defineStore({
       }
     },
 
+    async selectVehicle(vehicle: Vehicle): Promise<any> {
+      try {
+        this.setHeaders();
+
+        const data = {
+            id: vehicle.id,
+        }
+
+        const response = await axiosInstance.post("/vehicles/selectVehicle", data);
+
+        this.selectedVehicle = response.data as any;
+      } catch (error) {
+        console.error('Error performing the request:', error);
+        // Handle the error (e.g., show an error message or retry the request)
+      }
+    },
   },
   persist: {
     enabled: true,

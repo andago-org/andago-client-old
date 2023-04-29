@@ -13,7 +13,7 @@
             </ion-item>
           </ion-col>
           <ion-col size="auto">
-            <ion-checkbox :checked="selected" @click.stop></ion-checkbox>
+            <ion-checkbox :checked="selected" @click.stop="selectVehicle"></ion-checkbox>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -52,7 +52,7 @@ import {
   IonButton, IonIcon, IonGrid, IonRow, IonCol, IonCard, IonCardHeader, IonCardTitle, IonCheckbox, IonInput,
   IonItem, IonLabel
 } from '@ionic/vue';
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref, defineProps, defineEmits, computed } from 'vue';
 import { car as carIcon } from 'ionicons/icons';
 import { Vehicle } from '@/interfaces/types';
 import { useMainStore } from '@/store';
@@ -68,9 +68,22 @@ const props = defineProps({
 
 defineEmits(['update:vehicleData', 'click']);
 
-const selected = ref(false)
+// const selected = ref(false);
+
+const selected = computed(() => store.selectedVehicle?.id === props.vehicleData.id);
+
+// watch(selected, (newValue: boolean, oldValue: boolean) => {
+//   if (newValue) {
+
+//     store.selectVehicle(vehicleData.value);
+//   }
+// });
 
 const vehicleData = ref<Vehicle>(props.vehicleData)
+
+function selectVehicle() {
+  store.selectVehicle(vehicleData.value);
+}
 
 function saveCar() {
   vehicleData.value.editMode = false;

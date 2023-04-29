@@ -1,11 +1,5 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Trip</ion-title>
-      </ion-toolbar>
-    </ion-header>
-
     <ion-content :fullscreen="true">
       <Splide :options="{ rewind: true }" aria-label="My Favorite Images">
         <SplideSlide v-for="i in 4" :key="i">
@@ -16,8 +10,6 @@
     </ion-content>
 
     <ion-footer>
-
-
       <ion-grid>
         <ion-row>
           <ion-card style="width: 100%; padding: 0 20px  20px 20px">
@@ -35,8 +27,7 @@
                       <ion-icon :icon="car" size="large"></ion-icon>
                     </ion-col>
                     <ion-col>
-                      <ion-card-title>Car Number</ion-card-title>
-                      <ion-card-subtitle>Car Model</ion-card-subtitle>
+                      <ion-card-title>{{ store.selectedVehicle.name }}</ion-card-title>
                     </ion-col>
                     <ion-col size="auto" class="ion-align-items-center">
                       <ion-checkbox :checked="true"></ion-checkbox>
@@ -45,9 +36,9 @@
                 </ion-grid>
               </ion-card>
               <ion-card v-else style="padding: 0 10px 10px 10px">
-                <n-empty description="You don't have car added yet, go Manage your cars">
-
-                </n-empty>
+                <ion-text>
+                  <h3>You don't have car added yet, go Manage your cars</h3>
+                </ion-text>
               </ion-card>
             </ion-card-content>
 
