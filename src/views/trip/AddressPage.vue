@@ -13,11 +13,7 @@
       <ion-grid>
         <ion-row>
           <ion-card style="width: 100%; padding: 0 20px  20px 20px">
-            <ion-card-header>
-              <ion-text class="ion-text-center">
-                <h3>Selected Car</h3>
-              </ion-text>
-            </ion-card-header>
+            <div class="ion-text-center">Selected Car</div>
 
             <ion-card-content>
               <ion-card v-if="store.selectedVehicle">
