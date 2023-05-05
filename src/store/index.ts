@@ -8,6 +8,7 @@ import { Preferences } from '@capacitor/preferences';
 import { loadStripe } from '@stripe/stripe-js';
 import { CometChat } from "@cometchat-pro/chat";
 import { version } from 'vue';
+import { Browser } from '@capacitor/browser';
 
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
@@ -256,29 +257,32 @@ export const useMainStore = defineStore({
       this.saveToStorage()
     },
 
-    async createCheckoutSession(): Promise<any> {
+    async createPayment(): Promise<any> {
       try {
         this.setHeaders();
-        const response = await axiosInstance.post("/payment/createCheckoutSession");
+        // const response = await axiosInstance.post("/payment/createCheckoutSession");
+
+
+        await Browser.open({ url: 'http://capacitorjs.com/' });
         
         // Check for success
-        if (response.status === 200) {
-          const sessionId = response.data.sessionId;
+        // if (response.status === 200) {
+        //   const sessionId = response.data.sessionId;
           
-          const stripe = await loadStripe(process.env.VUE_APP_STRIPE_PUBLISHABLE_KEY); // Your Stripe publishable key
+        //   const stripe = await loadStripe(process.env.VUE_APP_STRIPE_PUBLISHABLE_KEY); // Your Stripe publishable key
           
-          if (stripe != null)
-          {
-            const { error } = await stripe.redirectToCheckout({
-                sessionId,
-            });
+        //   if (stripe != null)
+        //   {
+        //     const { error } = await stripe.redirectToCheckout({
+        //         sessionId,
+        //     });
 
-            if (error) {
-                console.error(error);
-                // Handle any errors
-            }
-          }
-        }
+        //     if (error) {
+        //         console.error(error);
+        //         // Handle any errors
+        //     }
+        //   }
+        // }
       } catch (error) {
         console.error('Error performing the request:', error);
         // Handle the error (e.g., show an error message or retry the request)

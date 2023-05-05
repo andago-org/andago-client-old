@@ -42,8 +42,7 @@
       <ion-grid>
         <ion-row>
           <ion-col>
-            <ion-button :strong="true" expand="block" color="primary"
-              @click="store.createCheckoutSession">Confirm</ion-button>
+            <ion-button :strong="true" expand="block" color="primary" @click="store.createPayment">Confirm</ion-button>
           </ion-col>
 
           <ion-col>
@@ -58,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, computed, watch, onMounted, onUpdated, nextTick } from 'vue';
+import { defineEmits, ref, computed, watch, onMounted, onUpdated, nextTick } from 'vue';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonBackButton,
   IonButton, IonButtons, IonGrid, IonRow, IonCol, IonText, IonPage, IonFooter, IonNavLink, IonIcon
@@ -67,30 +66,31 @@ import { Place } from '@/interfaces/types';
 import googleMaps from '@/plugins/google-map';
 // import TopUpModal from '@/components/TopUpModal.vue';
 import { useMainStore } from '@/store';
-import { walletOutline, cashOutline, timeOutline, carOutline } from 'ionicons/icons';
+import { bookOutline, cashOutline, timeOutline, carOutline } from 'ionicons/icons';
+
 
 const store = useMainStore();
 
 const checkoutDetails = [
   {
-    icon: walletOutline,
-    label: 'Wallet Credit',
+    icon: bookOutline,
+    label: 'Booking Fee',
     value: computed(() => store.walletBalance),
   },
   {
-    icon: cashOutline,
-    label: 'Fare Amount',
-    value: computed(() => store.fare),
-  },
-  {
     icon: timeOutline,
-    label: 'Estimated Time',
+    label: 'Time Add-On',
     value: computed(() => store.walletBalance),
   },
   {
     icon: carOutline,
-    label: 'Trip Distance',
+    label: 'Distance Add-On',
     value: computed(() => store.walletBalance),
+  },
+  {
+    icon: cashOutline,
+    label: 'Total Fare',
+    value: computed(() => store.fare),
   },
 ]
 

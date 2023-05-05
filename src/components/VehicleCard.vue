@@ -1,6 +1,24 @@
 <template>
   <ion-card>
     <ion-card-header>
+      <n-upload ref="upload" :default-upload="false" :headers="headers" :on-finish="handleUploadFinish"
+        :show-file-list="false" :on-change="submitFiles">
+        <n-upload-dragger style="height: 200px">
+          <div>
+            <div style="margin-bottom: 12px">
+              <n-icon size="48" :depth="3">
+                <image-icon />
+              </n-icon>
+            </div>
+            <n-text style="font-size: 16px">
+              Tap to Upload Image
+            </n-text>
+          </div>
+          <!-- <n-image object-fit="contain" src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
+            :preview-disabled="true" /> -->
+        </n-upload-dragger>
+      </n-upload>
+
       <ion-grid>
         <ion-row>
           <ion-col size="auto">
@@ -50,14 +68,51 @@
 <script setup lang="ts">
 import {
   IonButton, IonIcon, IonGrid, IonRow, IonCol, IonCard, IonCardHeader, IonCardTitle, IonCheckbox, IonInput,
-  IonItem, IonLabel
+  IonItem,
 } from '@ionic/vue';
 import { ref, defineProps, defineEmits, computed } from 'vue';
-import { car as carIcon } from 'ionicons/icons';
+import { car as carIcon, image } from 'ionicons/icons';
 import { Vehicle } from '@/interfaces/types';
 import { useMainStore } from '@/store';
+import { NUpload, NUploadDragger, NIcon, NText, NImage } from 'naive-ui';
+import { Image as ImageIcon } from '@vicons/ionicons5'
+import axios from 'axios';
 
 const store = useMainStore();
+
+const uploadUrl = process.env.VUE_APP_API_BASE_URL + "/files/uploadImage";
+
+const upload = ref<any>(null);
+
+const handleUploadFinish = (response: any, file: any) => {
+  console.log('File upload finished:', response);
+};
+
+const headers = {
+  Authorization: 'Bearer ' + store.token,
+  "Accept": 'application/json',
+  "Content-Type": 'multipart/form-data',
+};
+
+const submitFiles = async (response: any) => {
+  if (upload.value) {
+    const formData = new FormData();
+    console.log(upload.value);
+    formData.append('file', response.file.file);
+
+    try {
+      const response = await axios.post(uploadUrl, formData, { headers });
+      console.log('Upload response:', response);
+
+      // Clear the file list after a successful upload
+      upload.value.clear();
+    } catch (error) {
+      console.error('Error uploading files:', error);
+    }
+  } else {
+    console.log('No files to upload.');
+  }
+};
 
 const props = defineProps({
   vehicleData: {
@@ -71,13 +126,6 @@ defineEmits(['update:vehicleData', 'click']);
 // const selected = ref(false);
 
 const selected = computed(() => store.selectedVehicle?.id === props.vehicleData.id);
-
-// watch(selected, (newValue: boolean, oldValue: boolean) => {
-//   if (newValue) {
-
-//     store.selectVehicle(vehicleData.value);
-//   }
-// });
 
 const vehicleData = ref<Vehicle>(props.vehicleData)
 
