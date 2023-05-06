@@ -8,7 +8,8 @@ export interface Place {
 export interface Vehicle {
   id: number,
   name: string,
-  editMode: boolean,
+  selected: boolean,
+  controlMode: ControlMode,
 }
 
 export interface TripRequest {
@@ -29,4 +30,10 @@ export interface TripDetails {
 export interface Coordinate {
   lat: number;
   lng: number;
+}
+
+export enum ControlMode {
+  View = 'view',
+  Create = 'create',
+  Edit = 'edit',
 }

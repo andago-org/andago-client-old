@@ -25,19 +25,18 @@
             <ion-icon :icon="carIcon" size="large"></ion-icon>
           </ion-col>
           <ion-col>
-            <ion-item :fill="vehicleData.editMode ? 'outline' : undefined">
-              <ion-input v-model="vehicleData.name" placeholder="Enter Car Number"
-                :readonly="!vehicleData.editMode"></ion-input>
+            <ion-item :fill="!isViewMode ? 'outline' : undefined">
+              <ion-input v-model="vehicleData.name" placeholder="Enter Car Number" :readonly="isViewMode"></ion-input>
             </ion-item>
           </ion-col>
           <ion-col size="auto">
-            <ion-checkbox :checked="selected" @click.stop="selectVehicle"></ion-checkbox>
+            <ion-checkbox :checked="vehicleData.selected" @ion-change="onCheckboxChange"></ion-checkbox>
           </ion-col>
         </ion-row>
       </ion-grid>
     </ion-card-header>
     <ion-grid>
-      <ion-row v-if="!vehicleData.editMode">
+      <ion-row v-if="isViewMode">
         <ion-col>
           <ion-button color="primary" expand="block" @click="editCar()">
             Edit
@@ -70,9 +69,9 @@ import {
   IonButton, IonIcon, IonGrid, IonRow, IonCol, IonCard, IonCardHeader, IonCardTitle, IonCheckbox, IonInput,
   IonItem,
 } from '@ionic/vue';
-import { ref, defineProps, defineEmits, computed } from 'vue';
+import { ref, defineProps, defineEmits, computed, watch, reactive } from 'vue';
 import { car as carIcon, image } from 'ionicons/icons';
-import { Vehicle } from '@/interfaces/types';
+import { Vehicle, ControlMode } from '@/interfaces/types';
 import { useMainStore } from '@/store';
 import { NUpload, NUploadDragger, NIcon, NText, NImage } from 'naive-ui';
 import { Image as ImageIcon } from '@vicons/ionicons5'
@@ -83,6 +82,8 @@ const store = useMainStore();
 const uploadUrl = process.env.VUE_APP_API_BASE_URL + "/files/uploadImage";
 
 const upload = ref<any>(null);
+
+const isViewMode = computed(() => vehicleData.value.controlMode == ControlMode.View);
 
 const handleUploadFinish = (response: any, file: any) => {
   console.log('File upload finished:', response);
@@ -123,32 +124,48 @@ const props = defineProps({
 
 defineEmits(['update:vehicleData', 'click']);
 
-// const selected = ref(false);
-
-const selected = computed(() => store.selectedVehicle?.id === props.vehicleData.id);
+const onCheckboxChange = ({ detail }: any) => {
+  store.selectVehicle(vehicleData.value);
+};
 
 const vehicleData = ref<Vehicle>(props.vehicleData)
+const vehicleDataCopy = ref<Vehicle>({ ...props.vehicleData });
+
+watch(
+  () => vehicleData.value.controlMode,
+  (newValue: ControlMode, oldValue: ControlMode) => {
+    console.log('vehicle.controlMode changed:', newValue, oldValue);
+  }
+);
 
 function selectVehicle() {
   store.selectVehicle(vehicleData.value);
 }
 
 function saveCar() {
-  vehicleData.value.editMode = false;
+  switch (vehicleData.value.controlMode) {
+    case ControlMode.Create:
+      store.createVehicle(vehicleData.value);
+      break;
+    case ControlMode.Edit:
+      store.updateVehicle(vehicleData.value);
+      break;
+  }
 
-  store.createVehicle(vehicleData.value);
+  vehicleData.value.controlMode = ControlMode.View;
 }
 
 function editCar() {
-  // Implement edit functionality here
-  vehicleData.value.editMode = true;
+  vehicleData.value.controlMode = ControlMode.Edit;
 }
 
 function deleteCar() {
-  // Implement delete functionality here
+  store.deleteVehicle(vehicleData.value);
 }
 
 function cancelEdit() {
-  vehicleData.value.editMode = false;
+  vehicleData.value = vehicleDataCopy.value;
+
+  vehicleData.value.controlMode = ControlMode.View;
 }
 </script>

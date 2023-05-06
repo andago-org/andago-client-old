@@ -30,7 +30,7 @@
 
     <ion-footer>
       <ion-list>
-        <ion-item v-for="item in checkoutDetails" :key="item.label" lines="none" style="max-height: 36px">
+        <ion-item v-for="item in paymentDetails" :key="item.label" lines="none" style="max-height: 36px">
           <ion-icon :icon="item.icon" slot="start"></ion-icon>
           <ion-text>
             {{ item.label }}
@@ -42,7 +42,7 @@
       <ion-grid>
         <ion-row>
           <ion-col>
-            <ion-button :strong="true" expand="block" color="primary" @click="store.createPayment">Confirm</ion-button>
+            <ion-button :strong="true" expand="block" color="primary" @click="openPaymentPage">Confirm</ion-button>
           </ion-col>
 
           <ion-col>
@@ -67,30 +67,31 @@ import googleMaps from '@/plugins/google-map';
 // import TopUpModal from '@/components/TopUpModal.vue';
 import { useMainStore } from '@/store';
 import { bookOutline, cashOutline, timeOutline, carOutline } from 'ionicons/icons';
+import { Browser } from '@capacitor/browser';
 
 
 const store = useMainStore();
 
-const checkoutDetails = [
+const paymentDetails = [
   {
     icon: bookOutline,
-    label: 'Booking Fee',
-    value: computed(() => store.walletBalance),
-  },
-  {
-    icon: timeOutline,
-    label: 'Time Add-On',
-    value: computed(() => store.walletBalance),
+    label: store.paymentDetails.min_fare.text,
+    value: store.paymentDetails.min_fare.value,
   },
   {
     icon: carOutline,
-    label: 'Distance Add-On',
-    value: computed(() => store.walletBalance),
+    label: store.paymentDetails.distance_addon.text,
+    value: store.paymentDetails.distance_addon.value,
+  },
+  {
+    icon: timeOutline,
+    label: store.paymentDetails.duration_addon.text,
+    value: store.paymentDetails.duration_addon.value,
   },
   {
     icon: cashOutline,
-    label: 'Total Fare',
-    value: computed(() => store.fare),
+    label: store.paymentDetails.total_fare.text,
+    value: store.paymentDetails.total_fare.value,
   },
 ]
 
@@ -114,6 +115,11 @@ onMounted(() => {
 });
 
 const walletBalanceAfterPayment = ref(store.walletBalance - store.fare);
+
+const openPaymentPage = async () => {
+  //
+  await Browser.open({ url: store.paymentDetails.paymentUrl });
+}
 
 const topUpModalOpen = ref(false);
 

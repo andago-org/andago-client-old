@@ -12,7 +12,7 @@
     <ion-footer>
       <ion-grid>
         <ion-row>
-          <ion-card style="width: 100%; padding: 0 20px  20px 20px">
+          <!-- <ion-card style="width: 100%; padding: 0 20px  20px 20px">
             <div class="ion-text-center">Selected Car</div>
 
             <ion-card-content>
@@ -41,10 +41,30 @@
             <ion-nav-link router-direction="forward" :component="VehiclePage">
               <ion-button expand="block">Manage</ion-button>
             </ion-nav-link>
+          </ion-card> -->
 
-            <!-- <ion-button fill="clear">Action 1</ion-button>
-            <ion-button fill="clear">Action 2</ion-button> -->
-          </ion-card>
+          <ion-nav-link style="width: 100%;" router-direction="forward" :component="VehiclePage">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title class="ion-text-center">Selected Car</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-grid>
+                  <ion-row>
+                    <ion-col size="auto">
+                      <ion-icon :icon="car" size="large"></ion-icon>
+                    </ion-col>
+                    <ion-col>
+                      <ion-card-title class="ion-text-center">{{ store.selectedVehicle?.name }}</ion-card-title>
+                    </ion-col>
+                    <ion-col size="auto" class="ion-align-items-center">
+                      <ion-checkbox :checked="true"></ion-checkbox>
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+              </ion-card-content>
+            </ion-card>
+          </ion-nav-link>
         </ion-row>
 
         <ion-row>
@@ -70,7 +90,7 @@
           <ion-col>
 
             <ion-nav-link router-direction="forward" :component="PreviewPage">
-              <ion-button expand="block">Confirm</ion-button>
+              <ion-button expand="block" @click="createTripPayment">Confirm</ion-button>
             </ion-nav-link>
 
             <ion-loading :is-open="searchDriversLoadingOpen" class="searchDriversLoading" message="Searching for Drivers"
@@ -84,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, } from 'vue';
+import { ref, watch } from 'vue';
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonButton,
   IonGrid, IonRow, IonCol, IonLoading, IonNavLink, IonFooter, IonCard, IonCardHeader,
@@ -111,8 +131,13 @@ const isTripDetailsModalOpen = ref(false);
 
 const searchDriversLoadingOpen = ref(false);
 
-// const pickUpPlace = ref<Place>(store.pickUpPlace);
-// const dropOffPlace = ref<Place>(store.dropOffPlace);
+watch(() => store.vehicles, (newValue) => {
+  newValue.forEach((vehicle) => {
+    if (vehicle.selected) {
+      store.selectedVehicle = vehicle;
+    }
+  });
+});
 
 const tripDetails = ref({} as TripDetails);
 
@@ -133,6 +158,10 @@ const openTripDetailsModal = () => {
 //   console.log(tripDetails.value)
 //   openTripDetailsModal();
 // };
+
+const createTripPayment = async () => {
+  await store.createTripPayment();
+};
 
 const createTrip = () => {
   store.createTrip(tripDetails.value);
