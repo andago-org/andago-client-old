@@ -163,11 +163,11 @@ const createTripPayment = async () => {
   await store.createTripPayment();
 };
 
-const createTrip = () => {
-  store.createTrip(tripDetails.value);
+// const createTrip = () => {
+//   store.createTrip(tripDetails.value);
 
-  searchDriversLoadingOpen.value = true;
-};
+//   searchDriversLoadingOpen.value = true;
+// };
 
 
 </script>

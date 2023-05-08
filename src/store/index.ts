@@ -35,8 +35,33 @@ export const useMainStore = defineStore({
     distance: 0 as number,
     duration: '0 min' as string,
     fare: 0 as number,
-    paymentDetails: null as any,
-    // tripDetails: null as TripDetails | null,
+    myTrip: {} as any,
+    paymentDetails: {
+      min_fare: {
+        text: "",
+        value: 0,
+      },
+      distance_addon: {
+        text: "",
+        value: 0,
+      },
+      duration_addon: {
+        text: "",
+        value: 0,
+      },
+      total_fare: {
+        text: "",
+        value: 0,
+      },
+    } as any,
+
+    receivedTripJob: {} as any,
+    jobDetails: {
+      distanceToPickUp: "",
+      durationToPickUp: "",
+    } as any,
+    acceptedDriver: {} as any,
+    acceptedTrip: {} as any,
   }),
   getters: {
     getPhoneNumber(): string {
@@ -44,6 +69,23 @@ export const useMainStore = defineStore({
     },
   },
   actions: {
+
+    async getGeolocation(): Promise<any> {
+      const position = await Geolocation.getCurrentPosition();
+
+      const finalPosition = { lat: position.coords.latitude, lng: position.coords.longitude }
+
+      return finalPosition as any;
+    },
+    async getPickUpPosition(): Promise<any> {
+      const position = {
+        lat: this.receivedTripJob.pickup_place.latitude,
+        lng: this.receivedTripJob.pickup_place.longitude,
+      };
+
+      return position;
+    },
+
     async tryLogin(phoneNumber: string): Promise<void> {
     
       try {
@@ -134,6 +176,28 @@ export const useMainStore = defineStore({
       }
     },
 
+    async getDistanceMatrix(start: any, end: any): Promise<any> {
+      try {
+        this.setHeaders();
+
+        const data = {
+          start: start,
+          end: end,
+        }
+    
+        const response = await axiosInstance.post("/maps/getDistanceMatrix", data);
+    
+        // Check for success
+        if (response.status === 200) {
+
+          return response.data;
+        }
+      } catch (error) {
+        console.error('Error performing the request:', error);
+        // Handle the error (e.g., show an error message or retry the request)
+      }
+    },
+
     async getPlaces(query: string): Promise<any> {
       try {
         this.setHeaders();
@@ -164,27 +228,27 @@ export const useMainStore = defineStore({
       }
     },
 
-    async getTripDetails(pickUp: Place, dropOff: Place): Promise<any> {
-      try {
-        this.setHeaders();
+    // async getTripDetails(pickUp: Place, dropOff: Place): Promise<any> {
+    //   try {
+    //     this.setHeaders();
         
-        const data = {
-          pickUp: pickUp,
-          dropOff: dropOff,
-        }
+    //     const data = {
+    //       pickUp: pickUp,
+    //       dropOff: dropOff,
+    //     }
 
-        const response = await axiosInstance.post("/maps/getTripDetails", data);
+    //     const response = await axiosInstance.post("/maps/getTripDetails", data);
     
-        // Check for success
-        if (response.status === 200) {
-          return response.data as TripDetails;
-        }
-      } catch (error) {
-        console.error('Error performing the request:', error);
-        // Handle the error (e.g., show an error message or retry the request)
-      }  
+    //     // Check for success
+    //     if (response.status === 200) {
+    //       return response.data as TripDetails;
+    //     }
+    //   } catch (error) {
+    //     console.error('Error performing the request:', error);
+    //     // Handle the error (e.g., show an error message or retry the request)
+    //   }  
 
-    },
+    // },
 
     setHeaders()
     {
@@ -282,19 +346,63 @@ export const useMainStore = defineStore({
       }
     },
 
-    async createTrip(tripDetails: TripDetails): Promise<any> {
+    // async createTrip(tripDetails: TripDetails): Promise<any> {
+    //   try {
+    //     this.setHeaders();
+
+    //     const data = {
+    //       tripDetails: tripDetails,
+    //     }
+
+    //     const response = await axiosInstance.post("/trips/createTrip", data);
+    
+    //     // Check for success
+    //     if (response.status === 200) {
+    //       console.log("Trip created", response.data);
+    //       return response.data;
+    //     }
+    //   } catch (error) {
+    //     console.error('Error performing the request:', error);
+    //     // Handle the error (e.g., show an error message or retry the request)
+    //   }
+    // },
+
+    async confirmTrip(): Promise<any> {
+      try {
+        this.setHeaders();
+
+        // const data = {
+        //   tripDetails: tripDetails,
+        // }
+
+        this.acceptedDriver = null;
+
+        const response = await axiosInstance.post("/trips/confirmTrip");
+    
+        // Check for success
+        if (response.status === 200) {
+          console.log("Trip confirm", response.data);
+          return response.data;
+        }
+      } catch (error) {
+        console.error('Error performing the request:', error);
+        // Handle the error (e.g., show an error message or retry the request)
+      }
+    },
+
+    async acceptTrip(trip_id: any): Promise<any> {
       try {
         this.setHeaders();
 
         const data = {
-          tripDetails: tripDetails,
+          trip_id: trip_id,
         }
 
-        const response = await axiosInstance.post("/trips/createTrip", data);
+        const response = await axiosInstance.post("/trips/acceptTrip", data);
     
         // Check for success
         if (response.status === 200) {
-          console.log("Trip created", response.data);
+          console.log(response.data);
           return response.data;
         }
       } catch (error) {
@@ -416,7 +524,7 @@ export const useMainStore = defineStore({
         console.error('Error performing the request:', error);
         // Handle the error (e.g., show an error message or retry the request)
       }
-    }
+    },
   },
   persist: {
     enabled: true,

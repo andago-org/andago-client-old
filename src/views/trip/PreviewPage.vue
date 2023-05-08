@@ -30,19 +30,47 @@
 
     <ion-footer>
       <ion-list>
-        <ion-item v-for="item in paymentDetails" :key="item.label" lines="none" style="max-height: 36px">
+        <!-- <ion-item v-for="item in paymentDetails" :key="item.label" lines="none">
           <ion-icon :icon="item.icon" slot="start"></ion-icon>
           <ion-text>
             {{ item.label }}
           </ion-text>
           <ion-text slot="end">{{ item.value }}</ion-text>
+        </ion-item> -->
+        <ion-item lines="none">
+          <ion-icon :icon="bookOutline" slot="start"></ion-icon>
+          <ion-text>
+            {{ store.paymentDetails.min_fare.text }}
+          </ion-text>
+          <ion-text slot="end">{{ store.paymentDetails.min_fare.value }}</ion-text>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-icon :icon="carOutline" slot="start"></ion-icon>
+          <ion-text>
+            {{ store.paymentDetails.distance_addon.text }}
+          </ion-text>
+          <ion-text slot="end">{{ store.paymentDetails.distance_addon.value }}</ion-text>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-icon :icon="timeOutline" slot="start"></ion-icon>
+          <ion-text>
+            {{ store.paymentDetails.duration_addon.text }}
+          </ion-text>
+          <ion-text slot="end">{{ store.paymentDetails.duration_addon.value }}</ion-text>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-icon :icon="cashOutline" slot="start"></ion-icon>
+          <ion-text>
+            {{ store.paymentDetails.total_fare.text }}
+          </ion-text>
+          <ion-text slot="end">{{ store.paymentDetails.total_fare.value }}</ion-text>
         </ion-item>
       </ion-list>
 
       <ion-grid>
         <ion-row>
           <ion-col>
-            <ion-button :strong="true" expand="block" color="primary" @click="openPaymentPage">Confirm</ion-button>
+            <ion-button :strong="true" expand="block" color="primary" @click="confirmTrip">Confirm</ion-button>
           </ion-col>
 
           <ion-col>
@@ -60,7 +88,8 @@
 import { defineEmits, ref, computed, watch, onMounted, onUpdated, nextTick } from 'vue';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonBackButton,
-  IonButton, IonButtons, IonGrid, IonRow, IonCol, IonText, IonPage, IonFooter, IonNavLink, IonIcon
+  IonButton, IonButtons, IonGrid, IonRow, IonCol, IonText, IonPage, IonFooter, IonNavLink, IonIcon,
+  toastController, loadingController,
 } from '@ionic/vue';
 import { Place } from '@/interfaces/types';
 import googleMaps from '@/plugins/google-map';
@@ -68,32 +97,9 @@ import googleMaps from '@/plugins/google-map';
 import { useMainStore } from '@/store';
 import { bookOutline, cashOutline, timeOutline, carOutline } from 'ionicons/icons';
 import { Browser } from '@capacitor/browser';
-
+import Pusher from 'pusher-js';
 
 const store = useMainStore();
-
-const paymentDetails = [
-  {
-    icon: bookOutline,
-    label: store.paymentDetails.min_fare.text,
-    value: store.paymentDetails.min_fare.value,
-  },
-  {
-    icon: carOutline,
-    label: store.paymentDetails.distance_addon.text,
-    value: store.paymentDetails.distance_addon.value,
-  },
-  {
-    icon: timeOutline,
-    label: store.paymentDetails.duration_addon.text,
-    value: store.paymentDetails.duration_addon.value,
-  },
-  {
-    icon: cashOutline,
-    label: store.paymentDetails.total_fare.text,
-    value: store.paymentDetails.total_fare.value,
-  },
-]
 
 const center = store.pickUpPlace.coordinate;
 const zoom = 5;
@@ -116,18 +122,75 @@ onMounted(() => {
 
 const walletBalanceAfterPayment = ref(store.walletBalance - store.fare);
 
-const openPaymentPage = async () => {
-  //
-  await Browser.open({ url: store.paymentDetails.paymentUrl });
+function confirmTrip() {
+  showLoading();
+
+  store.confirmTrip();
+
+  const pusher = new Pusher('a294542618ad0c79d7b7', {
+    cluster: 'ap1'
+  });
+
+  const channel = pusher.subscribe('user-channel-' + store.user?.id);
+  channel.bind('trip-accepted-event', async function (event: any) {
+    const data = event.data;
+
+    store.myTrip = data;
+
+    store.acceptedDriver = data.driver;
+    console.log(data);
+    searchDriverLoading.value?.dismiss();
+  });
+  channel.bind('payment-success-event', async function (event: any) {
+    const data = event.data;
+    console.log("Payment success")
+    await Browser.close();
+  });
 }
 
-const topUpModalOpen = ref(false);
+const searchDriverLoading = ref(null as HTMLIonLoadingElement | null);
+
+const showLoading = async () => {
+  searchDriverLoading.value = await loadingController.create({
+    message: 'Searching for drivers...',
+    duration: 15000,
+    spinner: 'circles',
+  });
+
+  searchDriverLoading.value.present();
+
+  searchDriverLoading.value?.onDidDismiss().then(async () => {
+    console.log('Dismissed loading')
+    if (store.acceptedDriver) {
+      showDriverFoundToast();
+      console.log('Driver found')
+    }
+    else {
+      const nav = document.querySelector('ion-nav');
+      nav?.pop();
+      console.log('No driver found')
+    }
+  })
+};
+
+const driverFoundToast = ref(null as HTMLIonToastElement | null);
+
+const showDriverFoundToast = async () => {
+  driverFoundToast.value = await toastController.create({
+    message: 'We found a driver for you! Please pay first.',
+    duration: 1500,
+    position: 'middle',
+  });
+
+  await driverFoundToast.value.present();
+
+  driverFoundToast.value.onDidDismiss().then(async () => {
+    console.log('Dismissed toast')
+    await Browser.open({ url: store.myTrip.payment_url });
+  })
+}
 
 const emit = defineEmits(['confirm', 'cancel']);
-
-function openTopUpModal() {
-  topUpModalOpen.value = true;
-}
 
 function confirmModal() {
   emit('confirm');

@@ -36,13 +36,13 @@ import {
   IonIcon, IonToggle, IonText, IonGrid, IonRow, IonCol
 } from '@ionic/vue';
 import DriverJobModal from '@/components/DriverJobModal.vue';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useMainStore } from '@/store';
 import { TripDetails, Place } from '@/interfaces/types';
 import * as turf from '@turf/turf';
 import Pusher from 'pusher-js';
 
-const mainStore = useMainStore();
+const store = useMainStore();
 
 const tripDetails = ref({} as TripDetails);
 
@@ -50,7 +50,7 @@ const driverAvailable = ref(false);
 const driverJobModelOpen = ref(false);
 
 function logout() {
-  mainStore.logout();
+  store.logout();
 }
 
 // function toggleDriverAvailability() {
@@ -64,6 +64,8 @@ function logout() {
 function accept() {
   // Accept the trip details here
   driverJobModelOpen.value = false;
+
+  store.acceptTrip(store.receivedTripJob.id);
 }
 
 function decline() {
@@ -75,33 +77,23 @@ const pusher = new Pusher('a294542618ad0c79d7b7', {
   cluster: 'ap1'
 });
 
-const channel = pusher.subscribe('main-channel');
-channel.bind('main-event', function (event: any) {
-  console.log(event);
-
+const channel = pusher.subscribe('public-channel');
+channel.bind('trip-confirmed-event', async function (event: any) {
   const data = event.data;
 
-  // tripDetails.value = {
-  //   pickUp: {
-  //     name: data.pickup_place.name,
-  //     formatted_address: data.pickup_place.address,
-  //     coordinate: {
-  //       latitude: data.pickup_place.latitude,
-  //       longitude: data.pickup_place.longitude,
-  //     },
-  //   } as Place,
-  //   dropOff: {
-  //     name: data.dropoff_place.name,
-  //     formatted_address: data.dropoff_place.address,
-  //     coordinate: {
-  //       latitude: data.dropoff_place.latitude,
-  //       longitude: data.dropoff_place.longitude,
-  //     },
-  //   } as Place,
-  //   distance: data.distance,
-  //   duration: data.duration,
-  //   fare: data.fare,
-  // } as TripDetails;
+  store.receivedTripJob = event.data;
+
+  const start = await store.getGeolocation();
+  const end = await store.getPickUpPosition();
+
+  const distanceMatrix = await store.getDistanceMatrix(start, end);
+
+  console.log(distanceMatrix);
+
+  store.jobDetails = {
+    distanceToPickUp: distanceMatrix.rows[0].elements[0].distance.text,
+    durationToPickUp: distanceMatrix.rows[0].elements[0].duration.text,
+  }
 
   driverJobModelOpen.value = true;
 });
