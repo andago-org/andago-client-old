@@ -25,13 +25,13 @@
 
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import {
   IonInput, IonButton, IonIcon, IonPage, IonHeader, IonToolbar,
   IonTitle, IonContent, IonItem, IonLabel, IonCheckbox,
 } from '@ionic/vue';
 import { Preferences } from '@capacitor/preferences';
-
+import router from '@/router';
 import { useMainStore } from '@/store';
 
 const phoneNumber = ref('');
@@ -77,6 +77,16 @@ function updateCanSignIn() {
 
 updateCanSignIn();
 
+watch(() => store.token, (newValue, oldValue) => {
+  if (store.token) {
+    if (store.driverMode) {
+      router.push('/driver/');
+    }
+    else {
+      router.push('/tabs');
+    }
+  }
+})
 </script>
 
 <style scoped>
