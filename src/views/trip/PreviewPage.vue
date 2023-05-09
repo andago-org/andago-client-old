@@ -77,6 +77,8 @@
             <ion-nav-link router-direction="back">
               <ion-button :strong="true" expand="block" color="secondary">Cancel</ion-button>
             </ion-nav-link>
+
+            <ion-button @click="nav?.push(DriverProgressPage);">aaa</ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -97,6 +99,7 @@ import googleMaps from '@/plugins/google-map';
 import { useMainStore } from '@/store';
 import { bookOutline, cashOutline, timeOutline, carOutline } from 'ionicons/icons';
 import { Browser } from '@capacitor/browser';
+import DriverProgressPage from './DriverProgressPage.vue';
 import Pusher from 'pusher-js';
 
 const store = useMainStore();
@@ -109,6 +112,8 @@ const directionsResult = ref(null);
 
 const googleMap = ref(null as any);
 
+const nav = document.querySelector('ion-nav');
+
 onMounted(() => {
   googleMaps.load().then((maps: any) => {
     googleMap.value = new maps.Map(document.getElementById("map"), {
@@ -116,7 +121,7 @@ onMounted(() => {
       zoom: zoom,
       disableDefaultUI: true,
     });
-    googleMaps.calculateRoute(store.pickUpPlace.coordinate, store.dropOffPlace.coordinate, googleMap.value);
+    googleMaps.calculateRoute(start, end, googleMap.value);
   });
 });
 
@@ -145,6 +150,7 @@ function confirmTrip() {
     const data = event.data;
     console.log("Payment success")
     await Browser.close();
+
   });
 }
 
@@ -166,7 +172,6 @@ const showLoading = async () => {
       console.log('Driver found')
     }
     else {
-      const nav = document.querySelector('ion-nav');
       nav?.pop();
       console.log('No driver found')
     }
