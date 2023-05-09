@@ -987,6 +987,11 @@
   resolved "https://registry.npmjs.org/@capacitor/android/-/android-5.0.1.tgz"
   integrity sha512-zv0Hy22vkA6aPvLRwpYl8u5NMnZBcj+Gx1gz72mXmpy3JPRqM6UHB6Ncdcie3SK+uJW9TTftZz2uOHYSZiaPEA==
 
+"@capacitor/app-launcher@^5.0.1":
+  version "5.0.1"
+  resolved "https://registry.npmjs.org/@capacitor/app-launcher/-/app-launcher-5.0.1.tgz"
+  integrity sha512-xwRxcHxyKRRMzdLJsBmzmo1P2Xlw2Qhg3l5T5IZ4EnUN3XSG+ukn2/usDLqDZfFGLiJ8OCjt6YcYPhFEHg5+Gg==
+
 "@capacitor/app@5.0.1":
   version "5.0.1"
   resolved "https://registry.npmjs.org/@capacitor/app/-/app-5.0.1.tgz"
@@ -1676,11 +1681,6 @@
   version "2.22.3"
   resolved "https://registry.npmjs.org/@stencil/core/-/core-2.22.3.tgz"
   integrity sha512-kmVA0M/HojwsfkeHsifvHVIYe4l5tin7J5+DLgtl8h6WWfiMClND5K3ifCXXI2ETDNKiEk21p6jql3Fx9o2rng==
-
-"@stripe/stripe-js@^1.52.1":
-  version "1.52.1"
-  resolved "https://registry.npmjs.org/@stripe/stripe-js/-/stripe-js-1.52.1.tgz"
-  integrity sha512-fza40OPSpGQlFxc5TZWiYC/6Lk89Sep1fLuv9ss33YS6lCAF8UZbfA1E6W+lwO4c7WRKZIZumHIEbPJfP/O9uw==
 
 "@tootallnate/once@1":
   version "1.1.2"

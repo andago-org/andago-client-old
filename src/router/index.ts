@@ -5,10 +5,6 @@ import TabsPage from '../views/MainPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/',
-    redirect: '/sign-in'
-  },
-  {
     path: '/sign-in',
     component: () => import('@/views/sign-in/SignInPage.vue')
   },
@@ -80,7 +76,7 @@ router.beforeEach((to, from, next) => {
   const userToken = mainStore.token;
   const driverMode = mainStore.driverMode;
 
-  if (to.path === '/sign-in' || to.path === '/code-verify') {
+  if (to.path === '/sign-in' || to.path === '/code-verify' || to.path === '/') {
     if (userToken) {
       if (driverMode) {
         next('/driver/')

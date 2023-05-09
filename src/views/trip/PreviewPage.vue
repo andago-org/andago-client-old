@@ -125,8 +125,6 @@ onMounted(() => {
   });
 });
 
-const walletBalanceAfterPayment = ref(store.walletBalance - store.fare);
-
 function confirmTrip() {
   showLoading();
 

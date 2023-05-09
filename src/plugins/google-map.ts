@@ -37,7 +37,6 @@ const calculateRoute = (startCoords: any, endCoords: any, googleMap: any) => {
   });
 };
 
-
 const drawDriverProgress = (driverCoords: any, passengerCoords: any, googleMap: any) => {
   const driverIcon = {
     url: require('@/img/map_markers/car.png'),
@@ -76,9 +75,73 @@ if (driverPosition && passengerPosition) {
 }
 };
 
+import { Geolocation } from '@capacitor/geolocation';
+
+const startNavigator = async (startCoords: any, endCoords: any, googleMap: google.maps.Map) => {
+  const directionsService = new google.maps.DirectionsService();
+  const directionsRequest = {
+    origin: { lat: startCoords.lat, lng: startCoords.lng },
+    destination: { lat: endCoords.lat, lng: endCoords.lng },
+    travelMode: google.maps.TravelMode.DRIVING
+  };
+
+  let currentLocationMarker: google.maps.Marker | null = null;
+  let currentBearing = 0;
+
+  const position = await Geolocation.getCurrentPosition();
+  const currentLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+  // Update the current location marker and pan the map to the new location
+  if (!currentLocationMarker) {
+    currentLocationMarker = new google.maps.Marker({
+      map: googleMap,
+      icon: {
+        url: '',
+        scaledSize: new google.maps.Size(50, 50),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(25, 25)
+      }
+    });
+  }
+  currentLocationMarker.setPosition(currentLocation);
+  googleMap.panTo(currentLocation);
+
+  // Calculate the new route and redraw it on the map
+  directionsService.route(directionsRequest, (response: any, status: any) => {
+    if (status === 'OK') {
+      const directionsRenderer = new google.maps.DirectionsRenderer();
+      directionsRenderer.setMap(googleMap);
+      directionsRenderer.setDirections(response);
+      const route = response.routes[0];
+
+      // Calculate the bearing between the user's current location and the next step of the route
+      const nextStep = route.legs[0].steps[0];
+      const nextStepStart = new google.maps.LatLng(nextStep.start_location.lat(), nextStep.start_location.lng());
+      const bearing = google.maps.geometry.spherical.computeHeading(currentLocation, nextStepStart);
+
+      // Smoothly rotate the map towards the new bearing
+      if (Math.abs(bearing - currentBearing) > 1) {
+        const easingFactor = 0.1;
+        currentBearing = currentBearing + easingFactor * (bearing - currentBearing);
+        googleMap.setHeading(currentBearing);
+      } else {
+        googleMap.setHeading(bearing);
+      }
+    } else {
+      console.log('Directions request failed due to ' + status);
+    }
+  });
+};
 
 export default {
   load: loadGoogleMaps,
   calculateRoute: calculateRoute,
-  drawDriverProgress: drawDriverProgress
+  drawDriverProgress: drawDriverProgress,
+  startNavigator: startNavigator
 };
+
+declare global {
+  interface Window {
+    google: typeof google;
+  }
+}

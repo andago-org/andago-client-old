@@ -23,6 +23,8 @@
         Logout
       </ion-button>
 
+      <div id="navigationMap" style="height: 400px"></div>
+
       <DriverJobModal v-model:isOpen="driverJobModelOpen" :tripDetails="tripDetails" @accept="accept" @decline="decline">
       </DriverJobModal>
     </ion-content>
@@ -36,11 +38,12 @@ import {
   IonIcon, IonToggle, IonText, IonGrid, IonRow, IonCol
 } from '@ionic/vue';
 import DriverJobModal from '@/components/DriverJobModal.vue';
-import { ref, onMounted } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { useMainStore } from '@/store';
 import { TripDetails, Place } from '@/interfaces/types';
-import * as turf from '@turf/turf';
+import { Geolocation } from '@capacitor/geolocation';
 import Pusher from 'pusher-js';
+import googleMaps from '@/plugins/google-map';
 
 const store = useMainStore();
 
@@ -48,6 +51,56 @@ const tripDetails = ref({} as TripDetails);
 
 const driverAvailable = ref(false);
 const driverJobModelOpen = ref(false);
+
+const mapRef = ref<any>(null);
+
+// onMounted(
+//   async () => {
+//     // Load the Google Maps API
+//     googleMaps.load().then(async (maps: any) => {
+//       // Initialize the map
+//       const map = new maps.Map(mapRef.value, {
+//         center: await store.currentPosition,
+//         zoom: 16,
+//       });
+
+//       // Start the navigator and track changes in the current position
+//       // const startCoords = await store.currentPosition;
+//       // const endCoords = { lat: 3.0697556, lng: 101.726957 };
+//       // const watchId = googleMaps.startNavigator(startCoords, endCoords, map);
+//       // watch(store.currentPosition, (newValue, oldValue) => {
+//       //   const endCoords = { lat: 3.0697556, lng: 101.726957 };
+//       //   googleMaps.startNavigator(newValue, endCoords, map);
+//       // });
+
+//       setInterval(async () => {
+//         const startCoords = await store.currentPosition;
+//         const endCoords = { lat: 3.0697556, lng: 101.726957 };
+//         googleMaps.startNavigator(startCoords, endCoords, map);
+//       }, 1000);
+//     });
+//   }
+// );
+
+onMounted(() => {
+  // Load the Google Maps API
+  googleMaps.load().then(async (maps: any) => {
+    // Initialize the map
+    const map = new maps.Map(document.getElementById('navigationMap'), {
+      center: await store.currentPosition,
+      zoom: 18,
+    });
+
+    // setInterval(
+    //   async () => {
+    const startCoords = await store.currentPosition;
+    const endCoords = { lat: 3.0830124, lng: 101.662267 };
+    await googleMaps.startNavigator(startCoords, endCoords, map);
+    //   },
+    //   1000
+    // );
+  });
+});
 
 function logout() {
   store.logout();
@@ -58,6 +111,8 @@ function accept() {
   driverJobModelOpen.value = false;
 
   store.acceptTrip(store.receivedTripJob.id);
+
+  store.connectChannel("user-channel-" + store.acceptedTrip.user.id);
 }
 
 function decline() {
@@ -89,6 +144,24 @@ channel.bind('trip-confirmed-event', async function (event: any) {
 
   driverJobModelOpen.value = true;
 });
+
+const sendLocationInterval = ref(null as any);
+
+watch(
+  () => store.receivedTripJob,
+  (newValue: any) => {
+    if (store.receivedTripJob) {
+      if (store.receivedTripJob.status === 3) {
+        sendLocationInterval.value = setInterval(
+          async () => {
+            store.channel?.trigger('driver-location-event', await store.currentPosition)
+          },
+          5000
+        )
+      }
+    }
+  }
+);
 </script>
 
 <style scoped>

@@ -9,16 +9,7 @@
     <ion-content :fullscreen="true">
       <ion-list>
         <ion-item>
-          <ion-label>Fake Geolocation:</ion-label>
-          <ion-toggle v-model="fakeGeolocation"></ion-toggle>
-        </ion-item>
-        <ion-item>
-          <ion-label>Latitude:</ion-label>
-          <ion-input v-model="coordinate.latitude"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label>Longitude:</ion-label>
-          <ion-input v-model="coordinate.longitude"></ion-input>
+          <ion-button @click="store.openMap()"></ion-button>
         </ion-item>
       </ion-list>
     </ion-content>
@@ -29,6 +20,7 @@
 import { ref, watch } from 'vue';
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonInput, IonToggle,
+  IonButton, IonIcon, IonButtons, IonBackButton, IonGrid, IonRow, IonCol, IonNav, IonNavLink
 } from '@ionic/vue';
 import { Coordinate } from '@/interfaces/types';
 import { useMainStore } from '@/store';
@@ -41,7 +33,7 @@ watch(fakeGeolocation, (newFakeGeolocation) => {
   store.fakeGeolocation = newFakeGeolocation;
 });
 
-const coordinate = ref<Coordinate>({ latitude: 3.052943, longitude: 101.672337 });
+const coordinate = ref<Coordinate>({ lat: 3.052943, lng: 101.672337 });
 
 watch(coordinate, (newCoordinate) => {
   store.coordinate = newCoordinate;

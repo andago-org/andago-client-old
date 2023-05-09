@@ -2,12 +2,11 @@ import { defineStore } from 'pinia'
 import axios from 'axios';
 import router from '@/router';
 import { User } from '@/interfaces/models';
+import { AppLauncher } from '@capacitor/app-launcher';
 import { Geolocation } from '@capacitor/geolocation';
-import { TripDetails, Coordinate, Place, Vehicle, ControlMode } from '@/interfaces/types';
+import { Coordinate, Place, Vehicle, ControlMode } from '@/interfaces/types';
 import { Preferences } from '@capacitor/preferences';
-import { loadStripe } from '@stripe/stripe-js';
-import { version } from 'vue';
-import { Browser } from '@capacitor/browser';
+import Pusher, { Channel } from 'pusher-js';
 
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
@@ -31,7 +30,6 @@ export const useMainStore = defineStore({
     fakeGeolocation: false as boolean,
     pickUpPlace: { place_id: '', name: '', address: '', coordinate: { lat: 0, lng: 0 } as Coordinate } as Place,
     dropOffPlace: { place_id: '', name: '', address: '', coordinate: { lat: 0, lng: 0 } as Coordinate } as Place,
-    walletBalance: 0 as number,
     distance: 0 as number,
     duration: '0 min' as string,
     fare: 0 as number,
@@ -54,7 +52,6 @@ export const useMainStore = defineStore({
         value: 0,
       },
     } as any,
-
     receivedTripJob: {} as any,
     jobDetails: {
       distanceToPickUp: "",
@@ -62,20 +59,38 @@ export const useMainStore = defineStore({
     } as any,
     acceptedDriver: {} as any,
     acceptedTrip: {} as any,
+    channel: null as Channel | null,
   }),
   getters: {
     getPhoneNumber(): string {
       return this.phoneNumber
     },
+    async currentPosition() {
+      const currentPosition = await Geolocation.getCurrentPosition();
+
+      const position = { lat: currentPosition.coords.latitude, lng: currentPosition.coords.longitude }
+
+      return position;
+    },
   },
   actions: {
+    async openMap() {
+      const { latitude, longitude } = (await Geolocation.getCurrentPosition()).coords;
+
+      try {
+        await AppLauncher.canOpenUrl({ url: 'maps://' });
+        await AppLauncher.openUrl({ url: `maps://?q=${latitude},${longitude}` });
+      } catch (error) {
+        console.error('Error launching map application', error);
+      }
+    },
 
     async getGeolocation(): Promise<any> {
-      const position = await Geolocation.getCurrentPosition();
+      const currentPosition = await Geolocation.getCurrentPosition();
 
-      const finalPosition = { lat: position.coords.latitude, lng: position.coords.longitude }
+      const position = { lat: currentPosition.coords.latitude, lng: currentPosition.coords.longitude }
 
-      return finalPosition as any;
+      return position as any;
     },
     async getPickUpPosition(): Promise<any> {
       const position = {
@@ -228,28 +243,6 @@ export const useMainStore = defineStore({
       }
     },
 
-    // async getTripDetails(pickUp: Place, dropOff: Place): Promise<any> {
-    //   try {
-    //     this.setHeaders();
-        
-    //     const data = {
-    //       pickUp: pickUp,
-    //       dropOff: dropOff,
-    //     }
-
-    //     const response = await axiosInstance.post("/maps/getTripDetails", data);
-    
-    //     // Check for success
-    //     if (response.status === 200) {
-    //       return response.data as TripDetails;
-    //     }
-    //   } catch (error) {
-    //     console.error('Error performing the request:', error);
-    //     // Handle the error (e.g., show an error message or retry the request)
-    //   }  
-
-    // },
-
     setHeaders()
     {
       axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
@@ -346,34 +339,9 @@ export const useMainStore = defineStore({
       }
     },
 
-    // async createTrip(tripDetails: TripDetails): Promise<any> {
-    //   try {
-    //     this.setHeaders();
-
-    //     const data = {
-    //       tripDetails: tripDetails,
-    //     }
-
-    //     const response = await axiosInstance.post("/trips/createTrip", data);
-    
-    //     // Check for success
-    //     if (response.status === 200) {
-    //       console.log("Trip created", response.data);
-    //       return response.data;
-    //     }
-    //   } catch (error) {
-    //     console.error('Error performing the request:', error);
-    //     // Handle the error (e.g., show an error message or retry the request)
-    //   }
-    // },
-
     async confirmTrip(): Promise<any> {
       try {
         this.setHeaders();
-
-        // const data = {
-        //   tripDetails: tripDetails,
-        // }
 
         this.acceptedDriver = null;
 
@@ -524,6 +492,14 @@ export const useMainStore = defineStore({
         console.error('Error performing the request:', error);
         // Handle the error (e.g., show an error message or retry the request)
       }
+    },
+
+    connectChannel(channelName: string) {
+      // Initialize Pusher and create a new channel instance
+      const pusher = new Pusher(process.env.VUE_APP_PUSHER_APP_KEY, {
+        cluster: process.env.VUE_APP_PUSHER_APP_CLUSTER,
+      })
+      this.channel = pusher.subscribe(channelName)
     },
   },
   persist: {
