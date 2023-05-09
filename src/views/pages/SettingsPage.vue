@@ -9,7 +9,7 @@
     <ion-content :fullscreen="true">
       <ion-list>
         <ion-item>
-          <ion-button @click="store.openMap()"></ion-button>
+          <ion-button expand="block" @click="store.openMap()">Open Map</ion-button>
         </ion-item>
       </ion-list>
     </ion-content>
