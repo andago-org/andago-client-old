@@ -53,14 +53,6 @@ function logout() {
   store.logout();
 }
 
-// function toggleDriverAvailability() {
-//   driverAvailable.value = !driverAvailable.value;
-// }
-
-// function toggleTripDetailsVisibility() {
-//   tripDetailsVisible.value = !tripDetailsVisible.value;
-// }
-
 function accept() {
   // Accept the trip details here
   driverJobModelOpen.value = false;

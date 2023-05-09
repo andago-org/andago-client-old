@@ -22,15 +22,15 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: '',
-        redirect: '/driver/job'
+        redirect: '/driver/trip'
       },
       // {
       //   path: 'profile',
       //   component: () => import('@/views/pages/ProfilePage.vue')
       // },
       {
-        path: 'job',
-        component: () => import('@/views/driver/DriverPage.vue')
+        path: 'trip',
+        component: () => import('@/views/driver/DriverTripPage.vue')
       },
       // {
       //   path: 'chat',
@@ -83,9 +83,9 @@ router.beforeEach((to, from, next) => {
   if (to.path === '/sign-in' || to.path === '/code-verify') {
     if (userToken) {
       if (driverMode) {
-        next('/driver/job')
+        next('/driver/')
       } else {
-        next('/tabs/trip')
+        next('/tabs/')
       }
     } else {
       next()
@@ -98,6 +98,5 @@ router.beforeEach((to, from, next) => {
     }
   }
 });
-  
 
 export default router
