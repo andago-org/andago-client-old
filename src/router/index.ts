@@ -5,6 +5,10 @@ import TabsPage from '../views/MainPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
+    path: '/',
+    redirect: '/sign-in'
+  },
+  {
     path: '/sign-in',
     component: () => import('@/views/sign-in/SignInPage.vue')
   },
@@ -13,8 +17,30 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/sign-in/CodeVerifyPage.vue')
   },
   {
-    path: '/',
-    redirect: '/tabs/trip'
+    path: '/driver/',
+    component: () => import('@/views/DriverMain.vue'),
+    children: [
+      {
+        path: '',
+        redirect: '/driver/job'
+      },
+      // {
+      //   path: 'profile',
+      //   component: () => import('@/views/pages/ProfilePage.vue')
+      // },
+      {
+        path: 'job',
+        component: () => import('@/views/driver/DriverPage.vue')
+      },
+      // {
+      //   path: 'chat',
+      //   component: () => import('@/views/pages/TestPage.vue')
+      // },
+      // {
+      //   path: 'settings',
+      //   component: () => import('@/views/pages/SettingsPage.vue')
+      // }
+    ],
   },
   {
     path: '/tabs/',
@@ -22,7 +48,7 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: '',
-        redirect: '/tabs/profile'
+        redirect: '/tabs/trip'
       },
       {
         path: 'profile',
@@ -42,10 +68,6 @@ const routes: Array<RouteRecordRaw> = [
       }
     ]
   },
-  {
-    path: '/driver',
-    component: () => import('@/views/driver/DriverPage.vue')
-  }
 ]
 
 const router = createRouter({
@@ -58,23 +80,24 @@ router.beforeEach((to, from, next) => {
   const userToken = mainStore.token;
   const driverMode = mainStore.driverMode;
 
-  if (userToken) {
-    if (driverMode && to.path !== '/driver') {
-      next('/driver');
-    } else if (!driverMode && (to.path === '/sign-in' || to.path === '/driver')) {
-      next('/');
+  if (to.path === '/sign-in' || to.path === '/code-verify') {
+    if (userToken) {
+      if (driverMode) {
+        next('/driver/job')
+      } else {
+        next('/tabs/trip')
+      }
     } else {
-      next();
+      next()
     }
   } else {
-    if (to.path === '/code-verify') {
-      next();
-    } else if (to.path !== '/sign-in') {
-      next('/sign-in');
+    if (userToken) {
+      next()
     } else {
-      next();
+      next('/sign-in')
     }
   }
 });
+  
 
 export default router
