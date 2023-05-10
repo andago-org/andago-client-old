@@ -7,6 +7,7 @@ import { Geolocation } from '@capacitor/geolocation';
 import { Coordinate, Place, Vehicle, ControlMode } from '@/interfaces/types';
 import { Preferences } from '@capacitor/preferences';
 import Pusher, { Channel } from 'pusher-js';
+import { toastController, ToastOptions, loadingController, LoadingOptions } from '@ionic/vue';
 
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
@@ -19,9 +20,9 @@ const axiosInstance = axios.create({
 export const useMainStore = defineStore({
   id: 'mainStore',
   state: () => ({
-    phoneNumber: "" as string,
     token: "" as string,
-    user: null as User | null,
+    user: {} as User | null,
+    authType: "" as string,
     selectedVehicle: null as Vehicle | null,
     vehicles: [] as Vehicle[],
     creditWallet: 0 as number,
@@ -60,11 +61,10 @@ export const useMainStore = defineStore({
     acceptedDriver: {} as any,
     acceptedTrip: {} as any,
     channel: null as Channel | null,
+    ionToast: {} as HTMLIonToastElement,
+    ionLoading: {} as HTMLIonLoadingElement,
   }),
   getters: {
-    getPhoneNumber(): string {
-      return this.phoneNumber
-    },
     async currentPosition() {
       const currentPosition = await Geolocation.getCurrentPosition();
 
@@ -72,17 +72,42 @@ export const useMainStore = defineStore({
 
       return position;
     },
+    axios() {
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
+
+      return axiosInstance;
+    },
+    ionNav() : HTMLIonNavElement {
+      return document.querySelector('ion-nav') as HTMLIonNavElement;
+    }
   },
   actions: {
-    async openMap() {
-      const { latitude, longitude } = (await Geolocation.getCurrentPosition()).coords;
+    async showToast( toastOptions: ToastOptions )
+    {
+      this.ionToast = await toastController.create(toastOptions);
+    
+      await this.ionToast.present();
+    
+      return this.ionToast;
+    },
 
-      try {
-        await AppLauncher.canOpenUrl({ url: 'maps://' });
-        await AppLauncher.openUrl({ url: `maps://?q=${latitude},${longitude}` });
-      } catch (error) {
-        console.error('Error launching map application', error);
-      }
+    async showLoading( loadingOptions: LoadingOptions )
+    {
+      this.ionLoading = await loadingController.create(loadingOptions);
+    
+      await this.ionLoading.present();
+    
+      return this.ionLoading;
+    },
+
+    setHeaders()
+    {
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
+    },
+
+    async openMap(coordinates: Coordinate): Promise<void> {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${coordinates.lat},${coordinates.lng}`;
+      await AppLauncher.openUrl({ url });
     },
 
     async getGeolocation(): Promise<any> {
@@ -92,6 +117,7 @@ export const useMainStore = defineStore({
 
       return position as any;
     },
+
     async getPickUpPosition(): Promise<any> {
       const position = {
         lat: this.receivedTripJob.pickup_place.latitude,
@@ -99,75 +125,6 @@ export const useMainStore = defineStore({
       };
 
       return position;
-    },
-
-    async tryLogin(phoneNumber: string): Promise<void> {
-    
-      try {
-        const phoneNumberTemp = "+6" + phoneNumber;
-        this.setHeaders();
-
-        const data = {
-          phoneNumber: phoneNumberTemp,
-          driverMode: this.driverMode,
-        }
-
-        const response = await axiosInstance.post("/auth/tryLogin", data);
-        
-        // Check for success
-        if (response.status === 200) {
-          this.phoneNumber = phoneNumberTemp;
-
-          router.push({
-            path: '/code-verify',
-          });
-        }
-
-        return response.data;
-
-      } catch (error) {
-        console.error('Error performing the request:', error);
-        // Handle the error (e.g., show an error message or retry the request)
-      }
-    },
-
-    async login(code: string): Promise<void> {
-      try {
-        this.setHeaders();
-        const response = await axiosInstance.post("/auth/login",
-          { phoneNumber: this.phoneNumber, code: code }
-        );
-    
-        // Check for success
-        if (response.status === 200) {
-          console.log(response.data);
-
-          this.token = response.data.token;
-          this.user = response.data.user;
-
-          this.setUserToken(this.token);
-
-          this.setHeaders();
-
-          if (this.driverMode) {
-            router.push({
-              path: '/driver',
-            });
-          }
-          else
-          {
-            router.push({
-              path: '/',
-            });
-          }
-        }
-
-        return response.data;
-
-      } catch (error) {
-        console.error('Error performing the request:', error);
-        // Handle the error (e.g., show an error message or retry the request)
-      }
     },
 
     async logout(): Promise<void> {
@@ -241,12 +198,6 @@ export const useMainStore = defineStore({
         console.error('Error performing the request:', error);
         // Handle the error (e.g., show an error message or retry the request)
       }
-    },
-
-    setHeaders()
-    {
-      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
-      axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';
     },
 
     async getUser(): Promise<any> {

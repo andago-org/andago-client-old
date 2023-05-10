@@ -117,7 +117,7 @@ import { location, navigate } from 'ionicons/icons';
 import { useMainStore } from '@/store';
 import AddressSearchModal from '@/components/AddressSearchModal.vue';
 import PreviewPage from './PreviewPage.vue';
-import VehiclePage from '../vehicle/VehiclePage.vue';
+import VehiclePage from '../profile/VehiclePage.vue';
 import { car } from 'ionicons/icons';
 import { Splide, SplideSlide } from '@splidejs/vue-splide';
 import { NEmpty } from 'naive-ui';

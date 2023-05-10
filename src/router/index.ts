@@ -1,70 +1,60 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import { useMainStore } from '@/store'
-import TabsPage from '../views/MainPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/sign-in',
+    redirect: '/login'
   },
   {
-    path: '/sign-in',
-    component: () => import('@/views/sign-in/SignInPage.vue')
-  },
-  {
-    path: '/code-verify',
-    component: () => import('@/views/sign-in/CodeVerifyPage.vue')
+    path: '/login',
+    component: () => import('@/views/login/LoginPage.vue')
   },
   {
     path: '/driver/',
     component: () => import('@/views/DriverMain.vue'),
+    meta: { requiresAuth: true, authType: 'driver' },
     children: [
       {
         path: '',
         redirect: '/driver/trip'
       },
-      // {
-      //   path: 'profile',
-      //   component: () => import('@/views/pages/ProfilePage.vue')
-      // },
       {
         path: 'trip',
-        component: () => import('@/views/driver/DriverTripPage.vue')
-      },
-      // {
-      //   path: 'chat',
-      //   component: () => import('@/views/pages/TestPage.vue')
-      // },
-      // {
-      //   path: 'settings',
-      //   component: () => import('@/views/pages/SettingsPage.vue')
-      // }
-    ],
+        component: () => import('@/views/driver/trip/DriverTripPage.vue'),
+        meta: { requiresAuth: true, authType: 'driver' }
+      }
+    ]
   },
   {
-    path: '/tabs/',
-    component: TabsPage,
+    path: '/passenger/',
+    component: import('@/views/PassengerMain.vue'),
+    meta: { requiresAuth: true, authType: 'passenger' },
     children: [
       {
         path: '',
-        redirect: '/tabs/trip'
+        redirect: '/passenger/trip'
       },
       {
         path: 'profile',
-        component: () => import('@/views/pages/ProfilePage.vue')
+        component: () => import('@/views/passenger/profile/PassengerProfilePage.vue'),
+        meta: { requiresAuth: true, authType: 'passenger' }
       },
       {
         path: 'trip',
-        component: () => import('@/views/trip/TripPage.vue')
+        component: () => import('@/views/passenger/trip/PassengerTripPage.vue'),
+        meta: { requiresAuth: true, authType: 'passenger' }
       },
       {
         path: 'chat',
-        component: () => import('@/views/pages/TestPage.vue')
+        component: () => import('@/views/passenger/ChatPage.vue'),
+        meta: { requiresAuth: true, authType: 'passenger' }
       },
       {
         path: 'settings',
-        component: () => import('@/views/pages/SettingsPage.vue')
+        component: () => import('@/views/passenger/SettingsPage.vue'),
+        meta: { requiresAuth: true, authType: 'passenger' }
       }
     ]
   },
@@ -78,25 +68,23 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const mainStore = useMainStore();
   const userToken = mainStore.token;
-  const driverMode = mainStore.driverMode;
-
-  if (to.path === '/sign-in' || to.path === '/code-verify' || to.path === '/') {
+  const authType = mainStore.authType;
+  
+  if (to.matched.some(record => record.meta.requiresAuth)) {
     if (userToken) {
-      if (driverMode) {
+      if (authType === 'passenger') {
+        next()
+      } else if (authType === 'driver') {
         next('/driver/')
       } else {
-        next('/tabs/')
+        next('/login')
       }
     } else {
-      next()
+      next('/login')
     }
   } else {
-    if (userToken) {
-      next()
-    } else {
-      next('/sign-in')
-    }
+    next()
   }
-});
+})
 
 export default router

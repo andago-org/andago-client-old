@@ -1,3 +1,10 @@
+export interface User {
+  id: number;
+  phone_number: string;
+  name: string;
+  userType: string;
+}
+
 export interface Place {
   place_id: string;
   name: string;
