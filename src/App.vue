@@ -10,5 +10,5 @@ import { useMainStore } from './store';
 
 const mainStore = useMainStore()
 
-mainStore.loadFromStorage();
+// mainStore.loadFromStorage();
 </script>

@@ -19,9 +19,9 @@
         </ion-card-content>
       </ion-card>
 
-      <ion-button @click="logout" expand="block">
+      <!-- <ion-button @click="logout" expand="block">
         Logout
-      </ion-button>
+      </ion-button> -->
 
       <div id="navigationMap" style="height: 400px"></div>
 
@@ -101,10 +101,6 @@ onMounted(() => {
     // );
   });
 });
-
-function logout() {
-  store.logout();
-}
 
 function accept() {
   // Accept the trip details here

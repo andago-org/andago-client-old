@@ -33,8 +33,12 @@ import { useMainStore } from './store'
 const pinia = createPinia()
 pinia.use(piniaPersist)
 
+const ionicConfig = {
+  // mode: 'ios',
+}
+
 const app = createApp(App)
-  .use(IonicVue)
+  .use(IonicVue, ionicConfig)
   .use(router)
   .use(pinia)
 ;

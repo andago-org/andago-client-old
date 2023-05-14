@@ -5,6 +5,16 @@ export interface User {
   userType: string;
 }
 
+export enum UserType {
+  Passenger = 'passenger',
+  Driver = 'driver',
+}
+
+export enum Gender {
+  Male = 'male',
+  Female = 'female',
+}
+
 export interface Place {
   place_id: string;
   name: string;

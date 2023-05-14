@@ -4,10 +4,11 @@ import router from '@/router';
 import { User } from '@/interfaces/models';
 import { AppLauncher } from '@capacitor/app-launcher';
 import { Geolocation } from '@capacitor/geolocation';
-import { Coordinate, Place, Vehicle, ControlMode } from '@/interfaces/types';
+import { UserType, Gender, Coordinate, Place, Vehicle, ControlMode, } from '@/interfaces/types';
 import { Preferences } from '@capacitor/preferences';
 import Pusher, { Channel } from 'pusher-js';
 import { toastController, ToastOptions, loadingController, LoadingOptions } from '@ionic/vue';
+import { format, parseISO } from 'date-fns';
 
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
@@ -20,9 +21,14 @@ const axiosInstance = axios.create({
 export const useMainStore = defineStore({
   id: 'mainStore',
   state: () => ({
+    userType: UserType.Passenger as UserType,
+    phoneNumber: "" as string,
+    name: "" as string,
+    gender: Gender.Male as Gender,
+    birthDate: format(new Date(), 'yyyy-MM-dd\'T\'HH:mm:ss') as string,
+    carPlateNumber: "" as string,
     token: "" as string,
     user: {} as User | null,
-    authType: "" as string,
     selectedVehicle: null as Vehicle | null,
     vehicles: [] as Vehicle[],
     creditWallet: 0 as number,
@@ -63,6 +69,7 @@ export const useMainStore = defineStore({
     channel: null as Channel | null,
     ionToast: {} as HTMLIonToastElement,
     ionLoading: {} as HTMLIonLoadingElement,
+    syncedData: {} as any,
   }),
   getters: {
     async currentPosition() {
@@ -79,15 +86,31 @@ export const useMainStore = defineStore({
     },
     ionNav() : HTMLIonNavElement {
       return document.querySelector('ion-nav') as HTMLIonNavElement;
-    }
+    },
+    localStorage() {
+      return Preferences;
+    },
   },
   actions: {
+    
+
+    async syncData()
+    {
+      this.axios.post('/syncData')
+      .then((response) => {
+        this.syncedData = response.data;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    },
+
     async showToast( toastOptions: ToastOptions )
     {
       this.ionToast = await toastController.create(toastOptions);
     
       await this.ionToast.present();
-    
+
       return this.ionToast;
     },
 
@@ -125,27 +148,6 @@ export const useMainStore = defineStore({
       };
 
       return position;
-    },
-
-    async logout(): Promise<void> {
-      try {
-        this.removeUser()
-        Preferences.remove({ key: 'data' })
-        this.driverMode = false;
-
-        this.setHeaders();
-        const response = await axiosInstance.post("/auth/logout");
-        
-        router.push({
-          path: '/sign-in',
-        });
-
-        return response.data;
-
-      } catch (error) {
-        console.error('Error performing the request:', error);
-        // Handle the error (e.g., show an error message or retry the request)
-      }
     },
 
     async getDistanceMatrix(start: any, end: any): Promise<any> {
@@ -451,6 +453,49 @@ export const useMainStore = defineStore({
         cluster: process.env.VUE_APP_PUSHER_APP_CLUSTER,
       })
       this.channel = pusher.subscribe(channelName)
+    },
+
+    capitalizeFirstLetter(text: string): string {
+      if (text.length === 0) {
+        return text;
+      }
+    
+      return text.charAt(0).toUpperCase() + text.slice(1);
+    },
+
+    convertToCapitalNumeric(event: InputEvent): void {
+      const allowedCharacters = /[A-Z0-9]/;
+      const inputElement = event.target as HTMLInputElement;
+      const originalValue = inputElement.value;
+    
+      if (event instanceof CompositionEvent) {
+        return;
+      }
+    
+      setTimeout(() => {
+        const newValue = inputElement.value
+          .toUpperCase()
+          .split('')
+          .filter((char) => allowedCharacters.test(char))
+          .join('');
+    
+        if (inputElement.value !== originalValue) {
+          inputElement.value = newValue;
+          event.preventDefault();
+          inputElement.dispatchEvent(new InputEvent('input'));
+        }
+      });
+    },
+
+    digitOnlyInput(event: KeyboardEvent) {
+      if (!/[0-9]/.test(event.key)) {
+        event.preventDefault();
+      }
+    },
+
+    formatDate(date: string, formatString: string) {
+      
+      return format(parseISO(date), formatString);
     },
   },
   persist: {

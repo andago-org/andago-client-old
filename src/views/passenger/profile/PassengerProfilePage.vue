@@ -30,9 +30,8 @@
             <ion-datetime presentation="date" id="datetime" @ionChange="dateModal = false" v-model="date"></ion-datetime>
           </ion-modal>
         </ion-item>
-        <ion-item>
-          <ion-button expand="block" @click="logout()">Logout</ion-button>
-        </ion-item>
+
+        <ion-button expand="block" @click="logout()">Logout</ion-button>
       </ion-list>
 
     </ion-content>
@@ -42,17 +41,16 @@
 import { ref, computed } from 'vue';
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonInput, IonDatetime,
-  IonList, IonItem, IonLabel, IonText, IonSelect, IonSelectOption, IonDatetimeButton, IonModal
+  IonList, IonItem, IonLabel, IonText, IonSelect, IonSelectOption, IonModal
 } from '@ionic/vue';
 import { useMainStore } from '@/store';
 import { User } from '@/interfaces/models';
 import { format, parseISO } from 'date-fns';
+import router from '@/router';
 
 const dateModal = ref(false);
 const date = ref(new Date().toISOString());
 const dateFormatted = computed(() => {
-  console.log(date.value);
-  const d = new Date(date.value);
   return format(parseISO(date.value), 'MMM d, yyyy');
 });
 
@@ -60,12 +58,34 @@ const store = useMainStore();
 
 const user = computed<User | null>(() => store.user);
 
-const creditWallet = computed(() => store.creditWallet);
-
 function logout() {
-  store.logout()
-}
+  store.axios.post("/auth/logout")
+    .then(
+      async (response) => {
+        store.user = null;
+        store.token = "";
 
+        store.localStorage.remove({ key: 'data' })
+
+        const toast = await store.showToast({
+          message: response.data.message,
+          duration: 1000,
+          position: "middle",
+        });
+
+        toast.onDidDismiss().then(() => {
+          store.showLoading({});
+
+          router.go(0);
+        });
+      }
+    )
+    .catch(
+      (error) => {
+        console.log(error);
+      }
+    );
+}
 </script>
 
 <style>
