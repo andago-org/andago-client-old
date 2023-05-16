@@ -28,6 +28,7 @@ export const useMainStore = defineStore({
     birthDate: format(new Date(), 'yyyy-MM-dd\'T\'HH:mm:ss') as string,
     carPlateNumber: "" as string,
     token: "" as string,
+    profile: {} as any,
     user: {} as User | null,
     selectedVehicle: null as Vehicle | null,
     vehicles: [] as Vehicle[],
@@ -123,6 +124,40 @@ export const useMainStore = defineStore({
       return this.ionLoading;
     },
 
+    logout() {
+      this.axios.post("/auth/logout")
+        .then(
+          async (response) => {
+            this.profile = null;
+            this.token = "";
+            this.localStorage.remove({ key: 'data' })
+            
+            const toast = await this.showToast({
+              message: response.data.message,
+              duration: 1000,
+              position: "middle",
+            });
+    
+            toast.onDidDismiss().then(() => {
+              this.showLoading({});
+    
+              router.go(0);
+            });
+          }
+        )
+        .catch(
+          async (error) => {
+            console.log(error);
+
+            this.profile = null;
+            this.token = "";
+            this.localStorage.remove({ key: 'data' })
+
+            router.go(0);
+          }
+        );
+    },
+
     setHeaders()
     {
       axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
@@ -190,7 +225,7 @@ export const useMainStore = defineStore({
           lng: position.lng,
         }
     
-        const response = await axiosInstance.post("/maps/getPlaces", data);
+        const response = await axiosInstance.post("/users/maps/getPlaces", data);
     
         // Check for success
         if (response.status === 200) {

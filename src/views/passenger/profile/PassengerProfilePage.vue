@@ -31,7 +31,7 @@
           </ion-modal>
         </ion-item>
 
-        <ion-button expand="block" @click="logout()">Logout</ion-button>
+        <ion-button expand="block" @click="store.logout()">Logout</ion-button>
       </ion-list>
 
     </ion-content>
@@ -58,34 +58,6 @@ const store = useMainStore();
 
 const user = computed<User | null>(() => store.user);
 
-function logout() {
-  store.axios.post("/auth/logout")
-    .then(
-      async (response) => {
-        store.user = null;
-        store.token = "";
-
-        store.localStorage.remove({ key: 'data' })
-
-        const toast = await store.showToast({
-          message: response.data.message,
-          duration: 1000,
-          position: "middle",
-        });
-
-        toast.onDidDismiss().then(() => {
-          store.showLoading({});
-
-          router.go(0);
-        });
-      }
-    )
-    .catch(
-      (error) => {
-        console.log(error);
-      }
-    );
-}
 </script>
 
 <style>

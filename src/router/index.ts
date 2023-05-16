@@ -4,13 +4,6 @@ import { useMainStore } from '@/store'
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/test',
-    component: () => import('@/views/login/RegisterPage.vue'),
-    beforeEnter: async (to, from, next) => {
-      next()
-    }
-  },
-  {
     path: '/:catchAll(.*)',
     redirect: '/login',
   },
@@ -20,19 +13,39 @@ const routes: Array<RouteRecordRaw> = [
     beforeEnter: async (to, from, next) => {
       const store = useMainStore();
 
-      if (store.token) {
-        next(`/${store.userType}/`);
-      } else {
-        if (to.path === '/login') {
-          next()
-        }
+      if (store.token)
+      {
+        next('/register');
+      }
+      else
+      {
+        next()
       }
     }
   },
   {
-    path: '/driver/',
+    path: '/register',
+    component: () => import('@/views/login/RegisterPage.vue'),
+    beforeEnter: async (to, from, next) => {
+      const store = useMainStore();
+
+      if (!store.token)
+      {
+        next('/login')
+      }
+      else if (store.profile?.profile_completed)
+      {
+        next(`/${store.profile?.userType}`)
+      }
+      else
+      {
+        next()
+      }
+    }
+  },
+  {
+    path: '/driver',
     component: () => import('@/views/DriverMain.vue'),
-    meta: { requiresAuth: true, userType: 'driver' },
     children: [
       {
         path: '',
@@ -41,14 +54,12 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'trip',
         component: () => import('@/views/driver/trip/DriverTripPage.vue'),
-        meta: { requiresAuth: true, userType: 'driver' }
       }
-    ]
+    ],
   },
   {
-    path: '/passenger/',
+    path: '/passenger',
     component: import('@/views/PassengerMain.vue'),
-    meta: { requiresAuth: true, userType: 'passenger' },
     children: [
       {
         path: '',
@@ -57,22 +68,18 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'profile',
         component: () => import('@/views/passenger/profile/PassengerProfilePage.vue'),
-        meta: { requiresAuth: true, userType: 'passenger' }
       },
       {
         path: 'trip',
         component: () => import('@/views/passenger/trip/PassengerTripPage.vue'),
-        meta: { requiresAuth: true, userType: 'passenger' }
       },
       {
         path: 'chat',
         component: () => import('@/views/passenger/ChatPage.vue'),
-        meta: { requiresAuth: true, userType: 'passenger' }
       },
       {
         path: 'settings',
         component: () => import('@/views/passenger/SettingsPage.vue'),
-        meta: { requiresAuth: true, userType: 'passenger' }
       }
     ]
   },
@@ -83,23 +90,22 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach(async (to, from) => {
+router.beforeEach(async (to) => {
   const store = useMainStore();
-  const userType = store.userType;
 
-  if (to.meta.requiresAuth && !store.token) {
-    // this route requires auth, check if logged in
-    // if not, redirect to login page.
-    return {
-      path: '/login',
+  if (['driver', 'passenger'].includes(to.path.split('/')[1]))
+  {
+    if (!store.token || !store.profile?.profile_completed)
+    {
+      return { path: '/login'}
     }
-  }
-
-  if (to.meta.userType && to.meta.userType !== userType) {
-    // this route requires auth, check if logged in
-    // if not, redirect to login page.
-    return {
-      path: `/${userType}/`,
+    else if (to.path.split('/')[1] != store.profile?.userType)
+    {
+      return { path: `/${store.profile?.userType}`}
+    }
+    else
+    {
+      return true
     }
   }
 });

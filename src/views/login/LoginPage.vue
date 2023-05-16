@@ -86,6 +86,7 @@ async function requestOtp() {
           duration: 1000,
           position: 'bottom',
         });
+
       }
     })
     .catch(function (error) {

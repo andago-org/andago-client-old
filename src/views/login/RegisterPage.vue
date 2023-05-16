@@ -14,12 +14,12 @@
 
         <ion-item>
           <ion-label>Name</ion-label>
-          <ion-input v-model="store.name" placeholder="Enter name" slot="end"></ion-input>
+          <ion-input v-model="name" placeholder="Enter name" slot="end"></ion-input>
         </ion-item>
 
         <ion-item>
           <ion-label>Gender</ion-label>
-          <ion-segment v-model="store.gender">
+          <ion-segment v-model="gender">
             <ion-segment-button value="male" layout="icon-start">
               <ion-icon :icon="maleOutline"></ion-icon>
               <ion-label>Male</ion-label>
@@ -34,11 +34,11 @@
         <ion-item>
           <ion-label>Birth Date</ion-label>
           <ion-datetime-button datetime="datetime">
-            <div slot="date-target">{{ store.formatDate(store.birthDate, "dd-MM-yyyy") }}</div>
+            <div slot="date-target">{{ store.formatDate(birthDate, "dd-MM-yyyy") }}</div>
           </ion-datetime-button>
 
           <ion-modal :keep-contents-mounted="true">
-            <ion-datetime id="datetime" presentation="date" :value="store.birthDate"></ion-datetime>
+            <ion-datetime id="datetime" presentation="date" :value="birthDate"></ion-datetime>
           </ion-modal>
         </ion-item>
 
@@ -104,7 +104,8 @@
         </div>
       </ion-list>
 
-      <ion-button expand="block">Submit</ion-button>
+      <ion-button expand="block" @click="submit">Submit</ion-button>
+      <ion-button expand="block" color="secondary" @click="store.logout">Cancel</ion-button>
     </ion-content>
   </ion-page>
 </template>
@@ -113,14 +114,17 @@
 import { ref, watch, onMounted } from 'vue';
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonInput, IonSegment, IonSegmentButton,
-  IonText, IonModal, IonDatetime, IonDatetimeButton, IonItemDivider, IonIcon, IonButton, IonGrid, IonRow, IonCol,
+  IonText, IonModal, IonDatetime, IonDatetimeButton, IonItemDivider, IonIcon, IonButton, IonGrid, IonRow, IonCol, IonButtons, IonBackButton
 } from '@ionic/vue';
 import { maleOutline, femaleOutline } from 'ionicons/icons';
 import { useMainStore } from '@/store';
 import type { UploadFileInfo } from 'naive-ui'
 import { NUpload, NUploadDragger, NIcon, NImage, NModal } from 'naive-ui';
+import { arrowBack } from 'ionicons/icons';
+import { Gender } from '@/interfaces/types';
+import { format } from 'date-fns';
 
-const store = useMainStore();
+const store = useMainStore()
 
 const licenseNumber = ref('')
 
@@ -135,6 +139,20 @@ function handlePreview(file: UploadFileInfo) {
 
 const fileList = ref<UploadFileInfo[]>([])
 const licensePhotoFileList = ref<UploadFileInfo[]>([])
+
+const name = ref('')
+const gender = ref(Gender.Male)
+const birthDate = ref(format(new Date(), 'yyyy-MM-dd\'T\'HH:mm:ss'))
+
+if (store.profile?.user.details_completed) {
+  name.value = store.profile.user.name;
+  gender.value = store.profile.user.gender;
+  // birthDate.value = store.profile.user.birthDate;
+}
+
+function submit() {
+  console.log(store.profile)
+}
 </script>
 
 <style scoped>

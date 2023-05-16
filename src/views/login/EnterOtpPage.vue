@@ -71,8 +71,8 @@ async function login() {
 
       if (response.data.status == 'success') {
         store.token = response.data.token;
-        store.user = response.data.user;
-
+        store.profile = response.data.profile;
+        console.log(store.profile)
         const toast = await store.showToast({
           message: response.data.message,
           duration: 2000,
