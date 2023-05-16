@@ -91,6 +91,9 @@ export const useMainStore = defineStore({
     localStorage() {
       return Preferences;
     },
+    acceptImageFileFormats() {
+      return "image/jpeg, image/png, image/jpg";
+    },
   },
   actions: {
     
@@ -528,9 +531,8 @@ export const useMainStore = defineStore({
       }
     },
 
-    formatDate(date: string, formatString: string) {
-      
-      return format(parseISO(date), formatString);
+    validateNotEmpty(text: string): boolean {
+      return text.length > 0;
     },
   },
   persist: {

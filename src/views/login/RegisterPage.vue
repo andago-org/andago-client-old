@@ -33,13 +33,7 @@
 
         <ion-item>
           <ion-label>Birth Date</ion-label>
-          <ion-datetime-button datetime="datetime">
-            <div slot="date-target">{{ store.formatDate(birthDate, "dd-MM-yyyy") }}</div>
-          </ion-datetime-button>
-
-          <ion-modal :keep-contents-mounted="true">
-            <ion-datetime id="datetime" presentation="date" :value="birthDate"></ion-datetime>
-          </ion-modal>
+          <n-date-picker v-model:formatted-value="birthDate" type="date" format="dd-MM-yyyy" value-format="yyyy-MM-dd" />
         </ion-item>
 
         <div v-if="store.userType === 'passenger'">
@@ -49,7 +43,7 @@
 
           <ion-item>
             <ion-label>Car Plate Number</ion-label>
-            <ion-input v-model="store.carPlateNumber" placeholder="Car Plate Number" slot="end" maxlength="8"
+            <ion-input v-model="vehicleName" placeholder="Car Plate Number" slot="end" maxlength="8"
               @keypress="store.convertToCapitalNumeric"></ion-input>
           </ion-item>
 
@@ -58,10 +52,8 @@
               <ion-row>
                 <ion-label>Upload Car Photo</ion-label>
               </ion-row>
-              <n-upload max="1" :default-file-list="fileList" list-type="image-card" @preview="handlePreview" />
-              <n-modal v-model:show="showModal" preset="card" style="width: 600px" title="A Cool Picture">
-                <img :src="previewImageUrl" style="width: 100%">
-              </n-modal>
+              <n-upload :max="1" v-model:file-list="vehiclePhotoFileList" list-type="image-card"
+                :accept="store.acceptImageFileFormats" />
             </ion-grid>
           </ion-item>
         </div>
@@ -81,11 +73,8 @@
               <ion-row>
                 <ion-label>Upload License Photo</ion-label>
               </ion-row>
-              <n-upload max="1" :default-file-list="licensePhotoFileList" list-type="image-card"
-                @preview="handlePreview" />
-              <n-modal v-model:show="showModal" preset="card" style="width: 600px" title="A Cool Picture">
-                <img :src="previewImageUrl" style="width: 100%">
-              </n-modal>
+              <n-upload max="1" v-model:file-list="licensePhotoFileList" list-type="image-card"
+                :accept="store.acceptImageFileFormats" />
             </ion-grid>
           </ion-item>
 
@@ -94,64 +83,88 @@
               <ion-row>
                 <ion-label>Upload Driver Profile Photo</ion-label>
               </ion-row>
-              <n-upload max="1" :default-file-list="licensePhotoFileList" list-type="image-card"
-                @preview="handlePreview" />
-              <n-modal v-model:show="showModal" preset="card" style="width: 600px" title="A Cool Picture">
-                <img :src="previewImageUrl" style="width: 100%">
-              </n-modal>
+              <n-upload max="1" v-model:file-list="driverPhotoFileList" list-type="image-card"
+                :accept="store.acceptImageFileFormats" />
             </ion-grid>
           </ion-item>
         </div>
       </ion-list>
 
-      <ion-button expand="block" @click="submit">Submit</ion-button>
+      <ion-button expand="block" @click="submit" :disabled="!readyToSubmit">Submit</ion-button>
       <ion-button expand="block" color="secondary" @click="store.logout">Cancel</ion-button>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, watchEffect } from 'vue';
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonInput, IonSegment, IonSegmentButton,
-  IonText, IonModal, IonDatetime, IonDatetimeButton, IonItemDivider, IonIcon, IonButton, IonGrid, IonRow, IonCol, IonButtons, IonBackButton
+  IonItemDivider, IonIcon, IonButton, IonGrid, IonRow, IonCol, IonButtons, IonBackButton
 } from '@ionic/vue';
 import { maleOutline, femaleOutline } from 'ionicons/icons';
 import { useMainStore } from '@/store';
 import type { UploadFileInfo } from 'naive-ui'
-import { NUpload, NUploadDragger, NIcon, NImage, NModal } from 'naive-ui';
+import { NUpload, NUploadDragger, NIcon, NImage, NModal, NDatePicker } from 'naive-ui';
 import { arrowBack } from 'ionicons/icons';
 import { Gender } from '@/interfaces/types';
 import { format } from 'date-fns';
+import { validateBBox } from '@turf/turf';
 
 const store = useMainStore()
+const acceptFormat = ref('image/png, image/jpeg')
 
+// User Details
+const name = ref(store.profile.user.name)
+const gender = ref(store.profile.user.gender)
+const birthDate = ref(store.profile.user.birth_date)
+
+// Passenger Profile
+const vehicleName = ref('')
+const vehiclePhotoFileList = ref<UploadFileInfo[]>([])
+
+// Driver Profile
 const licenseNumber = ref('')
-
-const showModal = ref(false)
-const previewImageUrl = ref('')
-
-function handlePreview(file: UploadFileInfo) {
-  const { url } = file
-  previewImageUrl.value = url as string
-  showModal.value = true
-}
-
-const fileList = ref<UploadFileInfo[]>([])
 const licensePhotoFileList = ref<UploadFileInfo[]>([])
+const driverPhotoFileList = ref<UploadFileInfo[]>([])
 
-const name = ref('')
-const gender = ref(Gender.Male)
-const birthDate = ref(format(new Date(), 'yyyy-MM-dd\'T\'HH:mm:ss'))
+const readyToSubmit = ref(false)
 
-if (store.profile?.user.details_completed) {
-  name.value = store.profile.user.name;
-  gender.value = store.profile.user.gender;
-  // birthDate.value = store.profile.user.birthDate;
+watchEffect(
+  () => {
+    readyToSubmit.value = validate()
+
+    console.log(vehiclePhotoFileList.value)
+  }
+)
+
+function validate(): boolean {
+  switch (store.userType) {
+    case 'passenger':
+
+      return (
+        store.validateNotEmpty(name.value) &&
+        store.validateNotEmpty(vehicleName.value) &&
+        vehiclePhotoFileList.value.length > 0
+      )
+    case 'driver':
+      (
+        store.validateNotEmpty(name.value) &&
+        store.validateNotEmpty(licenseNumber.value) &&
+        licensePhotoFileList.value.length > 0 &&
+        driverPhotoFileList.value.length > 0
+      )
+      return true
+  }
+
+  return false
 }
 
-function submit() {
-  console.log(store.profile)
+function register() {
+  switch (store.profile.userType) {
+    case 'passenger':
+    case 'driver':
+  }
 }
 </script>
 
