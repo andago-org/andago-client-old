@@ -73,7 +73,7 @@ import { ref, defineProps, defineEmits, computed, watch, reactive } from 'vue';
 import { car as carIcon, image } from 'ionicons/icons';
 import { Vehicle, ControlMode } from '@/interfaces/types';
 import { useMainStore } from '@/store';
-import { NUpload, NUploadDragger, NIcon, NText, NImage } from 'naive-ui';
+import { NUpload, NUploadDragger, NIcon, NText, NImage, UploadFileInfo } from 'naive-ui';
 import { Image as ImageIcon } from '@vicons/ionicons5'
 import axios from 'axios';
 
@@ -85,7 +85,7 @@ const upload = ref<any>(null);
 
 const isViewMode = computed(() => vehicleData.value.controlMode == ControlMode.View);
 
-const handleUploadFinish = (response: any, file: any) => {
+const handleUploadFinish = (response: UploadFileInfo, file: any) => {
   console.log('File upload finished:', response);
 };
 

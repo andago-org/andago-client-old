@@ -62,13 +62,6 @@ async function login() {
 
   store.axios.post("/auth/login", data)
     .then(async (response) => {
-      console.log(response.data)
-      store.showToast({
-        message: response.data.message,
-        duration: 2000,
-        position: 'middle',
-      })
-
       if (response.data.status == 'success') {
         store.token = response.data.token;
         store.profile = response.data.profile;
@@ -87,7 +80,11 @@ async function login() {
       }
     })
     .catch(function (error) {
-      console.log(error);
+      store.showToast({
+        message: error,
+        duration: 2000,
+        position: 'middle',
+      })
     });
 }
 </script>

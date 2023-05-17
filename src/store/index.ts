@@ -81,7 +81,8 @@ export const useMainStore = defineStore({
       return position;
     },
     axios() {
-      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
+      axiosInstance.defaults.headers['Accept'] = 'application/json';
+      axiosInstance.defaults.headers['Authorization'] = `Bearer ${this.token}`;
 
       return axiosInstance;
     },

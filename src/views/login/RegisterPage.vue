@@ -43,7 +43,7 @@
 
           <ion-item>
             <ion-label>Car Plate Number</ion-label>
-            <ion-input v-model="vehicleName" placeholder="Car Plate Number" slot="end" maxlength="8"
+            <ion-input v-model="vehiclePlateNumber" placeholder="Car Plate Number" slot="end" maxlength="8"
               @keypress="store.convertToCapitalNumeric"></ion-input>
           </ion-item>
 
@@ -52,7 +52,7 @@
               <ion-row>
                 <ion-label>Upload Car Photo</ion-label>
               </ion-row>
-              <n-upload :max="1" v-model:file-list="vehiclePhotoFileList" list-type="image-card"
+              <n-upload :max="1" :default-upload="false" v-model:file-list="vehiclePhotoFileList" list-type="image-card"
                 :accept="store.acceptImageFileFormats" />
             </ion-grid>
           </ion-item>
@@ -90,7 +90,7 @@
         </div>
       </ion-list>
 
-      <ion-button expand="block" @click="submit" :disabled="!readyToSubmit">Submit</ion-button>
+      <ion-button expand="block" @click="register" :disabled="!readyToSubmit">Submit</ion-button>
       <ion-button expand="block" color="secondary" @click="store.logout">Cancel</ion-button>
     </ion-content>
   </ion-page>
@@ -112,15 +112,14 @@ import { format } from 'date-fns';
 import { validateBBox } from '@turf/turf';
 
 const store = useMainStore()
-const acceptFormat = ref('image/png, image/jpeg')
 
 // User Details
-const name = ref(store.profile.user.name)
-const gender = ref(store.profile.user.gender)
+const name = ref<string>(store.profile.user.name)
+const gender = ref<Gender>(store.profile.user.gender)
 const birthDate = ref(store.profile.user.birth_date)
 
 // Passenger Profile
-const vehicleName = ref('')
+const vehiclePlateNumber = ref<string>('')
 const vehiclePhotoFileList = ref<UploadFileInfo[]>([])
 
 // Driver Profile
@@ -133,8 +132,6 @@ const readyToSubmit = ref(false)
 watchEffect(
   () => {
     readyToSubmit.value = validate()
-
-    console.log(vehiclePhotoFileList.value)
   }
 )
 
@@ -144,7 +141,7 @@ function validate(): boolean {
 
       return (
         store.validateNotEmpty(name.value) &&
-        store.validateNotEmpty(vehicleName.value) &&
+        store.validateNotEmpty(vehiclePlateNumber.value) &&
         vehiclePhotoFileList.value.length > 0
       )
     case 'driver':
@@ -160,10 +157,30 @@ function validate(): boolean {
   return false
 }
 
-function register() {
+async function register() {
   switch (store.profile.userType) {
     case 'passenger':
+      {
+        store.axios.defaults.headers['Content-Type'] = 'multipart/form-data'
+
+        const formData = new FormData()
+
+        formData.append('userType', store.profile.userType)
+        formData.append('name', name.value)
+        formData.append('gender', gender.value)
+        formData.append('birthDate', birthDate.value)
+        formData.append('plateNumber', vehiclePlateNumber.value)
+        formData.append('vehiclePhoto', vehiclePhotoFileList.value[0].file as any)
+
+        store.axios.post('/auth/registerAsPassenger', formData)
+          .then(response => {
+            const data = response.data
+            console.log(data)
+          })
+        break
+      }
     case 'driver':
+      console.log(1);
   }
 }
 </script>
