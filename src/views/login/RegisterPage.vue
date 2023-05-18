@@ -110,6 +110,7 @@ import { arrowBack } from 'ionicons/icons';
 import { Gender } from '@/interfaces/types';
 import { format } from 'date-fns';
 import { validateBBox } from '@turf/turf';
+import router from '@/router';
 
 const store = useMainStore()
 
@@ -158,30 +159,60 @@ function validate(): boolean {
 }
 
 async function register() {
+  store.axios.defaults.headers['Content-Type'] = 'multipart/form-data'
+
+  const formData = new FormData()
+
+  formData.append('userType', store.profile.userType)
+  formData.append('name', name.value)
+  formData.append('gender', gender.value)
+  formData.append('birthDate', birthDate.value)
+
   switch (store.profile.userType) {
     case 'passenger':
       {
-        store.axios.defaults.headers['Content-Type'] = 'multipart/form-data'
-
-        const formData = new FormData()
-
-        formData.append('userType', store.profile.userType)
-        formData.append('name', name.value)
-        formData.append('gender', gender.value)
-        formData.append('birthDate', birthDate.value)
         formData.append('plateNumber', vehiclePlateNumber.value)
         formData.append('vehiclePhoto', vehiclePhotoFileList.value[0].file as any)
 
-        store.axios.post('/auth/registerAsPassenger', formData)
-          .then(response => {
-            const data = response.data
-            console.log(data)
-          })
         break
       }
     case 'driver':
-      console.log(1);
+      {
+        formData.append('licenseNumber', licenseNumber.value)
+        formData.append('licensePhoto', licensePhotoFileList.value[0].file as any)
+        formData.append('driverPhoto', driverPhotoFileList.value[0].file as any)
+
+        break
+      }
   }
+
+  const apiUrl = '/auth/registerAs' + store.capitalizeFirstLetter(store.profile.userType)
+
+  store.axios.post(apiUrl, formData)
+    .then(async response => {
+      const data = response.data
+
+      store.profile = data.profile
+
+      const toast = await store.showToast({
+        message: data.message,
+        duration: 2000,
+        position: 'middle',
+      })
+
+      toast.onDidDismiss().then(() => {
+        router.go(0)
+      })
+    })
+    .catch(async error => {
+      const data = error.response.data
+
+      store.showToast({
+        message: data.message,
+        duration: 2000,
+        position: 'middle',
+      })
+    })
 }
 </script>
 
