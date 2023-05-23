@@ -1,35 +1,41 @@
 <template>
-  <ion-modal :is-open="isOpen" @dismiss="closeModal">
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Top Up</ion-title>
-        <ion-buttons slot="end">
-          <ion-button :strong="true" @click="closeModal">Close</ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
+  <!-- <ion-modal :is-open="isOpen" @dismiss="closeModal"> -->
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Top Up</ion-title>
+      <ion-buttons slot="end">
+        <ion-button :strong="true" @click="closeModal">Close</ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
 
-    <ion-content>
-      <ion-list>
-        <ion-item>
-          <ion-label position="floating">Top Up Amount</ion-label>
-          <ion-input type="number" v-model="topUpAmount"></ion-input>
-        </ion-item>
-      </ion-list>
+  <ion-content class="ion-padding">
+    <ion-list>
 
-      <ion-grid>
-        <ion-row>
-          <ion-col>
-            <ion-button :strong="true" expand="block" @click="topUp">Top Up</ion-button>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-content>
-  </ion-modal>
+      <ion-item lines="none">
+        <ion-text class="ion-text-center">
+          <h3>Enter Top-Up Amount</h3>
+        </ion-text>
+      </ion-item>
+
+      <ion-item fill="outline">
+        <ion-label position="floating">Top-Up Amount</ion-label>
+        <ion-input v-model="topUpAmount" type="number" />
+      </ion-item>
+
+      <ion-button expand="block" @click="topUp">Top Up</ion-button>
+
+    </ion-list>
+  </ion-content>
+  <!-- </ion-modal> -->
 </template>
 
 <script setup lang="ts">
-import { ref, defineEmits } from 'vue';
+import { IonModal, IonButton, IonText, IonContent, IonList, IonItem, IonLabel, IonInput, IonHeader, IonToolbar, IonTitle, IonButtons } from '@ionic/vue';
+import { ref, defineEmits, onMounted } from 'vue';
+import { useMainStore } from '@/store';
+
+const store = useMainStore();
 
 const props = defineProps({
   isOpen: Boolean,
@@ -43,9 +49,23 @@ function closeModal() {
   emit('update:isOpen', false);
 }
 
-function confirmModal() {
-  emit('confirm');
+async function getSuggestedTopUpAmount() {
+  store.axios.post('/passengers/payments/getSuggestedTopUpAmount')
+    .then((response) => {
+      const data = response.data;
+
+      console.log(data);
+
+      topUpAmount.value = data.suggestedTopUpAmount;
+    })
+    .catch((error) => {
+      console.log(error)
+    })
 }
+
+onMounted(() => {
+  getSuggestedTopUpAmount();
+})
 
 const topUp = () => {
   // implement your top up logic here

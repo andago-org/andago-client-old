@@ -12,86 +12,49 @@
     <ion-footer>
       <ion-grid>
         <ion-row>
-          <!-- <ion-card style="width: 100%; padding: 0 20px  20px 20px">
-            <div class="ion-text-center">Selected Car</div>
-
+          <!-- <ion-nav-link style="width: 100%;" router-direction="forward" :component="VehiclePage"> -->
+          <ion-card style="width: 100%;">
+            <ion-card-header>
+              <ion-card-title class="ion-text-center">Selected Car</ion-card-title>
+            </ion-card-header>
             <ion-card-content>
-              <ion-card v-if="store.selectedVehicle">
-                <ion-grid>
-                  <ion-row>
-                    <ion-col size="auto">
-                      <ion-icon :icon="car" size="large"></ion-icon>
-                    </ion-col>
-                    <ion-col>
-                      <ion-card-title>{{ store.selectedVehicle.name }}</ion-card-title>
-                    </ion-col>
-                    <ion-col size="auto" class="ion-align-items-center">
-                      <ion-checkbox :checked="true"></ion-checkbox>
-                    </ion-col>
-                  </ion-row>
-                </ion-grid>
-              </ion-card>
-              <ion-card v-else style="padding: 0 10px 10px 10px">
-                <ion-text>
-                  <h3>You don't have car added yet, go Manage your cars</h3>
-                </ion-text>
-              </ion-card>
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="auto">
+                    <ion-icon :icon="car" size="large"></ion-icon>
+                  </ion-col>
+                  <ion-col>
+                    <ion-card-title class="ion-text-center">{{ store.profile.selectedVehicle.plate_number
+                    }}</ion-card-title>
+                  </ion-col>
+                  <ion-col size="auto" class="ion-align-items-center">
+                    <ion-checkbox :checked="true" :disabled="true"></ion-checkbox>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
             </ion-card-content>
-
-            <ion-nav-link router-direction="forward" :component="VehiclePage">
-              <ion-button expand="block">Manage</ion-button>
-            </ion-nav-link>
-          </ion-card> -->
-
-          <ion-nav-link style="width: 100%;" router-direction="forward" :component="VehiclePage">
-            <ion-card>
-              <ion-card-header>
-                <ion-card-title class="ion-text-center">Selected Car</ion-card-title>
-              </ion-card-header>
-              <ion-card-content>
-                <ion-grid>
-                  <ion-row>
-                    <ion-col size="auto">
-                      <ion-icon :icon="car" size="large"></ion-icon>
-                    </ion-col>
-                    <ion-col>
-                      <ion-card-title class="ion-text-center">{{ store.selectedVehicle?.name }}</ion-card-title>
-                    </ion-col>
-                    <ion-col size="auto" class="ion-align-items-center">
-                      <ion-checkbox :checked="true"></ion-checkbox>
-                    </ion-col>
-                  </ion-row>
-                </ion-grid>
-              </ion-card-content>
-            </ion-card>
-          </ion-nav-link>
+          </ion-card>
+          <!-- </ion-nav-link> -->
         </ion-row>
 
         <ion-row>
           <ion-col>
-            <ion-searchbar :search-icon="location" placeholder="Pick-Up" @ion-focus="openPickUpModal"
-              :value="store.pickUpPlace.name">
-            </ion-searchbar>
-            <AddressSearchModal v-model:value="store.pickUpPlace" v-model:isOpen="isPickUpModalOpen"
-              title="Pick-Up Location" placeholder="Search for address">
+            <AddressSearchModal :icon="location" v-model:value="store.pickUpPlace" title="Pick-Up Location"
+              placeholder="Search for address">
             </AddressSearchModal>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col>
-            <ion-searchbar :search-icon="navigate" placeholder="Drop-Off" @ion-focus="openDropOffModal"
-              :value="store.dropOffPlace.name"></ion-searchbar>
-            <AddressSearchModal v-model:value="store.dropOffPlace" v-model:isOpen="isDropOffModalOpen"
-              title="Drop-Off Location" placeholder="Search for address">
+            <AddressSearchModal :icon="navigate" v-model:value="store.dropOffPlace" title="Drop-Off Location"
+              placeholder="Search for address">
             </AddressSearchModal>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col>
 
-            <ion-nav-link router-direction="forward" :component="PreviewPage">
-              <ion-button expand="block" @click="createTripPayment">Confirm</ion-button>
-            </ion-nav-link>
+            <ion-button expand="block" @click="createTrip" :disabled="!proceedable">Confirm</ion-button>
 
             <ion-loading :is-open="searchDriversLoadingOpen" class="searchDriversLoading" message="Searching for Drivers"
               :duration="30000">
@@ -104,32 +67,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import {
-  IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonButton,
+  IonPage, IonContent, IonSearchbar, IonButton,
   IonGrid, IonRow, IonCol, IonLoading, IonNavLink, IonFooter, IonCard, IonCardHeader,
-  IonCardTitle, IonCardSubtitle, IonCardContent, IonIcon, IonText, IonCheckbox
+  IonCardTitle, IonCardContent, IonIcon, IonCheckbox
 } from '@ionic/vue';
-// import { NCarousel } from 'naive-ui';
-import TripDetailsModal from '@/components/TripDetailsModal.vue';
-import { Place, TripDetails } from '@/interfaces/types';
 import { location, navigate } from 'ionicons/icons';
 import { useMainStore } from '@/store';
 import AddressSearchModal from '@/components/AddressSearchModal.vue';
 import PreviewPage from './PreviewPage.vue';
 import VehiclePage from '../profile/VehiclePage.vue';
+import { Place } from '@/interfaces/types';
 import { car } from 'ionicons/icons';
 import { Splide, SplideSlide } from '@splidejs/vue-splide';
-import { NEmpty } from 'naive-ui';
 
 const store = useMainStore();
 
-const isPickUpModalOpen = ref(false);
-const isDropOffModalOpen = ref(false);
-
-const isTripDetailsModalOpen = ref(false);
-
 const searchDriversLoadingOpen = ref(false);
+
+const proceedable = computed(
+  () => !store.isObjectEmpty(store.pickUpPlace) && !store.isObjectEmpty(store.dropOffPlace)
+);
 
 watch(() => store.vehicles, (newValue) => {
   newValue.forEach((vehicle) => {
@@ -139,37 +98,30 @@ watch(() => store.vehicles, (newValue) => {
   });
 });
 
-const tripDetails = ref({} as TripDetails);
+async function createTrip() {
+  const loading = await store.showLoading({});
 
-const openPickUpModal = () => {
-  isPickUpModalOpen.value = true;
-};
+  const data = {
+    pickUp: store.pickUpPlace,
+    dropOff: store.dropOffPlace,
+  }
 
-const openDropOffModal = () => {
-  isDropOffModalOpen.value = true;
-};
+  store.axios.post("passengers/trips/createTrip", data)
+    .then((response) => {
+      if (response.status === 200) {
+        const data = response.data;
 
-const openTripDetailsModal = () => {
-  isTripDetailsModalOpen.value = true;
-};
+        store.paymentDetails = data.paymentDetails;
 
-// const getTripDetails = async () => {
-//   tripDetails.value = await store.getTripDetails(pickUpPlace.value, dropOffPlace.value)
-//   console.log(tripDetails.value)
-//   openTripDetailsModal();
-// };
+        store.ionNav.push(PreviewPage);
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
-const createTripPayment = async () => {
-  await store.createTripPayment();
-};
-
-// const createTrip = () => {
-//   store.createTrip(tripDetails.value);
-
-//   searchDriversLoadingOpen.value = true;
-// };
-
-
+  loading.dismiss();
+}
 </script>
 
 <style>

@@ -13,16 +13,16 @@
         <ion-item>
           <ion-label>Pick-Up</ion-label>
           <ion-text>
-            <h4>{{ store.pickUpPlace.name }}</h4>
-            <p>{{ store.pickUpPlace.address }}</p>
+            <h4>{{ store.pickUpPlace?.name }}</h4>
+            <p>{{ store.pickUpPlace?.address }}</p>
           </ion-text>
         </ion-item>
 
         <ion-item>
           <ion-label>Drop-Off</ion-label>
           <ion-text>
-            <h4>{{ store.dropOffPlace.name }}</h4>
-            <p>{{ store.dropOffPlace.address }}</p>
+            <h4>{{ store.dropOffPlace?.name }}</h4>
+            <p>{{ store.dropOffPlace?.address }}</p>
           </ion-text>
         </ion-item>
       </ion-list>
@@ -30,13 +30,6 @@
 
     <ion-footer>
       <ion-list>
-        <!-- <ion-item v-for="item in paymentDetails" :key="item.label" lines="none">
-          <ion-icon :icon="item.icon" slot="start"></ion-icon>
-          <ion-text>
-            {{ item.label }}
-          </ion-text>
-          <ion-text slot="end">{{ item.value }}</ion-text>
-        </ion-item> -->
         <ion-item lines="none">
           <ion-icon :icon="bookOutline" slot="start"></ion-icon>
           <ion-text>
@@ -77,8 +70,6 @@
             <ion-nav-link router-direction="back">
               <ion-button :strong="true" expand="block" color="secondary">Cancel</ion-button>
             </ion-nav-link>
-
-            <ion-button @click="nav?.push(DriverProgressPage);">aaa</ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -91,7 +82,7 @@ import { defineEmits, ref, computed, watch, onMounted, onUpdated, nextTick } fro
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonBackButton,
   IonButton, IonButtons, IonGrid, IonRow, IonCol, IonText, IonPage, IonFooter, IonNavLink, IonIcon,
-  toastController, loadingController,
+  toastController, loadingController, modalController,
 } from '@ionic/vue';
 import { Place } from '@/interfaces/types';
 import googleMaps from '@/plugins/google-map';
@@ -99,15 +90,16 @@ import googleMaps from '@/plugins/google-map';
 import { useMainStore } from '@/store';
 import { bookOutline, cashOutline, timeOutline, carOutline } from 'ionicons/icons';
 import { Browser } from '@capacitor/browser';
+import TopUpModal from '@/components/TopUpModal.vue';
 import DriverProgressPage from './DriverProgressPage.vue';
 import Pusher from 'pusher-js';
 
 const store = useMainStore();
 
-const center = store.pickUpPlace.coordinate;
+const center = store.pickUpPlace?.coordinate;
 const zoom = 5;
-const start = store.pickUpPlace.coordinate;
-const end = store.dropOffPlace.coordinate;
+const start = store.pickUpPlace?.coordinate;
+const end = store.dropOffPlace?.coordinate;
 const directionsResult = ref(null);
 
 const googleMap = ref(null as any);
@@ -126,30 +118,36 @@ onMounted(() => {
 });
 
 function confirmTrip() {
-  showLoading();
+  store.axios.post('/passengers/trips/confirmTrip')
+    .then(async (response: any) => {
+      console.log(response.data);
 
-  store.confirmTrip();
+      const data = response.data;
 
-  const pusher = new Pusher('a294542618ad0c79d7b7', {
-    cluster: 'ap1'
-  });
+      if (data.status === 'success') {
+        //
+      }
+      else {
+        const toast = await store.showToast({
+          message: data.message,
+          duration: 2000,
+          position: 'middle',
+        })
 
-  const channel = pusher.subscribe('user-channel-' + store.user?.id);
-  channel.bind('trip-accepted-event', async function (event: any) {
-    const data = event.data;
+        toast.onDidDismiss().then(async () => {
+          const modal = await modalController.create({
+            component: TopUpModal,
+          });
+          modal.present();
 
-    store.myTrip = data;
-
-    store.acceptedDriver = data.driver;
-    console.log(data);
-    searchDriverLoading.value?.dismiss();
-  });
-  channel.bind('payment-success-event', async function (event: any) {
-    const data = event.data;
-    console.log("Payment success")
-    await Browser.close();
-
-  });
+          // store.showModal({
+          //   component: TopUpModal
+          // })
+        })
+      }
+    }).catch((error: any) => {
+      console.log(error.response.data);
+    });
 }
 
 const searchDriverLoading = ref(null as HTMLIonLoadingElement | null);

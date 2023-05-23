@@ -7,7 +7,7 @@ import { Geolocation } from '@capacitor/geolocation';
 import { UserType, Gender, Coordinate, Place, Vehicle, ControlMode, } from '@/interfaces/types';
 import { Preferences } from '@capacitor/preferences';
 import Pusher, { Channel } from 'pusher-js';
-import { toastController, ToastOptions, loadingController, LoadingOptions } from '@ionic/vue';
+import { toastController, ToastOptions, loadingController, LoadingOptions, modalController, ModalOptions } from '@ionic/vue';
 import { format, parseISO } from 'date-fns';
 
 const axiosInstance = axios.create({
@@ -30,14 +30,14 @@ export const useMainStore = defineStore({
     token: "" as string,
     profile: {} as any,
     user: {} as User | null,
-    selectedVehicle: null as Vehicle | null,
+    selectedVehicle: null as any | null,
     vehicles: [] as Vehicle[],
     creditWallet: 0 as number,
     driverMode: false as boolean,
     coordinate: { lat: 0, lng: 0 } as Coordinate,
     fakeGeolocation: false as boolean,
-    pickUpPlace: { place_id: '', name: '', address: '', coordinate: { lat: 0, lng: 0 } as Coordinate } as Place,
-    dropOffPlace: { place_id: '', name: '', address: '', coordinate: { lat: 0, lng: 0 } as Coordinate } as Place,
+    pickUpPlace: {} as Place | null,
+    dropOffPlace: {} as Place | null,
     distance: 0 as number,
     duration: '0 min' as string,
     fare: 0 as number,
@@ -71,6 +71,7 @@ export const useMainStore = defineStore({
     ionToast: {} as HTMLIonToastElement,
     ionLoading: {} as HTMLIonLoadingElement,
     syncedData: {} as any,
+    suggestedTopUpAmount: 0 as number,
   }),
   getters: {
     async currentPosition() {
@@ -114,52 +115,61 @@ export const useMainStore = defineStore({
     {
       this.ionToast = await toastController.create(toastOptions);
     
-      await this.ionToast.present();
+      await this.ionToast.present()
 
-      return this.ionToast;
+      return this.ionToast
     },
 
     async showLoading( loadingOptions: LoadingOptions )
     {
-      this.ionLoading = await loadingController.create(loadingOptions);
+      this.ionLoading = await loadingController.create(loadingOptions)
     
-      await this.ionLoading.present();
+      await this.ionLoading.present()
     
-      return this.ionLoading;
+      return this.ionLoading
     },
 
-    logout() {
+    async showModal( modalOptions: ModalOptions )
+    {
+      const modal = await modalController.create(modalOptions)
+    
+      await modal.present()
+    
+      return modal
+    },
+
+    async logout() {
+      let message = "";
+
       this.axios.post("/auth/logout")
         .then(
           async (response) => {
-            this.profile = null;
-            this.token = "";
-            this.localStorage.remove({ key: 'data' })
-            
-            const toast = await this.showToast({
-              message: response.data.message,
-              duration: 1000,
-              position: "middle",
-            });
-    
-            toast.onDidDismiss().then(() => {
-              this.showLoading({});
-    
-              router.go(0);
-            });
+            message = response.data.message;
           }
         )
         .catch(
           async (error) => {
-            console.log(error);
+            console.log(error)
 
-            this.profile = null;
-            this.token = "";
-            this.localStorage.remove({ key: 'data' })
-
-            router.go(0);
+            message = error.data.message;
           }
         );
+
+        const toast = await this.showToast({
+          message: message,
+          duration: 1000,
+          position: "middle",
+        })
+
+        toast.onDidDismiss().then(() => {
+          this.profile = null
+          this.token = ""
+          this.localStorage.remove({ key: 'data' })
+
+          this.showLoading({})
+
+          router.go(0)
+        })
     },
 
     setHeaders()
@@ -535,6 +545,10 @@ export const useMainStore = defineStore({
     validateNotEmpty(text: string): boolean {
       return text.length > 0;
     },
+
+    isObjectEmpty(object: any): boolean {
+      return Object.keys(object).length === 0;
+    }
   },
   persist: {
     enabled: true,

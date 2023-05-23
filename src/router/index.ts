@@ -4,6 +4,20 @@ import { useMainStore } from '@/store'
 
 const routes: Array<RouteRecordRaw> = [
   {
+    path: '/test',
+    component: () => import('@/views/test/TestMain.vue'),
+    children: [
+      {
+        path: 'PusherPrivateTest',
+        component: () => import('@/views/test/PusherPrivateTestPage.vue'),
+      },
+      {
+        path: 'TopUpModalTest',
+        component: () => import('@/views/test/TopUpModalTestPage.vue'),
+      },
+    ]
+  },
+  {
     path: '/:catchAll(.*)',
     redirect: '/login',
   },
@@ -44,6 +58,32 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    path: '/passenger',
+    component: () => import('@/views/PassengerMain.vue'),
+    children: [
+      {
+        path: '',
+        redirect: '/passenger/trip'
+      },
+      {
+        path: 'profile',
+        component: () => import('@/views/passenger/profile/PassengerProfileNav.vue'),
+      },
+      {
+        path: 'trip',
+        component: () => import('@/views/passenger/trip/PassengerTripNav.vue'),
+      },
+      {
+        path: 'chat',
+        component: () => import('@/views/passenger/ChatPage.vue'),
+      },
+      {
+        path: 'settings',
+        component: () => import('@/views/passenger/SettingsPage.vue'),
+      }
+    ]
+  },
+  {
     path: '/driver',
     component: () => import('@/views/DriverMain.vue'),
     children: [
@@ -57,32 +97,6 @@ const routes: Array<RouteRecordRaw> = [
       }
     ],
   },
-  {
-    path: '/passenger',
-    component: import('@/views/PassengerMain.vue'),
-    children: [
-      {
-        path: '',
-        redirect: '/passenger/trip'
-      },
-      {
-        path: 'profile',
-        component: () => import('@/views/passenger/profile/PassengerProfilePage.vue'),
-      },
-      {
-        path: 'trip',
-        component: () => import('@/views/passenger/trip/PassengerTripPage.vue'),
-      },
-      {
-        path: 'chat',
-        component: () => import('@/views/passenger/ChatPage.vue'),
-      },
-      {
-        path: 'settings',
-        component: () => import('@/views/passenger/SettingsPage.vue'),
-      }
-    ]
-  },
 ]
 
 const router = createRouter({
@@ -92,7 +106,7 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const store = useMainStore();
-
+  
   if (['driver', 'passenger'].includes(to.path.split('/')[1]))
   {
     if (!store.token || !store.profile?.profile_completed)

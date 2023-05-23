@@ -139,20 +139,18 @@ watchEffect(
 function validate(): boolean {
   switch (store.userType) {
     case 'passenger':
-
       return (
         store.validateNotEmpty(name.value) &&
         store.validateNotEmpty(vehiclePlateNumber.value) &&
         vehiclePhotoFileList.value.length > 0
       )
     case 'driver':
-      (
+      return (
         store.validateNotEmpty(name.value) &&
         store.validateNotEmpty(licenseNumber.value) &&
         licensePhotoFileList.value.length > 0 &&
         driverPhotoFileList.value.length > 0
       )
-      return true
   }
 
   return false

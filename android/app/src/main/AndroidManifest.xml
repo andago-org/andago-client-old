@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyA-T6S3baY4-AZuTSc9Fryb9fCH8Ihi0Uc"/>
+
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
