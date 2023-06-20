@@ -15,6 +15,18 @@ const routes: Array<RouteRecordRaw> = [
         path: 'TopUpModalTest',
         component: () => import('@/views/test/TopUpModalTestPage.vue'),
       },
+      {
+        path: 'ModalStackTestPage',
+        component: () => import('@/views/test/ModalStackTestPage.vue'),
+      },
+      {
+        path: 'CometChatTestPage',
+        component: () => import('@/views/test/CometChatTestPage.vue'),
+      },
+      {
+        path: 'SearchDriverPage',
+        component: () => import('@/views/passenger/trip/SearchDriverPage.vue'),
+      },
     ]
   },
   {
@@ -72,6 +84,76 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'trip',
         component: () => import('@/views/passenger/trip/PassengerTripNav.vue'),
+        children: [
+          {
+            path: '',
+            redirect: '/passenger/trip/AddressPage'
+          },
+          {
+            path: 'AddressPage',
+            component: () => import('@/views/passenger/trip/AddressPage.vue'),
+            beforeEnter: async (to, from, next) => {
+              const store = useMainStore();
+              
+              if (![undefined].includes(store.currentTrip?.status))
+              {
+                next('/passenger/trip/PreviewPage')
+              }
+              else
+              {
+                next()
+              }
+            },
+          },
+          {
+            path: 'PreviewPage',
+            component: () => import('@/views/passenger/trip/PreviewPage.vue'),
+            beforeEnter: async (to, from, next) => {
+              const store = useMainStore();
+
+              if (!['pending'].includes(store.currentTrip?.status))
+              {
+                next('/passenger/trip/SearchDriverPage')
+              }
+              else
+              {
+                next()
+              }
+            },
+          },
+          {
+            path: 'SearchDriverPage',
+            component: () => import('@/views/passenger/trip/SearchDriverPage.vue'),
+            beforeEnter: async (to, from, next) => {
+              const store = useMainStore();
+
+              if (!['confirmed'].includes(store.currentTrip?.status))
+              {
+                next('/passenger/trip/PassengerProgressPage')
+              }
+              else
+              {
+                next()
+              }
+            },
+          },
+          {
+            path: 'PassengerProgressPage',
+            component: () => import('@/views/passenger/trip/PassengerProgressPage.vue'),
+            beforeEnter: async (to, from, next) => {
+              const store = useMainStore();
+
+              if (!['accepted'].includes(store.currentTrip?.status))
+              {
+                next('/passenger/trip')
+              }
+              else
+              {
+                next()
+              }
+            },
+          },
+        ],
       },
       {
         path: 'chat',
@@ -93,7 +175,45 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'trip',
-        component: () => import('@/views/driver/trip/DriverTripPage.vue'),
+        component: () => import('@/views/driver/trip/DriverTripNav.vue'),
+        children: [
+          {
+            path: '',
+            redirect: '/driver/trip/IdlePage'
+          },
+          {
+            path: 'IdlePage',
+            component: () => import('@/views/driver/trip/IdlePage.vue'),
+            beforeEnter: async (to, from, next) => {
+              const store = useMainStore();
+
+              if (![undefined].includes(store.currentTrip?.status))
+              {
+                next('/driver/trip/DriverProgressPage')
+              }
+              else
+              {
+                next()
+              }
+            },
+          },
+          {
+            path: 'DriverProgressPage',
+            component: () => import('@/views/driver/trip/DriverProgressPage.vue'),
+            beforeEnter: async (to, from, next) => {
+              const store = useMainStore();
+
+              if (!['accepted'].includes(store.currentTrip?.status))
+              {
+                next('/driver/trip')
+              }
+              else
+              {
+                next()
+              }
+            },
+          },
+        ]
       }
     ],
   },
@@ -106,8 +226,10 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const store = useMainStore();
-  
-  if (['driver', 'passenger'].includes(to.path.split('/')[1]))
+
+  const splittedPath = to.path.split('/');
+
+  if (['driver', 'passenger'].includes(splittedPath[1]))
   {
     if (!store.token || !store.profile?.profile_completed)
     {

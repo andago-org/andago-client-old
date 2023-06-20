@@ -4,11 +4,17 @@ import router from '@/router';
 import { User } from '@/interfaces/models';
 import { AppLauncher } from '@capacitor/app-launcher';
 import { Geolocation } from '@capacitor/geolocation';
+import { Browser } from '@capacitor/browser';
 import { UserType, Gender, Coordinate, Place, Vehicle, ControlMode, } from '@/interfaces/types';
 import { Preferences } from '@capacitor/preferences';
 import Pusher, { Channel } from 'pusher-js';
+import Echo from 'laravel-echo';
 import { toastController, ToastOptions, loadingController, LoadingOptions, modalController, ModalOptions } from '@ionic/vue';
+import { NavComponent } from '@ionic/core';
 import { format, parseISO } from 'date-fns';
+import AddressPage from '@/views/passenger/trip/AddressPage.vue';
+import PreviewPage from '@/views/passenger/trip/PreviewPage.vue';
+import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
@@ -16,6 +22,14 @@ const axiosInstance = axios.create({
     'Accept': 'application/json',
     'Content-Type': 'application/json',
   },
+});
+
+const echoInstance = new Echo({
+  broadcaster: 'pusher',
+  key: process.env.VUE_APP_PUSHER_APP_KEY,
+  cluster: process.env.VUE_APP_PUSHER_APP_CLUSTER,
+  encrypted: true,
+  authEndpoint: 'http://localhost/api/broadcasting/auth',
 });
 
 export const useMainStore = defineStore({
@@ -29,7 +43,7 @@ export const useMainStore = defineStore({
     carPlateNumber: "" as string,
     token: "" as string,
     profile: {} as any,
-    user: {} as User | null,
+    currentTrip: null as any || null,
     selectedVehicle: null as any | null,
     vehicles: [] as Vehicle[],
     creditWallet: 0 as number,
@@ -42,29 +56,6 @@ export const useMainStore = defineStore({
     duration: '0 min' as string,
     fare: 0 as number,
     myTrip: {} as any,
-    paymentDetails: {
-      min_fare: {
-        text: "",
-        value: 0,
-      },
-      distance_addon: {
-        text: "",
-        value: 0,
-      },
-      duration_addon: {
-        text: "",
-        value: 0,
-      },
-      total_fare: {
-        text: "",
-        value: 0,
-      },
-    } as any,
-    receivedTripJob: {} as any,
-    jobDetails: {
-      distanceToPickUp: "",
-      durationToPickUp: "",
-    } as any,
     acceptedDriver: {} as any,
     acceptedTrip: {} as any,
     channel: null as Channel | null,
@@ -87,6 +78,17 @@ export const useMainStore = defineStore({
 
       return axiosInstance;
     },
+    echo() : Echo {
+      echoInstance.options.auth = {
+        headers: {
+          'Authorization': 'Bearer ' + this.token,
+        },
+      }
+
+      echoInstance.connect()
+
+      return echoInstance;
+    },
     ionNav() : HTMLIonNavElement {
       return document.querySelector('ion-nav') as HTMLIonNavElement;
     },
@@ -96,19 +98,73 @@ export const useMainStore = defineStore({
     acceptImageFileFormats() {
       return "image/jpeg, image/png, image/jpg";
     },
+    browser() {
+      return Browser;
+    },
+    loggedIn() : boolean {
+      return this.token !== "";
+    },
+    searchingForDriver() : boolean {
+      return this.currentTrip.status === 'confirmed';
+    },
+    chatRoomName() : string {
+      if (this.profile.userType == "passenger") {
+        return this.currentTrip?.driver?.user.name
+      }
+      else {
+        return this.currentTrip?.passenger?.user.name
+      }
+    },
   },
   actions: {
-    
+    initCometChat() {
+      const appID = "23694678a67dabe9" as string;
+      const region = "eu" as string;
+      const appSetting: CometChat.AppSettings = new CometChat.AppSettingsBuilder()
+        .subscribePresenceForAllUsers()
+        .setRegion(region)
+        .autoEstablishSocketConnection(true)
+        .build();
+      CometChat.init(appID, appSetting).then(
+        (initialized: boolean) => {
+          console.log("Initialization completed successfully", initialized);
+        }, (error: CometChat.CometChatException) => {
+          console.log("Initialization failed with error:", error);
+        }
+      );
+    },
 
-    async syncData()
-    {
-      this.axios.post('/syncData')
-      .then((response) => {
-        this.syncedData = response.data;
-      })
+    async getData() {
+      this.axios.post('/auth/getData')
+        .then(
+          async (response) => {
+            const data = response.data;
+            
+            this.profile = data.profile;
+            this.currentTrip = data.currentTrip;
+          }
+        )
+        .catch(
+          async (error) => {
+            console.log(error)
+          }
+        )
+      ;
+    },
+
+    async updatePosition(position: Coordinate) {
+      const data = {
+        position: position,
+      }
+
+      this.axios.post('/drivers/updatePosition', data)
+        .then((response) => {
+          console.log(response.data)
+        }
+      )
       .catch((error) => {
-        console.error(error);
-      });
+        console.log(error)
+      })
     },
 
     async showToast( toastOptions: ToastOptions )
@@ -190,15 +246,6 @@ export const useMainStore = defineStore({
       return position as any;
     },
 
-    async getPickUpPosition(): Promise<any> {
-      const position = {
-        lat: this.receivedTripJob.pickup_place.latitude,
-        lng: this.receivedTripJob.pickup_place.longitude,
-      };
-
-      return position;
-    },
-
     async getDistanceMatrix(start: any, end: any): Promise<any> {
       try {
         this.setHeaders();
@@ -251,31 +298,6 @@ export const useMainStore = defineStore({
       }
     },
 
-    async getUser(): Promise<any> {
-      try {
-        this.setHeaders();
-        axiosInstance.post("/auth/getUser").then((response) => { 
-          // Check for success
-          if (response.status === 200) {
-            this.user = response.data;
-            
-
-            router.push({ path: '/' });
-          }
-
-          return response.data;
-        });
-      } catch (error) {
-        console.error('Error performing the request:', error);
-        // Handle the error (e.g., show an error message or retry the request)
-      }
-    },
-
-    removeUser() {
-      this.user = null;
-      this.clearUserToken();
-    },
-
     async loadFromStorage() {
       const { value } = await Preferences.get({ key: 'data' })
       const { value: driverMode } = await Preferences.get({ key: 'driverMode' })
@@ -290,7 +312,7 @@ export const useMainStore = defineStore({
 
         if (this.token != "")
         {
-          this.user = await this.getUser();
+          // this.user = await this.getUser();
         }
       }
     },
@@ -313,32 +335,6 @@ export const useMainStore = defineStore({
     clearUserToken() {
       this.token = ""
       this.saveToStorage()
-    },
-
-    async createTripPayment(): Promise<any> {
-      try {
-        this.setHeaders();
-
-        console.log(this.pickUpPlace);
-
-        const data = {
-          pickUp: this.pickUpPlace,
-          dropOff: this.dropOffPlace,
-        }
-
-        const response = await axiosInstance.post("/trips/createTripPayment", data);
-
-        console.log(response.data);
-
-        // Check for success
-        if (response.status === 200) {
-
-          this.paymentDetails = response.data.paymentDetails;
-        }
-      } catch (error) {
-        console.error('Error performing the request:', error);
-        // Handle the error (e.g., show an error message or retry the request)
-      }
     },
 
     async confirmTrip(): Promise<any> {

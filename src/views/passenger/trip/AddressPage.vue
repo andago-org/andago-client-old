@@ -40,14 +40,14 @@
         <ion-row>
           <ion-col>
             <AddressSearchModal :icon="location" v-model:value="store.pickUpPlace" title="Pick-Up Location"
-              placeholder="Search for address">
+              placeholder="Pick-Up">
             </AddressSearchModal>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col>
             <AddressSearchModal :icon="navigate" v-model:value="store.dropOffPlace" title="Drop-Off Location"
-              placeholder="Search for address">
+              placeholder="Drop-Off">
             </AddressSearchModal>
           </ion-col>
         </ion-row>
@@ -76,11 +76,9 @@ import {
 import { location, navigate } from 'ionicons/icons';
 import { useMainStore } from '@/store';
 import AddressSearchModal from '@/components/AddressSearchModal.vue';
-import PreviewPage from './PreviewPage.vue';
-import VehiclePage from '../profile/VehiclePage.vue';
-import { Place } from '@/interfaces/types';
 import { car } from 'ionicons/icons';
 import { Splide, SplideSlide } from '@splidejs/vue-splide';
+import router from '@/router';
 
 const store = useMainStore();
 
@@ -111,9 +109,9 @@ async function createTrip() {
       if (response.status === 200) {
         const data = response.data;
 
-        store.paymentDetails = data.paymentDetails;
+        store.currentTrip = data.trip;
 
-        store.ionNav.push(PreviewPage);
+        // router.go(0)
       }
     })
     .catch((error) => {

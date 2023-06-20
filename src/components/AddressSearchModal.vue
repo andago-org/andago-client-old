@@ -1,6 +1,6 @@
 <template>
-  <ion-searchbar :search-icon="icon" placeholder="Pick-Up" @ionFocus="searchModalOpen = true" :value="$props.value?.name"
-    show-clear-button="never">
+  <ion-searchbar :search-icon="icon" :placeholder="placeholder" @ionFocus="searchModalOpen = true"
+    :value="$props.value?.name" show-clear-button="never">
   </ion-searchbar>
 
   <ion-modal :is-open="searchModalOpen" @dismiss="closeModal">
@@ -13,7 +13,7 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-searchbar @ionChange="getPlaces" :placeholder="placeholder" v-model="searchText"></ion-searchbar>
+    <ion-searchbar @ionChange="getPlaces" placeholder="Search for places" v-model="searchText"></ion-searchbar>
 
     <ion-content scroll-y>
       <ion-grid v-if="searching">
@@ -59,7 +59,7 @@ defineProps({
   },
   value: {
     type: Object,
-    default: {} as Place,
+    default: {} as any,
   },
 });
 

@@ -12,23 +12,11 @@ import { useMainStore } from '@/store';
 
 const store = useMainStore();
 
-const echo = new Echo({
-  broadcaster: 'pusher',
-  key: process.env.VUE_APP_PUSHER_APP_KEY,
-  cluster: process.env.VUE_APP_PUSHER_APP_CLUSTER,
-  encrypted: true,
-  authEndpoint: 'http://localhost/api/auth/broadcasting/auth', // Optional: If using private channels
-  auth: {
-    headers: {
-      Authorization: 'Bearer ' + store.token, // Optional: If using private channels
-    },
-  },
-});
-
-echo.private('test-channel')
-  .listen('.test-event', (e: any) => {
-    console.log(e);
-  });
+store.echo.private(`PassengerChannel-${store.profile.id}`)
+  .listen('.DriverUpdateEvent', (data: any) => {
+    console.log(data)
+    // googleMaps.drawDriverProgress(data.driverCoordinate, passengerCoordinate, googleMap.value);
+  })
 </script>
 
 <style></style>
