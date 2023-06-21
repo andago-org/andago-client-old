@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { watch, } from 'vue';
 import {
   IonPage, IonRouterOutlet,
 } from '@ionic/vue';

@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
+import { IonPage, IonContent } from '@ionic/vue';
 import { useMainStore } from '@/store';
 import { register } from 'vue-advanced-chat'
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
@@ -89,8 +89,6 @@ function getConversation() {
     }
   );
 }
-
-
 
 onMounted(() => {
   messagesLoaded.value = true;

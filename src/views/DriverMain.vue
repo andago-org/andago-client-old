@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { watch, ref, onMounted } from 'vue';
+import { watch, ref, } from 'vue';
 import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
 import { person, car, chatbox, settings } from 'ionicons/icons';
 import { useMainStore } from '@/store';
@@ -74,7 +74,7 @@ watch(
 
 store.echo.join('DriverChannel');
 
-Geolocation.watchPosition({}, (position, err) => {
+Geolocation.watchPosition({}, (position) => {
   const data = {
     position: {
       lat: position?.coords.latitude,
@@ -83,7 +83,7 @@ Geolocation.watchPosition({}, (position, err) => {
   }
 
   store.axios.post('/drivers/updatePosition', data)
-    .then((response) => {
+    .then(() => {
       // console.log(response.data)
     })
     .catch((error) => {

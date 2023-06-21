@@ -26,16 +26,6 @@
           </ion-text>
         </ion-item>
 
-        <!-- <ion-item>
-          <ion-label>Distance to Pick-Up Point:</ion-label>
-          <ion-note slot="end">{{ receivedTrip.distanceToPickUp }}</ion-note>
-        </ion-item>
-
-        <ion-item>
-          <ion-label>Duration to Pick-Up Point:</ion-label>
-          <ion-note slot="end">{{ receivedTrip.durationToPickUp }}</ion-note>
-        </ion-item> -->
-
         <ion-item>
           <ion-label>Trip Distance:</ion-label>
           <ion-note slot="end">{{ receivedTrip.distance }} km</ion-note>
@@ -64,10 +54,10 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, onMounted, watch, nextTick } from 'vue';
+import { defineProps, defineEmits, ref, watch, } from 'vue';
 import {
   IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonNote, IonButton,
-  IonButtons, IonGrid, IonRow, IonCol, IonText, IonIcon
+  IonGrid, IonRow, IonCol, IonText, IonIcon
 } from '@ionic/vue';
 import { useMainStore } from '@/store';
 import { location, navigate } from 'ionicons/icons';

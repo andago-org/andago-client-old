@@ -19,8 +19,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import {
-  IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonInput, IonToggle,
-  IonButton, IonIcon, IonButtons, IonBackButton, IonGrid, IonRow, IonCol, IonNav, IonNavLink
+  IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonButton,
 } from '@ionic/vue';
 import { Coordinate } from '@/interfaces/types';
 import { useMainStore } from '@/store';

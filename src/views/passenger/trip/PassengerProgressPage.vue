@@ -19,7 +19,6 @@ import {
 } from '@ionic/vue';
 import { useMainStore } from '@/store';
 import googleMaps from '@/plugins/google-map';
-import Pusher from 'pusher-js';
 
 const store = useMainStore();
 
@@ -69,7 +68,7 @@ onMounted(() => {
 
     watch(
       () => store.currentTrip.driver.coordinate,
-      (newVal, oldVal) => {
+      (newVal) => {
         driverCoordinate.value = newVal;
 
         refreshMap()

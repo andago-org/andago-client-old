@@ -1,19 +1,15 @@
 import { defineStore } from 'pinia'
 import axios from 'axios';
 import router from '@/router';
-import { User } from '@/interfaces/models';
 import { AppLauncher } from '@capacitor/app-launcher';
 import { Geolocation } from '@capacitor/geolocation';
 import { Browser } from '@capacitor/browser';
-import { UserType, Gender, Coordinate, Place, Vehicle, ControlMode, } from '@/interfaces/types';
+import { UserType, Gender, Coordinate, Vehicle, ControlMode, } from '@/interfaces/types';
 import { Preferences } from '@capacitor/preferences';
 import Pusher, { Channel } from 'pusher-js';
 import Echo from 'laravel-echo';
 import { toastController, ToastOptions, loadingController, LoadingOptions, modalController, ModalOptions } from '@ionic/vue';
-import { NavComponent } from '@ionic/core';
-import { format, parseISO } from 'date-fns';
-import AddressPage from '@/views/passenger/trip/AddressPage.vue';
-import PreviewPage from '@/views/passenger/trip/PreviewPage.vue';
+import { format, } from 'date-fns';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 
 const axiosInstance = axios.create({
@@ -50,8 +46,8 @@ export const useMainStore = defineStore({
     driverMode: false as boolean,
     coordinate: { lat: 0, lng: 0 } as Coordinate,
     fakeGeolocation: false as boolean,
-    pickUpPlace: {} as Place | null,
-    dropOffPlace: {} as Place | null,
+    pickUpPlace: {} as any | null,
+    dropOffPlace: {} as any | null,
     distance: 0 as number,
     duration: '0 min' as string,
     fare: 0 as number,
@@ -233,8 +229,10 @@ export const useMainStore = defineStore({
       axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
     },
 
-    async openMap(coordinates: Coordinate): Promise<void> {
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${coordinates.lat},${coordinates.lng}`;
+    async openMap(): Promise<void> {
+      const currentPosition = await this.currentPosition;
+
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${currentPosition.lat},${currentPosition.lng}`;
       await AppLauncher.openUrl({ url });
     },
 

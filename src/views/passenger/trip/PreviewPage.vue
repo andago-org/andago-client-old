@@ -80,11 +80,10 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, ref, computed, watch, onMounted, onUpdated, nextTick } from 'vue';
+import { ref, onMounted, } from 'vue';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonBackButton,
-  IonButton, IonButtons, IonGrid, IonRow, IonCol, IonText, IonPage, IonFooter, IonNavLink, IonIcon,
-  IonLoading,
+  IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonGrid, IonRow, IonCol,
+  IonText, IonPage, IonFooter, IonNavLink, IonIcon,
 } from '@ionic/vue';
 import googleMaps from '@/plugins/google-map';
 import { useMainStore } from '@/store';
@@ -135,7 +134,7 @@ function cancelTrip() {
     .then(async (response: any) => {
       const data = response.data;
 
-      store.currentTrip = response.data.trip;
+      store.currentTrip = data.trip;
 
     }).catch((error: any) => {
       store.currentTrip = null;

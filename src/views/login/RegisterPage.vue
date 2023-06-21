@@ -43,7 +43,7 @@
 
           <ion-item>
             <ion-label>Car Plate Number</ion-label>
-            <ion-input v-model="vehiclePlateNumber" placeholder="Car Plate Number" slot="end" maxlength="8"
+            <ion-input v-model="vehiclePlateNumber" placeholder="Car Plate Number" slot="end" :maxlength="8"
               @keypress="store.convertToCapitalNumeric"></ion-input>
           </ion-item>
 
@@ -64,7 +64,7 @@
 
           <ion-item>
             <ion-label>License Number</ion-label>
-            <ion-input v-model="licenseNumber" placeholder="Enter here" slot="end" maxlength="8"
+            <ion-input v-model="licenseNumber" placeholder="Enter here" slot="end" :maxlength="8"
               @keypress="store.convertToCapitalNumeric"></ion-input>
           </ion-item>
 
@@ -73,7 +73,7 @@
               <ion-row>
                 <ion-label>Upload License Photo</ion-label>
               </ion-row>
-              <n-upload max="1" v-model:file-list="licensePhotoFileList" list-type="image-card"
+              <n-upload :max="1" v-model:file-list="licensePhotoFileList" list-type="image-card"
                 :accept="store.acceptImageFileFormats" />
             </ion-grid>
           </ion-item>
@@ -83,7 +83,7 @@
               <ion-row>
                 <ion-label>Upload Driver Profile Photo</ion-label>
               </ion-row>
-              <n-upload max="1" v-model:file-list="driverPhotoFileList" list-type="image-card"
+              <n-upload :max="1" v-model:file-list="driverPhotoFileList" list-type="image-card"
                 :accept="store.acceptImageFileFormats" />
             </ion-grid>
           </ion-item>
@@ -97,19 +97,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, watchEffect } from 'vue';
+import { ref, watchEffect } from 'vue';
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonInput, IonSegment, IonSegmentButton,
-  IonItemDivider, IonIcon, IonButton, IonGrid, IonRow, IonCol, IonButtons, IonBackButton
+  IonItemDivider, IonIcon, IonButton, IonGrid, IonRow,
 } from '@ionic/vue';
 import { maleOutline, femaleOutline } from 'ionicons/icons';
 import { useMainStore } from '@/store';
 import type { UploadFileInfo } from 'naive-ui'
-import { NUpload, NUploadDragger, NIcon, NImage, NModal, NDatePicker } from 'naive-ui';
-import { arrowBack } from 'ionicons/icons';
+import { NUpload, NDatePicker } from 'naive-ui';
 import { Gender } from '@/interfaces/types';
-import { format } from 'date-fns';
-import { validateBBox } from '@turf/turf';
 import router from '@/router';
 
 const store = useMainStore()

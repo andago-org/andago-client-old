@@ -5,9 +5,6 @@
 </template>
 
 <script setup lang="ts">
-import Pusher from 'pusher-js';
-import Echo from 'laravel-echo';
-import TopUpModal from '@/components/TopUpModal.vue';
 import { useMainStore } from '@/store';
 
 const store = useMainStore();

@@ -6,9 +6,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
-import {
-  IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
-} from '@ionic/vue';
+import { } from '@ionic/vue';
 import googleMaps from '@/plugins/google-map';
 import { useMainStore } from '@/store';
 
@@ -59,7 +57,7 @@ onMounted(() => {
 
     watch(
       () => store.currentTrip.driver.coordinate,
-      (newVal, oldVal) => {
+      (newVal) => {
         driverCoordinate.value = newVal;
 
         refreshMap()

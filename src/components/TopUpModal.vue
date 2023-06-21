@@ -37,7 +37,7 @@ import { useMainStore } from '@/store';
 
 const store = useMainStore();
 
-const props = defineProps({
+defineProps({
   isOpen: Boolean,
 });
 

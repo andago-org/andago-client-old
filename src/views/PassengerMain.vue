@@ -28,10 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, } from 'vue';
+// import { ref, watch, } from 'vue';
 import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
 import { person, car, chatbox, settings } from 'ionicons/icons';
-import { useMainStore } from '@/store';
-
-const store = useMainStore()
 </script>

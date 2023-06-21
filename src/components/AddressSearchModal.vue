@@ -38,12 +38,11 @@
 
 <script setup lang="ts">
 import {
-  IonItem, IonList, IonSearchbar, IonModal, IonHeader, IonToolbar, IonButton, IonButtons, IonContent, IonGrid, IonRow, IonCol, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCheckbox, IonIcon,
-  IonTitle, IonLabel, IonSpinner
+  IonItem, IonList, IonSearchbar, IonModal, IonHeader, IonToolbar, IonButton, IonButtons, IonContent, IonGrid,
+  IonRow, IonCol, IonTitle, IonLabel, IonSpinner
 } from '@ionic/vue';
 import { ref, defineProps, defineEmits } from 'vue';
 import { useMainStore } from '@/store';
-import { Place } from '@/interfaces/types';
 
 const store = useMainStore();
 
@@ -59,7 +58,7 @@ defineProps({
   },
   value: {
     type: Object,
-    default: {} as any,
+    default: {} as any | null,
   },
 });
 

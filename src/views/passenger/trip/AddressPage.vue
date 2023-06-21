@@ -69,8 +69,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
 import {
-  IonPage, IonContent, IonSearchbar, IonButton,
-  IonGrid, IonRow, IonCol, IonLoading, IonNavLink, IonFooter, IonCard, IonCardHeader,
+  IonPage, IonContent, IonButton, IonGrid, IonRow, IonCol, IonLoading, IonFooter, IonCard, IonCardHeader,
   IonCardTitle, IonCardContent, IonIcon, IonCheckbox
 } from '@ionic/vue';
 import { location, navigate } from 'ionicons/icons';
@@ -78,7 +77,6 @@ import { useMainStore } from '@/store';
 import AddressSearchModal from '@/components/AddressSearchModal.vue';
 import { car } from 'ionicons/icons';
 import { Splide, SplideSlide } from '@splidejs/vue-splide';
-import router from '@/router';
 
 const store = useMainStore();
 

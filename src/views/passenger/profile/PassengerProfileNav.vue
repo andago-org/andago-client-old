@@ -35,21 +35,14 @@
   </ion-page>
 </template>
 <script setup lang="ts">
-import { ref, computed } from 'vue';
 import {
-  IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonInput, IonDatetime,
-  IonList, IonItem, IonLabel, IonText, IonSelect, IonSelectOption, IonModal
+  IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonList, IonItem, IonLabel, IonText, IonSelect,
+  IonSelectOption,
 } from '@ionic/vue';
 import { NDatePicker } from 'naive-ui';
-import { User } from '@/interfaces/models';
-import { format, parseISO } from 'date-fns';
 import { useMainStore } from '@/store';
-import router from '@/router';
 
 const store = useMainStore();
-
-const user = computed<User | null>(() => store.user);
-
 </script>
 
 <style>

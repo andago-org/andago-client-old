@@ -17,7 +17,7 @@
 
         <ion-item fill="outline">
           <ion-label position="floating">Phone Number</ion-label>
-          <ion-input v-model="store.phoneNumber" maxlength="12" @keypress="store.digitOnlyInput" />
+          <ion-input v-model="store.phoneNumber" :maxlength="12" @keypress="store.digitOnlyInput" />
         </ion-item>
 
         <ion-item>
@@ -41,7 +41,6 @@
 
 <script setup lang="ts">
 import { ref, watch, } from 'vue';
-import router from '@/router';
 import { useMainStore } from '@/store';
 import {
   IonInput, IonButton, IonPage, IonHeader, IonToolbar, IonList, IonText,

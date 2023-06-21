@@ -19,10 +19,6 @@
         </ion-card-content>
       </ion-card>
 
-      <!-- <ion-button @click="logout" expand="block">
-        Logout
-      </ion-button> -->
-
       <div id="navigationMap" style="height: 400px"></div>
     </ion-content>
   </ion-page>
@@ -31,25 +27,13 @@
 <script setup lang="ts">
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader,
-  IonCardTitle, IonCardContent, IonButton, IonList, IonItem, IonLabel, IonNote,
-  IonIcon, IonToggle, IonText, IonGrid, IonRow, IonCol
+  IonCardTitle, IonCardContent, IonToggle, IonText,
 } from '@ionic/vue';
-import ReceivedTripModal from '@/components/ReceivedTripModal.vue';
-import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { onMounted, } from 'vue';
 import { useMainStore } from '@/store';
-import { TripDetails, Place } from '@/interfaces/types';
-import { Geolocation } from '@capacitor/geolocation';
-import Pusher from 'pusher-js';
 import googleMaps from '@/plugins/google-map';
 
 const store = useMainStore();
-
-const receivedTrip = ref({} as any);
-
-const driverAvailable = ref(false);
-const driverJobModelOpen = ref(false);
-
-const mapRef = ref<any>(null);
 
 onMounted(() => {
   // Load the Google Maps API
@@ -71,20 +55,6 @@ onMounted(() => {
   });
 });
 
-
-const pusher = new Pusher('a294542618ad0c79d7b7', {
-  cluster: 'ap1'
-});
-
-const sendLocationInterval = ref(null as any);
-
-// watch(
-//   () => store.receivedTrips,
-//   (newValue: any) => {
-
-//     //
-//   }
-// );
 </script>
 
 <style scoped>

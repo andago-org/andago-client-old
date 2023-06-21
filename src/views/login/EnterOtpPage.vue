@@ -23,7 +23,7 @@
 
         <ion-item fill="outline">
           <ion-label position="floating">OTP Code</ion-label>
-          <ion-input v-model="otpCode" maxlength="6" @keypress="store.digitOnlyInput" />
+          <ion-input v-model="otpCode" :maxlength="6" @keypress="store.digitOnlyInput" />
         </ion-item>
 
         <ion-button expand="block" :disabled="!isValidOtpCode" @click="login">Login</ion-button>
@@ -85,6 +85,7 @@ async function login() {
         duration: 2000,
         position: 'middle',
       })
+      console.log(error)
     });
 }
 </script>
