@@ -12,6 +12,13 @@
 
 
       <ion-list>
+        <ion-item lines="full">
+          <ion-icon :icon="personCircleOutline" slot="start" size="large"></ion-icon>
+          <ion-label>
+            <h1>{{ currentTrip.driver.user.name }}</h1>
+          </ion-label>
+        </ion-item>
+
         <ion-item>
           <ion-label>Pick-Up</ion-label>
           <ion-text>
@@ -72,7 +79,7 @@ import {
 } from '@ionic/vue';
 import { useMainStore } from '@/store';
 import googleMaps from '@/plugins/google-map';
-import { cashOutline, timeOutline, carOutline } from 'ionicons/icons';
+import { cashOutline, personCircleOutline, carOutline } from 'ionicons/icons';
 import AddWaitTimeModal from '@/components/AddWaitTimeModal.vue';
 
 const store = useMainStore();

@@ -83,11 +83,6 @@ function login() {
   );
 }
 
-function initializeChat() {
-  getConversation()
-  listenMessages()
-}
-
 function listenMessages() {
   CometChat.addMessageListener(
     guid.value,
@@ -133,6 +128,12 @@ function getGroupMembers() {
   );
 }
 
+function initializeChat() {
+  getConversation()
+  listenMessages()
+  getGroupMembers()
+}
+
 function send(event: any) {
   const data = event.detail[0]
 
@@ -173,7 +174,6 @@ function getConversation() {
 onMounted(() => {
   initComet()
   login()
-  getGroupMembers()
 
   messagesLoaded.value = true;
 })

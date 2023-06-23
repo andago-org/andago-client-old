@@ -5,11 +5,31 @@
         <ion-title>Head to the passenger</ion-title>
       </ion-toolbar>
 
-      <div id="driverMap" style="height: 300px"></div>
+
     </ion-header>
 
+    <div id="driverMap" style="height: 300px"></div>
+
     <ion-content>
+      <ion-fab slot="fixed" vertical="top" horizontal="end" :edge="true">
+        <ion-fab-button>
+          <ion-icon :icon="call"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+
       <ion-list>
+        <ion-item lines="none">
+          <ion-icon :icon="personCircleOutline" slot="start" size="large"></ion-icon>
+          <ion-label>
+            <h1>{{ currentTrip.passenger.user.name }}</h1>
+          </ion-label>
+        </ion-item>
+
+        <ion-item lines="full">
+          <ion-icon :icon="carOutline" slot="start" size="large"></ion-icon>
+          <ion-label>{{ currentTrip.passenger.selectedVehicle.plate_number }}</ion-label>
+        </ion-item>
+
         <ion-popover trigger="pickup-address" color="primary" mode="ios" side="top" :showBackdrop="false" :detail="false"
           :dismissOnSelect="true">
           <ion-content>
@@ -22,6 +42,7 @@
             </ion-list>
           </ion-content>
         </ion-popover>
+
         <ion-item button id="pickup-address">
           <ion-label>Pick-Up</ion-label>
           <ion-text>
@@ -42,6 +63,7 @@
             </ion-list>
           </ion-content>
         </ion-popover>
+
         <ion-item button id="dropoff-address">
           <ion-label>Drop-Off</ion-label>
           <ion-text>
@@ -65,6 +87,8 @@
           <ion-text slot="end">{{ currentTrip.preview.total_fare.value }}</ion-text>
         </ion-item>
       </ion-list>
+
+
     </ion-content>
 
     <ion-footer class="ion-padding">
@@ -77,6 +101,8 @@
       <ion-button expand="block" @click="completeTrip" v-if="currentTrip.status == 'started'">
         Complete
       </ion-button>
+
+
     </ion-footer>
   </ion-page>
 </template>
@@ -85,9 +111,9 @@
 import { ref, onMounted, watch } from 'vue';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonText, IonPage, IonIcon, IonLabel, IonPopover,
-  IonFooter, IonButton,
+  IonFooter, IonButton, IonFab, IonFabButton,
 } from '@ionic/vue';
-import { timeOutline, carOutline, cashOutline } from 'ionicons/icons';
+import { call, carOutline, cashOutline, personCircleOutline } from 'ionicons/icons';
 import googleMaps from '@/plugins/google-map';
 import { useMainStore } from '@/store';
 
