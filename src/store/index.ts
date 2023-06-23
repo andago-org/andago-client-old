@@ -113,23 +113,6 @@ export const useMainStore = defineStore({
     },
   },
   actions: {
-    initCometChat() {
-      const appID = "23694678a67dabe9" as string;
-      const region = "eu" as string;
-      const appSetting: CometChat.AppSettings = new CometChat.AppSettingsBuilder()
-        .subscribePresenceForAllUsers()
-        .setRegion(region)
-        .autoEstablishSocketConnection(true)
-        .build();
-      CometChat.init(appID, appSetting).then(
-        (initialized: boolean) => {
-          console.log("Initialization completed successfully", initialized);
-        }, (error: CometChat.CometChatException) => {
-          console.log("Initialization failed with error:", error);
-        }
-      );
-    },
-
     async getData() {
       this.axios.post('/auth/getData')
         .then(
@@ -229,10 +212,9 @@ export const useMainStore = defineStore({
       axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
     },
 
-    async openMap(): Promise<void> {
-      const currentPosition = await this.currentPosition;
-
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${currentPosition.lat},${currentPosition.lng}`;
+    async openMap(position: any): Promise<void> {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${position.lat},${position.lng}`;
+      
       await AppLauncher.openUrl({ url });
     },
 
@@ -242,58 +224,6 @@ export const useMainStore = defineStore({
       const position = { lat: currentPosition.coords.latitude, lng: currentPosition.coords.longitude }
 
       return position as any;
-    },
-
-    async getDistanceMatrix(start: any, end: any): Promise<any> {
-      try {
-        this.setHeaders();
-
-        const data = {
-          start: start,
-          end: end,
-        }
-    
-        const response = await axiosInstance.post("/maps/getDistanceMatrix", data);
-    
-        // Check for success
-        if (response.status === 200) {
-
-          return response.data;
-        }
-      } catch (error) {
-        console.error('Error performing the request:', error);
-        // Handle the error (e.g., show an error message or retry the request)
-      }
-    },
-
-    async getPlaces(query: string): Promise<any> {
-      try {
-        this.setHeaders();
-
-        let position = { lat: this.coordinate?.lat, lng: this.coordinate?.lng } as Coordinate;
-        
-        if (!this.fakeGeolocation) {
-          const currentPosition = await Geolocation.getCurrentPosition();
-
-          position = { lat: currentPosition.coords.latitude, lng: currentPosition.coords.longitude } as Coordinate;
-        }
-
-        const data = {
-          query: query,
-          lat: position.lat,
-          lng: position.lng,
-        }
-    
-        const response = await axiosInstance.post("/users/maps/getPlaces", data);
-    
-        // Check for success
-        if (response.status === 200) {
-          return response.data.results;
-        }
-      } catch (error) {
-        console.error('Error performing the request:', error);
-        // Handle the error (e.g., show an error message or retry the request)
-      }
     },
 
     async loadFromStorage() {
@@ -333,46 +263,6 @@ export const useMainStore = defineStore({
     clearUserToken() {
       this.token = ""
       this.saveToStorage()
-    },
-
-    async confirmTrip(): Promise<any> {
-      try {
-        this.setHeaders();
-
-        this.acceptedDriver = null;
-
-        const response = await axiosInstance.post("/trips/confirmTrip");
-    
-        // Check for success
-        if (response.status === 200) {
-          console.log("Trip confirm", response.data);
-          return response.data;
-        }
-      } catch (error) {
-        console.error('Error performing the request:', error);
-        // Handle the error (e.g., show an error message or retry the request)
-      }
-    },
-
-    async acceptTrip(trip_id: any): Promise<any> {
-      try {
-        this.setHeaders();
-
-        const data = {
-          trip_id: trip_id,
-        }
-
-        const response = await axiosInstance.post("/trips/acceptTrip", data);
-    
-        // Check for success
-        if (response.status === 200) {
-          console.log(response.data);
-          return response.data;
-        }
-      } catch (error) {
-        console.error('Error performing the request:', error);
-        // Handle the error (e.g., show an error message or retry the request)
-      }
     },
 
     async getVehicles(): Promise<any> {
@@ -542,7 +432,13 @@ export const useMainStore = defineStore({
 
     isObjectEmpty(object: any): boolean {
       return Object.keys(object).length === 0;
-    }
+    },
+
+    formatFromTimestamp(timestamp: number, formatStr: string): string {
+      const date = format(new Date(timestamp * 1000), formatStr) as string
+
+      return date;
+    },
   },
   persist: {
     enabled: true,

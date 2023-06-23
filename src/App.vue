@@ -13,8 +13,6 @@ const store = useMainStore()
 
 // store.loadFromStorage();
 
-store.initCometChat();
-
 setInterval(() => {
   if (store.loggedIn) {
     console.log("Get Profile")

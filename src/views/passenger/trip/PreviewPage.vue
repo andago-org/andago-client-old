@@ -67,9 +67,7 @@
           </ion-col>
 
           <ion-col>
-            <ion-nav-link router-direction="back">
-              <ion-button :strong="true" expand="block" color="secondary" @click="cancelTrip">Cancel</ion-button>
-            </ion-nav-link>
+            <ion-button :strong="true" expand="block" color="secondary" @click="cancelTrip">Cancel</ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -83,7 +81,7 @@
 import { ref, onMounted, } from 'vue';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonButton, IonGrid, IonRow, IonCol,
-  IonText, IonPage, IonFooter, IonNavLink, IonIcon,
+  IonText, IonPage, IonFooter, IonIcon,
 } from '@ionic/vue';
 import googleMaps from '@/plugins/google-map';
 import { useMainStore } from '@/store';
@@ -119,7 +117,12 @@ function confirmTrip() {
     .then(async (response: any) => {
       const data = response.data;
 
-      store.currentTrip = data.trip;
+      if (data.status == 'success') {
+        store.currentTrip = data.trip;
+      }
+      else {
+        topUpModalOpen.value = true;
+      }
 
     }).catch((error: any) => {
       console.log(error.response.data);

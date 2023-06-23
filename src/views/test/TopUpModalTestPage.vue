@@ -1,7 +1,8 @@
 <template>
-  <TopUpModal :is-open="true"></TopUpModal>
+  <!-- <AddWaitTimeModal :is-open="true"></AddWaitTimeModal> -->
+  <div></div>
 </template>
 
 <script setup lang="ts">
-import TopUpModal from '@/components/TopUpModal.vue';
+// import AddWaitTimeModal from '@/components/AddWaitTimeModal.vue';
 </script>

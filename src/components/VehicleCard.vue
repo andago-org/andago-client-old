@@ -1,7 +1,7 @@
 <template>
   <ion-card>
     <ion-card-header>
-      <n-upload ref="upload" :default-upload="false" :headers="headers" :on-finish="handleUploadFinish"
+      <n-upload ref="upload" :default-upload="false" :headers="headers" @onFinish="handleUploadFinish"
         :show-file-list="false" :on-change="submitFiles">
         <n-upload-dragger style="height: 200px">
           <div>

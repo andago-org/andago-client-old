@@ -4,42 +4,44 @@
   </ion-searchbar>
 
   <ion-modal :is-open="searchModalOpen" @dismiss="closeModal">
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>{{ title }}</ion-title>
-        <ion-buttons slot="end">
-          <ion-button :strong="true" @click="closeModal">Close</ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
+    <ion-page>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{ title }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button :strong="true" @click="closeModal">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
 
-    <ion-searchbar @ionChange="getPlaces" placeholder="Search for places" v-model="searchText"></ion-searchbar>
+      <ion-searchbar @ionChange="getPlaces" placeholder="Search for places" v-model="searchText"></ion-searchbar>
 
-    <ion-content scroll-y>
-      <ion-grid v-if="searching">
-        <ion-row>
-          <ion-col class="ion-text-center">
-            <ion-spinner></ion-spinner>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+      <ion-content scroll-y>
+        <ion-grid v-if="searching">
+          <ion-row>
+            <ion-col class="ion-text-center">
+              <ion-spinner></ion-spinner>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
 
-      <ion-list v-else>
-        <ion-item :key="place.name" v-for="place in places" @click="setValue(place)" button>
-          <ion-label>
-            <h2>{{ place.name }}</h2>
-            <p>{{ place.formatted_address }}</p>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-    </ion-content>
+        <ion-list v-else>
+          <ion-item :key="place.name" v-for="place in places" @click="setValue(place)" button>
+            <ion-label>
+              <h2>{{ place.name }}</h2>
+              <p>{{ place.formatted_address }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ion-page>
   </ion-modal>
 </template>
 
 <script setup lang="ts">
 import {
   IonItem, IonList, IonSearchbar, IonModal, IonHeader, IonToolbar, IonButton, IonButtons, IonContent, IonGrid,
-  IonRow, IonCol, IonTitle, IonLabel, IonSpinner
+  IonRow, IonCol, IonTitle, IonLabel, IonSpinner, IonPage,
 } from '@ionic/vue';
 import { ref, defineProps, defineEmits } from 'vue';
 import { useMainStore } from '@/store';

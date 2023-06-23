@@ -26,6 +26,9 @@ import './theme/variables.css';
 // Default theme
 import '@splidejs/vue-splide/css';
 
+// Global styles
+import './styles/global.css';
+
 import { createPinia } from 'pinia'
 import piniaPersist from 'pinia-plugin-persist'
 import { useMainStore } from './store'

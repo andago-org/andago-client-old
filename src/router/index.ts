@@ -143,7 +143,7 @@ const routes: Array<RouteRecordRaw> = [
             beforeEnter: async (to, from, next) => {
               const store = useMainStore();
 
-              if (!['accepted'].includes(store.currentTrip?.status))
+              if (!['accepted', 'arrived', 'started'].includes(store.currentTrip?.status))
               {
                 next('/passenger/trip')
               }
@@ -157,7 +157,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'chat',
-        component: () => import('@/views/passenger/ChatPage.vue'),
+        component: () => import('@/views/ChatPage.vue'),
       },
       {
         path: 'settings',
@@ -173,6 +173,10 @@ const routes: Array<RouteRecordRaw> = [
         path: '',
         redirect: '/driver/trip'
       },
+      // {
+      //   path: 'profile',
+      //   component: () => import('@/views/driver/profile/DriverProfileNav.vue'),
+      // },
       {
         path: 'trip',
         component: () => import('@/views/driver/trip/DriverTripNav.vue'),
@@ -203,7 +207,7 @@ const routes: Array<RouteRecordRaw> = [
             beforeEnter: async (to, from, next) => {
               const store = useMainStore();
 
-              if (!['accepted'].includes(store.currentTrip?.status))
+              if (!['accepted', 'arrived', 'started'].includes(store.currentTrip?.status))
               {
                 next('/driver/trip')
               }
@@ -214,7 +218,11 @@ const routes: Array<RouteRecordRaw> = [
             },
           },
         ]
-      }
+      },
+      {
+        path: 'chat',
+        component: () => import('@/views/ChatPage.vue'),
+      },
     ],
   },
 ]

@@ -1,37 +1,42 @@
 <template>
   <ion-modal :is-open="isOpen" @dismiss="closeModal">
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Top Up</ion-title>
-        <ion-buttons slot="end">
-          <ion-button :strong="true" @click="closeModal">Close</ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
+    <ion-page>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Top Up</ion-title>
+          <ion-buttons slot="end">
+            <ion-button :strong="true" @click="closeModal">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
 
-    <ion-content class="ion-padding">
-      <ion-list>
+      <ion-content class="ion-padding">
+        <ion-list>
 
-        <ion-item lines="none">
-          <ion-text class="ion-text-center">
-            <h3>Enter Top-Up Amount</h3>
-          </ion-text>
-        </ion-item>
+          <ion-item lines="none">
+            <ion-text class="ion-text-center">
+              <h3>Enter Top-Up Amount</h3>
+            </ion-text>
+          </ion-item>
 
-        <ion-item fill="outline">
-          <ion-label position="floating">Top-Up Amount</ion-label>
-          <ion-input v-model="topUpAmount" type="number" />
-        </ion-item>
+          <ion-item fill="outline">
+            <ion-label position="floating">Top-Up Amount</ion-label>
+            <ion-input v-model="topUpAmount" type="number" />
+          </ion-item>
 
-        <ion-button expand="block" @click="topUp">Top Up</ion-button>
+          <ion-button expand="block" @click="topUp">Top Up</ion-button>
 
-      </ion-list>
-    </ion-content>
+        </ion-list>
+      </ion-content>
+    </ion-page>
   </ion-modal>
 </template>
 
 <script setup lang="ts">
-import { IonModal, IonButton, IonText, IonContent, IonList, IonItem, IonLabel, IonInput, IonHeader, IonToolbar, IonTitle, IonButtons } from '@ionic/vue';
+import {
+  IonModal, IonButton, IonText, IonContent, IonList, IonItem, IonLabel, IonInput, IonHeader, IonToolbar, IonTitle,
+  IonButtons, IonPage,
+} from '@ionic/vue';
 import { ref, defineEmits, onMounted } from 'vue';
 import { useMainStore } from '@/store';
 
