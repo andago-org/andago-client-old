@@ -1,2 +1,0 @@
-"use strict";(self["webpackChunkandago_client"]=self["webpackChunkandago_client"]||[]).push([[805],{3805:(s,n,e)=>{e.r(n),e.d(n,{Browser:()=>t,BrowserWeb:()=>l});var o=e(9895);class l extends o.Uw{constructor(){super(),this._lastWindow=null}async open(s){this._lastWindow=window.open(s.url,s.windowName||"_blank")}async close(){return new Promise(((s,n)=>{null!=this._lastWindow?(this._lastWindow.close(),this._lastWindow=null,s()):n("No active window to close!")}))}}const t=new l}}]);
-//# sourceMappingURL=805-legacy.fc3e34ff.js.map

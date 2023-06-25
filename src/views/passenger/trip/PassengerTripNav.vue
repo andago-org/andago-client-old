@@ -14,7 +14,7 @@ import router from '@/router';
 
 const store = useMainStore();
 
-watch(() => store.currentTrip, (newValue, oldValue) => {
+watch(() => store.currentTrip, async (newValue, oldValue) => {
   const splittedRoute = router.currentRoute.value.path.split('/');
 
   if (splittedRoute[2] != 'trip') {
@@ -27,6 +27,18 @@ watch(() => store.currentTrip, (newValue, oldValue) => {
     setTimeout(() => {
       router.go(0)
     }, 100);
+  }
+
+  if (store.currentTrip?.status == 'completed') {
+    const toast = await store.showToast({
+      message: 'Trip completed',
+      duration: 5000,
+      position: 'middle',
+    })
+
+    toast.onDidDismiss().then(() => {
+      store.currentTrip = null
+    })
   }
 });
 

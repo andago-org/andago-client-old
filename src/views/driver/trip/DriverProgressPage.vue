@@ -12,7 +12,7 @@
 
     <ion-content>
       <ion-fab slot="fixed" vertical="top" horizontal="end" :edge="true">
-        <ion-fab-button>
+        <ion-fab-button @click="setCalling" :color="callButtonColor">
           <ion-icon :icon="call"></ion-icon>
         </ion-fab-button>
       </ion-fab>
@@ -108,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonText, IonPage, IonIcon, IonLabel, IonPopover,
   IonFooter, IonButton, IonFab, IonFabButton,
@@ -208,6 +208,27 @@ function startTrip() {
 
 function completeTrip() {
   store.axios.post('/drivers/trips/completeTrip')
+    .then((res) => {
+      store.currentTrip = res.data.currentTrip;
+    }).catch((err) => {
+      console.log(err);
+    })
+}
+
+const calling = ref(store.currentTrip.calling);
+
+const callButtonColor = computed(() => {
+  return calling.value ? 'primary' : 'secondary';
+})
+
+async function setCalling() {
+  calling.value = !calling.value;
+
+  const data = {
+    'calling': calling.value
+  }
+
+  store.axios.post('/drivers/trips/setCalling', data)
     .then((res) => {
       store.currentTrip = res.data.currentTrip;
     }).catch((err) => {

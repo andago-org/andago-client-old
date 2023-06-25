@@ -2,12 +2,14 @@
   <ion-app>
     <ion-router-outlet />
   </ion-app>
+
+  <audio id="localAudio" autoplay muted></audio>
+  <audio id="remoteAudio" autoplay></audio>
 </template>
 
 <script setup lang="ts">
-// import { ref, watch, } from 'vue';
-import { IonApp, IonRouterOutlet } from '@ionic/vue';
-import { useMainStore } from './store';
+import { IonApp, IonRouterOutlet } from '@ionic/vue'
+import { useMainStore } from './store'
 
 const store = useMainStore()
 
@@ -15,7 +17,7 @@ const store = useMainStore()
 
 setInterval(() => {
   if (store.loggedIn) {
-    console.log("Get Profile")
+    // console.log("Get Profile")
     store.getData();
   }
 }, 5000);

@@ -1,2 +1,0 @@
-"use strict";(self["webpackChunkandago_client"]=self["webpackChunkandago_client"]||[]).push([[494],{3494:(e,a,n)=>{n.r(a),n.d(a,{default:()=>l});var t=n(6252),s=n(9263);const r=(0,t.aZ)({__name:"PusherPrivateTestPage",setup(e){const a=(0,s.h)();return a.echo.private(`PassengerChannel-${a.profile.id}`).listen(".DriverUpdateEvent",(e=>{console.log(e)})),(e,a)=>((0,t.wg)(),(0,t.iD)("div"))}}),i=r,l=i}}]);
-//# sourceMappingURL=494-legacy.71a654bb.js.map

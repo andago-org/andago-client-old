@@ -111,7 +111,7 @@ function acceptTrip() {
     })
 
     if (data.status === 'success') {
-      store.acceptedTrip = data.trip;
+      store.currentTrip = data.trip;
     }
   }).catch((err) => {
     console.log(err);

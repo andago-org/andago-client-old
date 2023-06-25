@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios';
 import router from '@/router';
+import { Capacitor } from '@capacitor/core';
 import { AppLauncher } from '@capacitor/app-launcher';
 import { Geolocation } from '@capacitor/geolocation';
 import { Browser } from '@capacitor/browser';
@@ -10,7 +11,8 @@ import Pusher, { Channel } from 'pusher-js';
 import Echo from 'laravel-echo';
 import { toastController, ToastOptions, loadingController, LoadingOptions, modalController, ModalOptions } from '@ionic/vue';
 import { format, } from 'date-fns';
-import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
+import OneSignal from 'onesignal-cordova-plugin';
+import apiRTC from '@/plugins/api-rtc'
 
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
@@ -42,9 +44,6 @@ export const useMainStore = defineStore({
     currentTrip: null as any || null,
     selectedVehicle: null as any | null,
     vehicles: [] as Vehicle[],
-    creditWallet: 0 as number,
-    driverMode: false as boolean,
-    coordinate: { lat: 0, lng: 0 } as Coordinate,
     fakeGeolocation: false as boolean,
     pickUpPlace: {} as any | null,
     dropOffPlace: {} as any | null,
@@ -53,7 +52,6 @@ export const useMainStore = defineStore({
     fare: 0 as number,
     myTrip: {} as any,
     acceptedDriver: {} as any,
-    acceptedTrip: {} as any,
     channel: null as Channel | null,
     ionToast: {} as HTMLIonToastElement,
     ionLoading: {} as HTMLIonLoadingElement,
@@ -121,6 +119,23 @@ export const useMainStore = defineStore({
             
             this.profile = data.profile;
             this.currentTrip = data.currentTrip;
+
+            if (['android', 'ios'].includes(Capacitor.getPlatform())) {
+              OneSignal.setExternalUserId(this.profile.id.toString());
+            }
+
+            if (this.currentTrip?.driver_id !== null) {
+              
+
+              if (this.currentTrip?.calling)
+              {
+                apiRTC.connect(this.currentTrip?.id)
+              }
+              else
+              {
+                apiRTC.disconnect()
+              }
+            }
           }
         )
         .catch(
@@ -228,11 +243,9 @@ export const useMainStore = defineStore({
 
     async loadFromStorage() {
       const { value } = await Preferences.get({ key: 'data' })
-      const { value: driverMode } = await Preferences.get({ key: 'driverMode' })
+      // const { value: driverMode } = await Preferences.get({ key: 'driverMode' })
 
       const data = JSON.parse(value || '{}');
-
-      this.driverMode = driverMode === 'true' || false;
 
       if (data) {
         this.token = data.token;
@@ -249,8 +262,6 @@ export const useMainStore = defineStore({
       const data = {
         token: this.token,
       }
-
-      await Preferences.set({ key: 'driverMode', value: this.driverMode.toString() })
 
       await Preferences.set({ key: 'data', value: JSON.stringify(data) })
     },

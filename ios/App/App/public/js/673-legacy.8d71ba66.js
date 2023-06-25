@@ -1,2 +1,0 @@
-"use strict";(self["webpackChunkandago_client"]=self["webpackChunkandago_client"]||[]).push([[673],{673:(e,a,n)=>{n.r(a),n.d(a,{default:()=>r});var t=n(6252),s=n(2262),u=n(6751);const c=(0,t.aZ)({__name:"TestMain",setup(e){return(e,a)=>((0,t.wg)(),(0,t.j4)((0,s.SU)(u.jP)))}}),l=c,r=l}}]);
-//# sourceMappingURL=673-legacy.8d71ba66.js.map

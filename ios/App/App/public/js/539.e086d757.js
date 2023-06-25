@@ -1,2 +1,0 @@
-"use strict";(self["webpackChunkandago_client"]=self["webpackChunkandago_client"]||[]).push([[539],{8539:(e,n,a)=>{a.r(n),a.d(n,{AppLauncherWeb:()=>l});var c=a(9895);class l extends c.Uw{async canOpenUrl(e){return{value:!0}}async openUrl(e){return window.open(e.url,"_blank"),{completed:!0}}}}}]);
-//# sourceMappingURL=539.e086d757.js.map

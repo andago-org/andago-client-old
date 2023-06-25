@@ -143,7 +143,7 @@ const routes: Array<RouteRecordRaw> = [
             beforeEnter: async (to, from, next) => {
               const store = useMainStore();
 
-              if (!['accepted', 'arrived', 'started'].includes(store.currentTrip?.status))
+              if (!['accepted', 'arrived', 'started', 'completed'].includes(store.currentTrip?.status))
               {
                 next('/passenger/trip')
               }
@@ -207,7 +207,7 @@ const routes: Array<RouteRecordRaw> = [
             beforeEnter: async (to, from, next) => {
               const store = useMainStore();
 
-              if (!['accepted', 'arrived', 'started'].includes(store.currentTrip?.status))
+              if (!['accepted', 'arrived', 'started', 'completed'].includes(store.currentTrip?.status))
               {
                 next('/driver/trip')
               }
