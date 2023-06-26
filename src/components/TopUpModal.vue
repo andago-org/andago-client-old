@@ -113,22 +113,6 @@ const topUp = () => {
           });
         }
       })
-
-      // store.echo.private(`PassengerChannel-${store.profile.id}`).listen('.PaymentSuccessEvent', async (e: any) => {
-      //   console.log(e);
-      //   store.browser.close();
-      //   const toast = await store.showToast({
-      //     message: 'Top Up Successful',
-      //     color: 'success',
-      //     duration: 1000,
-      //     position: 'middle',
-      //   });
-
-      //   toast.onDidDismiss().then(() => {
-      //     closeModal();
-      //   });
-      //   store.echo.private(`PassengerChannel-${store.profile.id}`).stopListening('.PaymentSuccessEvent');
-      // });
     })
     .catch((error) => {
       console.log(error)

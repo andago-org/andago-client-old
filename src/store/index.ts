@@ -117,8 +117,6 @@ export const useMainStore = defineStore({
             this.currentTrip = data.currentTrip;
             this.currentPayment = data.currentPayment;
 
-            console.log(this.currentPayment)
-
             if (['android', 'ios'].includes(Capacitor.getPlatform())) {
               OneSignal.setExternalUserId(this.profile.id.toString());
             }
