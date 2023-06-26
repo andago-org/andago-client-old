@@ -42,16 +42,12 @@ export const useMainStore = defineStore({
     token: "" as string,
     profile: {} as any,
     currentTrip: null as any || null,
+    currentPayment: null as any || null,
     selectedVehicle: null as any | null,
     vehicles: [] as Vehicle[],
     fakeGeolocation: false as boolean,
     pickUpPlace: {} as any | null,
     dropOffPlace: {} as any | null,
-    distance: 0 as number,
-    duration: '0 min' as string,
-    fare: 0 as number,
-    myTrip: {} as any,
-    acceptedDriver: {} as any,
     channel: null as Channel | null,
     ionToast: {} as HTMLIonToastElement,
     ionLoading: {} as HTMLIonLoadingElement,
@@ -119,6 +115,9 @@ export const useMainStore = defineStore({
             
             this.profile = data.profile;
             this.currentTrip = data.currentTrip;
+            this.currentPayment = data.currentPayment;
+
+            console.log(this.currentPayment)
 
             if (['android', 'ios'].includes(Capacitor.getPlatform())) {
               OneSignal.setExternalUserId(this.profile.id.toString());

@@ -37,7 +37,7 @@ import {
   IonModal, IonButton, IonText, IonContent, IonList, IonItem, IonLabel, IonInput, IonHeader, IonToolbar, IonTitle,
   IonButtons, IonPage,
 } from '@ionic/vue';
-import { ref, defineEmits, onMounted } from 'vue';
+import { ref, defineEmits, onMounted, watch } from 'vue';
 import { useMainStore } from '@/store';
 
 const store = useMainStore();
@@ -72,32 +72,63 @@ onMounted(() => {
   getSuggestedTopUpAmount();
 })
 
+watch(() => store.currentPayment, async (newValue, oldValue) => {
+  if (oldValue != null && newValue == null) {
+    store.browser.close();
+    const toast = await store.showToast({
+      message: 'Top Up Successful',
+      duration: 2000,
+      position: 'middle',
+    });
+
+    toast.onDidDismiss().then(() => {
+      closeModal();
+      store.currentPayment = null;
+    })
+  }
+})
+
 const topUp = () => {
   store.axios.post('/passengers/payments/topUp', {
     topUpAmount: topUpAmount.value,
   })
-    .then((response) => {
+    .then(async (response) => {
       const data = response.data;
       console.log(data);
-      store.browser.open({
-        url: data.item.url,
-      });
 
-      store.echo.private(`PassengerChannel-${store.profile.id}`).listen('.PaymentSuccessEvent', async (e: any) => {
-        console.log(e);
-        store.browser.close();
-        const toast = await store.showToast({
-          message: 'Top Up Successful',
-          color: 'success',
-          duration: 1000,
-          position: 'middle',
-        });
+      const toast = await store.showToast({
+        message: data.message,
+        duration: 2000,
+        position: 'middle',
+      })
 
-        toast.onDidDismiss().then(() => {
-          closeModal();
-        });
-        store.echo.private(`PassengerChannel-${store.profile.id}`).stopListening('.PaymentSuccessEvent');
-      });
+      toast.onDidDismiss().then(() => {
+        if (data.status === 'success') {
+          store.browser.open({
+            url: data.checkoutUrl,
+          });
+
+          store.browser.addListener('browserFinished', () => {
+            store.getData();
+          });
+        }
+      })
+
+      // store.echo.private(`PassengerChannel-${store.profile.id}`).listen('.PaymentSuccessEvent', async (e: any) => {
+      //   console.log(e);
+      //   store.browser.close();
+      //   const toast = await store.showToast({
+      //     message: 'Top Up Successful',
+      //     color: 'success',
+      //     duration: 1000,
+      //     position: 'middle',
+      //   });
+
+      //   toast.onDidDismiss().then(() => {
+      //     closeModal();
+      //   });
+      //   store.echo.private(`PassengerChannel-${store.profile.id}`).stopListening('.PaymentSuccessEvent');
+      // });
     })
     .catch((error) => {
       console.log(error)
