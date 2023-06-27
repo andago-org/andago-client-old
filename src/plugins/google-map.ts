@@ -4,7 +4,7 @@ let googleMaps: typeof google.maps;
 
 const loadGoogleMaps = () => {
   const loader = new Loader({
-    apiKey: "AIzaSyA-T6S3baY4-AZuTSc9Fryb9fCH8Ihi0Uc",
+    apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY,
     version: 'weekly',
     libraries: ['places']
   });
@@ -76,6 +76,7 @@ if (driverPosition && passengerPosition) {
 };
 
 import { Geolocation } from '@capacitor/geolocation';
+import { WifiProtectedSetupSharp } from '@vicons/material';
 
 const startNavigator = async (startCoords: any, endCoords: any, googleMap: google.maps.Map) => {
   const directionsService = new google.maps.DirectionsService();
