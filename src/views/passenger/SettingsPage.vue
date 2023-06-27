@@ -9,7 +9,7 @@
     <ion-content :fullscreen="true">
       <ion-list>
         <ion-item>
-          <ion-button expand="block" @click="store.openMap()">Open Map</ion-button>
+          <ion-button expand="block" @click="store.openMap(store.currentPosition)">Open Map</ion-button>
         </ion-item>
       </ion-list>
     </ion-content>
@@ -21,7 +21,6 @@ import { ref, watch } from 'vue';
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonButton,
 } from '@ionic/vue';
-import { Coordinate } from '@/interfaces/types';
 import { useMainStore } from '@/store';
 
 const store = useMainStore();
@@ -31,12 +30,5 @@ const fakeGeolocation = ref(false);
 watch(fakeGeolocation, (newFakeGeolocation) => {
   store.fakeGeolocation = newFakeGeolocation;
 });
-
-const coordinate = ref<Coordinate>({ lat: 3.052943, lng: 101.672337 });
-
-watch(coordinate, (newCoordinate) => {
-  store.coordinate = newCoordinate;
-});
-
 
 </script>
