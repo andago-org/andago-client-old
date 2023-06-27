@@ -27,7 +27,7 @@ const echoInstance = new Echo({
   key: process.env.VUE_APP_PUSHER_APP_KEY,
   cluster: process.env.VUE_APP_PUSHER_APP_CLUSTER,
   encrypted: true,
-  authEndpoint: 'http://localhost/api/broadcasting/auth',
+  authEndpoint: `http://${process.env.VUE_APP_API_BASE_URL}/api/broadcasting/auth`,
 });
 
 export const useMainStore = defineStore({
