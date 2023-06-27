@@ -17,7 +17,6 @@ const store = useMainStore()
 
 setInterval(() => {
   if (store.loggedIn) {
-    // console.log("Get Profile")
     store.getData();
   }
 }, 5000);
