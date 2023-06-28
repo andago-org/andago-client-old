@@ -10,13 +10,16 @@
 <script setup lang="ts">
 import { IonApp, IonRouterOutlet } from '@ionic/vue'
 import { useMainStore } from './store'
+import { Capacitor } from '@capacitor/core'
 
 declare const AndroidBridge: any;
 
-// Now you can use the AndroidBridge object in your TypeScript code
-AndroidBridge.showToast('Whoa cool');
-const data = AndroidBridge.getDataFromAndroid();
-console.log(data);
+if (Capacitor.getPlatform() === 'android') {
+  // Now you can use the AndroidBridge object in your TypeScript code
+  AndroidBridge.showToast('Whoa cool');
+  const data = AndroidBridge.getDataFromAndroid();
+  console.log(data);
+}
 
 const store = useMainStore()
 
