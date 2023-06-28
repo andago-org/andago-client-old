@@ -11,7 +11,7 @@
 import { IonApp, IonRouterOutlet } from '@ionic/vue'
 import { useMainStore } from './store'
 
-import AndroidBridge from '@/plugins/android-bridge';
+declare const AndroidBridge: any;
 
 // Now you can use the AndroidBridge object in your TypeScript code
 AndroidBridge.showToast('Hello from TypeScript');
