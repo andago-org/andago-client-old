@@ -44,6 +44,8 @@ import {
 } from '@ionic/vue';
 import { close } from 'ionicons/icons';
 
+declare const AndroidBridge: any;
+
 const store = useMainStore();
 
 const otpCode = ref('');
@@ -58,6 +60,7 @@ async function login() {
     phoneNumber: store.phoneNumber,
     code: otpCode.value,
     userType: store.userType,
+    onesignalId: AndroidBridge.getOneSignalPlayerId(),
   };
 
   store.axios.post("/auth/login", data)
