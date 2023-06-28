@@ -14,6 +14,8 @@ import { Capacitor } from '@capacitor/core'
 
 declare const AndroidBridge: any;
 
+console.log('Capacitor.getPlatform()', Capacitor.getPlatform())
+
 if (Capacitor.getPlatform() === 'android') {
   // Now you can use the AndroidBridge object in your TypeScript code
   AndroidBridge.showToast('Whoa cool');
