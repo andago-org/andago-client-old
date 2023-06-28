@@ -19,6 +19,7 @@ if (Capacitor.getPlatform() === 'android') {
   AndroidBridge.showToast('Whoa cool');
   const data = AndroidBridge.getDataFromAndroid();
   console.log(data);
+  console.log(AndroidBridge.getOneSignalUserId())
 }
 
 const store = useMainStore()
