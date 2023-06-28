@@ -8342,11 +8342,6 @@ once@^1.3.0, once@^1.3.1, once@^1.4.0:
   dependencies:
     wrappy "1"
 
-onesignal-cordova-plugin@^3.3.1:
-  version "3.3.1"
-  resolved "https://registry.npmjs.org/onesignal-cordova-plugin/-/onesignal-cordova-plugin-3.3.1.tgz"
-  integrity sha512-MAAZA1QALwHdVIw3ASVTUsna7XEKVZ5y7QEitJ0oFX7246l7nQhZIvyHyG9l7A6CQdcdW48H6nLT6izCNROB4g==
-
 onetime@^2.0.0:
   version "2.0.1"
   resolved "https://registry.npmjs.org/onetime/-/onetime-2.0.1.tgz"

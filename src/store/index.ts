@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios';
 import router from '@/router';
-import { Capacitor } from '@capacitor/core';
 import { AppLauncher } from '@capacitor/app-launcher';
 import { Geolocation } from '@capacitor/geolocation';
 import { Browser } from '@capacitor/browser';
@@ -11,7 +10,6 @@ import Pusher, { Channel } from 'pusher-js';
 import Echo from 'laravel-echo';
 import { toastController, ToastOptions, loadingController, LoadingOptions, modalController, ModalOptions } from '@ionic/vue';
 import { format, } from 'date-fns';
-import OneSignal from 'onesignal-cordova-plugin';
 import apiRTC from '@/plugins/api-rtc'
 
 const axiosInstance = axios.create({
@@ -116,10 +114,6 @@ export const useMainStore = defineStore({
             this.profile = data.profile;
             this.currentTrip = data.currentTrip;
             this.currentPayment = data.currentPayment;
-
-            if (['android', 'ios'].includes(Capacitor.getPlatform())) {
-              OneSignal.setExternalUserId(this.profile.id.toString());
-            }
 
             if (this.currentTrip?.driver_id !== null) {
               
