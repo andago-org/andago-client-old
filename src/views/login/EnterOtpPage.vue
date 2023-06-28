@@ -44,8 +44,6 @@ import {
 } from '@ionic/vue';
 import { close } from 'ionicons/icons';
 
-declare const AndroidBridge: any;
-
 const store = useMainStore();
 
 const otpCode = ref('');
