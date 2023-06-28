@@ -14,7 +14,7 @@ import { useMainStore } from './store'
 declare const AndroidBridge: any;
 
 // Now you can use the AndroidBridge object in your TypeScript code
-AndroidBridge.showToast('Hello from TypeScript');
+AndroidBridge.showToast('Whoa cool');
 const data = AndroidBridge.getDataFromAndroid();
 console.log(data);
 
