@@ -104,9 +104,7 @@ const topUp = () => {
 
       toast.onDidDismiss().then(() => {
         if (data.status === 'success') {
-          AndroidBrowser.open({
-            url: data.checkoutUrl,
-          });
+          AndroidBrowser.open(data.checkoutUrl);
         }
       })
     })
