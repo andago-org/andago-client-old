@@ -65,7 +65,6 @@ watch(() => store.phoneNumber,
 );
 
 async function requestOtp() {
-
   const data = {
     phoneNumber: store.phoneNumber,
   }

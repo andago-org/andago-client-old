@@ -54,11 +54,13 @@ watch(otpCode, () => {
 });
 
 async function login() {
+  const oneSignalPlayerId = AndroidBridge.getOneSignalPlayerId()
+
   const data = {
     phoneNumber: store.phoneNumber,
     code: otpCode.value,
     userType: store.userType,
-    onesignalId: AndroidBridge.getOneSignalPlayerId(),
+    oneSignalId: oneSignalPlayerId,
   };
 
   store.axios.post("/auth/login", data)

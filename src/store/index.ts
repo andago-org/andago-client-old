@@ -3,7 +3,6 @@ import axios from 'axios';
 import router from '@/router';
 import { AppLauncher } from '@capacitor/app-launcher';
 import { Geolocation } from '@capacitor/geolocation';
-import { Browser } from '@capacitor/browser';
 import { UserType, Gender, Coordinate, Vehicle, ControlMode, } from '@/interfaces/types';
 import { Preferences } from '@capacitor/preferences';
 import Pusher, { Channel } from 'pusher-js';
@@ -85,9 +84,6 @@ export const useMainStore = defineStore({
     },
     acceptImageFileFormats() {
       return "image/jpeg, image/png, image/jpg";
-    },
-    browser() {
-      return Browser;
     },
     loggedIn() : boolean {
       return this.token !== "";
@@ -217,11 +213,11 @@ export const useMainStore = defineStore({
     {
       axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
     },
-
-    async openMap(position: any): Promise<void> {
+    
+    async openMap(position: any = { lat: 3.0668693359101, lng: 101.67422110225 }): Promise<void> {
       const url = `https://www.google.com/maps/dir/?api=1&destination=${position.lat},${position.lng}`;
       
-      await AppLauncher.openUrl({ url });
+      AndroidBrowser.open(url);
     },
 
     async getGeolocation(): Promise<any> {

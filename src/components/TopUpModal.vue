@@ -74,7 +74,7 @@ onMounted(() => {
 
 watch(() => store.currentPayment, async (newValue, oldValue) => {
   if (oldValue != null && newValue == null) {
-    store.browser.close();
+    AndroidBrowser.close();
     const toast = await store.showToast({
       message: 'Top Up Successful',
       duration: 2000,
@@ -104,12 +104,8 @@ const topUp = () => {
 
       toast.onDidDismiss().then(() => {
         if (data.status === 'success') {
-          store.browser.open({
+          AndroidBrowser.open({
             url: data.checkoutUrl,
-          });
-
-          store.browser.addListener('browserFinished', () => {
-            store.getData();
           });
         }
       })

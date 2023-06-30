@@ -55,7 +55,7 @@ const store = useMainStore();
 
 const topUpModalOpen = ref(false);
 
-const props = defineProps({
+defineProps({
   isOpen: Boolean,
   waitPackages: {
     type: Array as () => any[],

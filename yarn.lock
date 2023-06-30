@@ -1002,11 +1002,6 @@
   resolved "https://registry.npmjs.org/@capacitor/app/-/app-5.0.1.tgz"
   integrity sha512-JyichIVMeYP1YlnxkvpFs7TvZKoOO8OpH29ksSt9vVSeZ/8OWgpaM/H7ach2H50JrS4BAKBVivqTEjwQWo0GKA==
 
-"@capacitor/browser@5.0.1":
-  version "5.0.1"
-  resolved "https://registry.npmjs.org/@capacitor/browser/-/browser-5.0.1.tgz"
-  integrity sha512-CikTn9fZSCVn9qoJ4uUs+H7gR3qWi/9oDdb+sKEDd5IeODLtp3fp2m+4eneGVfaUJ7TG79PN4ldIBQ2J3p7gqg==
-
 "@capacitor/cli@^5.0.0":
   version "5.0.1"
   resolved "https://registry.npmjs.org/@capacitor/cli/-/cli-5.0.1.tgz"
