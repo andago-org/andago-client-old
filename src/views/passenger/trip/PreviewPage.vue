@@ -31,6 +31,13 @@
     <ion-footer>
       <ion-list>
         <ion-item lines="none">
+          <ion-icon :icon="walletOutline" slot="start"></ion-icon>
+          <ion-text>
+            Wallet Balance
+          </ion-text>
+          <ion-text slot="end">{{ store.profile.balanceText }}</ion-text>
+        </ion-item>
+        <ion-item lines="none">
           <ion-icon :icon="bookOutline" slot="start"></ion-icon>
           <ion-text>
             {{ currentTrip.preview.min_fare.text }}
@@ -85,7 +92,7 @@ import {
 } from '@ionic/vue';
 import googleMaps from '@/plugins/google-map';
 import { useMainStore } from '@/store';
-import { bookOutline, cashOutline, timeOutline, carOutline } from 'ionicons/icons';
+import { bookOutline, cashOutline, timeOutline, carOutline, walletOutline } from 'ionicons/icons';
 import TopUpModal from '@/components/TopUpModal.vue';
 
 const store = useMainStore();
