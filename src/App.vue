@@ -20,4 +20,5 @@ setInterval(() => {
     store.getData();
   }
 }, 5000);
+
 </script>

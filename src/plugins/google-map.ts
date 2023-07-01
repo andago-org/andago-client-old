@@ -89,8 +89,8 @@ const startNavigator = async (startCoords: any, endCoords: any, googleMap: googl
   let currentLocationMarker: google.maps.Marker | null = null;
   let currentBearing = 0;
 
-  const position = await Geolocation.getCurrentPosition();
-  const currentLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+  const position = AndroidBridge.getLocation();
+  const currentLocation = new google.maps.LatLng(position);
 
   // Update the current location marker and pan the map to the new location
   if (!currentLocationMarker) {

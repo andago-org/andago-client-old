@@ -77,7 +77,7 @@ const googleMap = ref(null as any);
 
 watch(() => props.isOpen, async (newVal) => {
   if (newVal) {
-    const center = await store.getGeolocation();
+    const center = store.currentPosition;
     // const pickUpPostion = await store.getPickUpPosition();
 
     googleMaps.load().then((maps: any) => {

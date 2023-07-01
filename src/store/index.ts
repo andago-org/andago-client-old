@@ -52,12 +52,17 @@ export const useMainStore = defineStore({
     suggestedTopUpAmount: 0 as number,
   }),
   getters: {
-    async currentPosition() {
-      const currentPosition = await Geolocation.getCurrentPosition();
+    currentPosition() {
+      const currentPosition = AndroidBridge.getLocation();
 
-      const position = { lat: currentPosition.coords.latitude, lng: currentPosition.coords.longitude }
+      const position = currentPosition.split(',');
 
-      return position;
+      const coordinate: Coordinate = {
+        lat: position[0],
+        lng: position[1],
+      }
+
+      return coordinate;
     },
     axios() {
       axiosInstance.defaults.headers['Accept'] = 'application/json';
