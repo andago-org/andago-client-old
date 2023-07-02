@@ -12,6 +12,9 @@
         <div>
           <ion-button type="button" id="join" @click="join">Join</ion-button>
           <ion-button type="button" id="leave" @click="leave">Leave</ion-button>
+
+          <ion-button type="button" id="mute" @click="user1">Mute</ion-button>
+          <ion-button type="button" id="mute" @click="user2">Mute</ion-button>
         </div>
       </div>
       <br>
@@ -21,10 +24,21 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import {
   IonButton, IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
 } from '@ionic/vue';
 import AgoraRTC from "agora-rtc-sdk-ng"
+
+const token = ref<string>('')
+
+function user1() {
+  token.value = '007eJxTYDD9Es534+00oW12QR8U9/LfbjGqm8u6bEN2nHDP4oZHcVoKDCmGxmYp5iaJlibmKSZmKamWiZaWiQbmRonJlimm5olm99cvTGkIZGSo5G9lZGSAQBCfhaEktbiEgQEAMyofOw=='
+}
+
+function user2() {
+  token.value = '007eJxTYEi9vWG/8uNTjCd7Hya8EnF2vSY7dZ+OyJWDCSl29yaIvnyhwJBiaGyWYm6SaGlinmJilpJqmWhpmWhgbpSYbJliap5oJntmYUpDICNDnNdsFkYGCATxWRhKUotLGBgAwsMgww=='
+}
 
 const options =
 {
@@ -33,7 +47,7 @@ const options =
   // Set the channel name.
   channel: 'test',
   // Pass your temp token here.
-  token: '007eJxTYDD9Es534+00oW12QR8U9/LfbjGqm8u6bEN2nHDP4oZHcVoKDCmGxmYp5iaJlibmKSZmKamWiZaWiQbmRonJlimm5olm99cvTGkIZGSo5G9lZGSAQBCfhaEktbiEgQEAMyofOw==',
+  token: '',
   // Set the user ID.
   uid: 0,
 };
@@ -80,7 +94,7 @@ async function startBasicCall() {
 
 async function join() {
   // Join a channel.
-  await agoraEngine.join(options.appId, options.channel, options.token, options.uid);
+  await agoraEngine.join(options.appId, options.channel, token.value, options.uid);
   // showMessage("Joined channel: " + options.channel);
   // Create a local audio track from the microphone audio.
   channelParameters.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
