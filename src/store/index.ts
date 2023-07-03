@@ -1,15 +1,12 @@
 import { defineStore } from 'pinia'
 import axios from 'axios';
 import router from '@/router';
-import { AppLauncher } from '@capacitor/app-launcher';
-import { Geolocation } from '@capacitor/geolocation';
 import { UserType, Gender, Coordinate, Vehicle, ControlMode, } from '@/interfaces/types';
 import { Preferences } from '@capacitor/preferences';
 import Pusher, { Channel } from 'pusher-js';
 import Echo from 'laravel-echo';
 import { toastController, ToastOptions, loadingController, LoadingOptions, modalController, ModalOptions } from '@ionic/vue';
 import { format, } from 'date-fns';
-import apiRTC from '@/plugins/api-rtc'
 
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
@@ -117,15 +114,15 @@ export const useMainStore = defineStore({
             this.currentPayment = data.currentPayment;
 
             if (this.currentTrip?.driver_id !== null) {
-              
+              const tripId = this.currentTrip?.id
 
               if (this.currentTrip?.calling)
               {
-                apiRTC.connect(this.currentTrip?.id)
+                AndroidBridge.startCall(tripId)
               }
               else
               {
-                apiRTC.disconnect()
+                AndroidBridge.stopCall()
               }
             }
           }
@@ -223,14 +220,6 @@ export const useMainStore = defineStore({
       const url = `https://www.google.com/maps/dir/?api=1&destination=${position.lat},${position.lng}`;
       
       AndroidBrowser.open(url);
-    },
-
-    async getGeolocation(): Promise<any> {
-      const currentPosition = await Geolocation.getCurrentPosition();
-
-      const position = { lat: currentPosition.coords.latitude, lng: currentPosition.coords.longitude }
-
-      return position as any;
     },
 
     async loadFromStorage() {

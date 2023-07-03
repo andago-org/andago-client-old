@@ -30,7 +30,7 @@ import {
 } from '@ionic/vue';
 import AgoraRTC from "agora-rtc-sdk-ng"
 
-const token = ref<string>('')
+const token = ref<string>('007eJxTYNhzm5vfO2fX9+aww8vbv+i1J9r1Xb2qcd/1NseMO5K37NwUGFIMjc1SzE0SLU3MU0zMUlItEy0tEw3MjRKTLVNMzRPNhB0WpTQEMjLcuzafhZEBAkF8FoaS1OISBgYAm7cgrQ==')
 
 function user1() {
   token.value = '007eJxTYDD9Es534+00oW12QR8U9/LfbjGqm8u6bEN2nHDP4oZHcVoKDCmGxmYp5iaJlibmKSZmKamWiZaWiQbmRonJlimm5olm99cvTGkIZGSo5G9lZGSAQBCfhaEktbiEgQEAMyofOw=='
@@ -43,9 +43,9 @@ function user2() {
 const options =
 {
   // Pass your App ID here.
-  appId: 'd136d74a947d46de9a99a072ac9d57a6',
+  appId: 'd2b9ac99d5334323a9f9ff4338a1c29f',
   // Set the channel name.
-  channel: 'test',
+  channel: '9',
   // Pass your temp token here.
   token: '',
   // Set the user ID.
@@ -94,7 +94,7 @@ async function startBasicCall() {
 
 async function join() {
   // Join a channel.
-  await agoraEngine.join(options.appId, options.channel, token.value, options.uid);
+  await agoraEngine.join(options.appId, options.channel, null, options.uid);
   // showMessage("Joined channel: " + options.channel);
   // Create a local audio track from the microphone audio.
   channelParameters.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
