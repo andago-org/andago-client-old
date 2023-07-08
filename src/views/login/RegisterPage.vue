@@ -112,9 +112,9 @@ import router from '@/router';
 const store = useMainStore()
 
 // User Details
-const name = ref<string>(store.profile.user.name)
-const gender = ref<Gender>(store.profile.user.gender)
-const birthDate = ref(store.profile.user.birth_date)
+const name = ref<string>(store.profile?.user?.name)
+const gender = ref<Gender>(store.profile?.user?.gender)
+const birthDate = ref(store.profile?.user?.birth_date)
 
 // Passenger Profile
 const vehiclePlateNumber = ref<string>('')

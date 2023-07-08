@@ -88,7 +88,7 @@ export const useMainStore = defineStore({
       return "image/jpeg, image/png, image/jpg";
     },
     loggedIn() : boolean {
-      return this.token !== "";
+      return this.token !== ""
     },
     searchingForDriver() : boolean {
       return this.currentTrip.status === 'confirmed';
@@ -184,8 +184,6 @@ export const useMainStore = defineStore({
         .then(
           async (response) => {
             message = response.data.message;
-
-            this.clearUserToken()
           }
         )
         .catch(
@@ -204,8 +202,7 @@ export const useMainStore = defineStore({
 
         toast.onDidDismiss().then(() => {
           this.profile = null
-          this.token = ""
-          this.localStorage.remove({ key: 'data' })
+          this.clearUserToken()
 
           this.showLoading({})
 
@@ -226,14 +223,14 @@ export const useMainStore = defineStore({
 
     async loadTokenFromStorage() {
       const { value } = await Preferences.get({ key: 'token' })
-
+      console.log(value)
       if (value) {
         this.token = value
       }
     },
 
     async saveTokenToStorage() {
-      await Preferences.set({ key: 'token', value: this.token })
+      await Preferences.set({ key: 'token', value: this.token as string })
     },
 
     clearUserToken() {
@@ -403,7 +400,7 @@ export const useMainStore = defineStore({
     },
 
     validateNotEmpty(text: string): boolean {
-      return text.length > 0;
+      return text?.length > 0;
     },
 
     isObjectEmpty(object: any): boolean {
