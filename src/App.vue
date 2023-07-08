@@ -13,7 +13,7 @@ import { useMainStore } from './store'
 
 const store = useMainStore()
 
-// store.loadFromStorage();
+store.loadTokenFromStorage();
 
 setInterval(() => {
   if (store.loggedIn) {

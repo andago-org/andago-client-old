@@ -184,6 +184,8 @@ export const useMainStore = defineStore({
         .then(
           async (response) => {
             message = response.data.message;
+
+            this.clearUserToken()
           }
         )
         .catch(
@@ -222,39 +224,21 @@ export const useMainStore = defineStore({
       AndroidBrowser.open(url);
     },
 
-    async loadFromStorage() {
-      const { value } = await Preferences.get({ key: 'data' })
-      // const { value: driverMode } = await Preferences.get({ key: 'driverMode' })
+    async loadTokenFromStorage() {
+      const { value } = await Preferences.get({ key: 'token' })
 
-      const data = JSON.parse(value || '{}');
-
-      if (data) {
-        this.token = data.token;
-        
-
-        if (this.token != "")
-        {
-          // this.user = await this.getUser();
-        }
+      if (value) {
+        this.token = value
       }
     },
 
-    async saveToStorage() {
-      const data = {
-        token: this.token,
-      }
-
-      await Preferences.set({ key: 'data', value: JSON.stringify(data) })
-    },
-
-    setUserToken(token: string) {
-      this.token = token
-      this.saveToStorage()
+    async saveTokenToStorage() {
+      await Preferences.set({ key: 'token', value: this.token })
     },
 
     clearUserToken() {
       this.token = ""
-      this.saveToStorage()
+      this.saveTokenToStorage()
     },
 
     async getVehicles(): Promise<any> {

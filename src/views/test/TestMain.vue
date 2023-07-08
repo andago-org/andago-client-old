@@ -45,7 +45,7 @@ const options =
   // Pass your App ID here.
   appId: 'd2b9ac99d5334323a9f9ff4338a1c29f',
   // Set the channel name.
-  channel: '9',
+  channel: '10',
   // Pass your temp token here.
   token: '',
   // Set the user ID.

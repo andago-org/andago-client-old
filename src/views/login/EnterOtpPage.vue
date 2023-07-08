@@ -54,7 +54,8 @@ watch(otpCode, () => {
 });
 
 async function login() {
-  const oneSignalPlayerId = AndroidBridge.getOneSignalPlayerId()
+  // const oneSignalPlayerId = AndroidBridge.getOneSignalPlayerId()
+  const oneSignalPlayerId = "asdasd"
 
   const data = {
     phoneNumber: store.phoneNumber,
@@ -68,6 +69,8 @@ async function login() {
       if (response.data.status == 'success') {
         store.token = response.data.token;
         store.profile = response.data.profile;
+
+        await store.saveTokenToStorage()
 
         const toast = await store.showToast({
           message: response.data.message,
