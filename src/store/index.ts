@@ -34,6 +34,7 @@ export const useMainStore = defineStore({
     birthDate: format(new Date(), 'yyyy-MM-dd\'T\'HH:mm:ss') as string,
     carPlateNumber: "" as string,
     token: "" as string,
+    tokenLoaded: false as boolean,
     profile: {} as any,
     currentTrip: null as any || null,
     currentPayment: null as any || null,
@@ -88,7 +89,7 @@ export const useMainStore = defineStore({
       return "image/jpeg, image/png, image/jpg";
     },
     loggedIn() : boolean {
-      return this.token !== ""
+      return Boolean(this.token);
     },
     searchingForDriver() : boolean {
       return this.currentTrip.status === 'confirmed';
@@ -103,8 +104,8 @@ export const useMainStore = defineStore({
     },
   },
   actions: {
-    async getData() {
-      this.axios.post('/auth/getData')
+    async getData(): Promise<any> {
+      return this.axios.post('/auth/getData')
         .then(
           async (response) => {
             const data = response.data;
@@ -113,18 +114,7 @@ export const useMainStore = defineStore({
             this.currentTrip = data.currentTrip;
             this.currentPayment = data.currentPayment;
 
-            if (this.currentTrip?.driver_id !== null) {
-              const tripId = this.currentTrip?.id
-
-              if (this.currentTrip?.calling)
-              {
-                AndroidBridge.startCall(tripId)
-              }
-              else
-              {
-                AndroidBridge.stopCall()
-              }
-            }
+            return data
           }
         )
         .catch(
@@ -133,6 +123,19 @@ export const useMainStore = defineStore({
           }
         )
       ;
+    },
+
+    async setCalling(calling: boolean) {
+      const data = {
+        'calling': calling
+      }
+
+      this.axios.post(`/${this.profile.userType}s/trips/setCalling`, data)
+          .then((res) => {
+            this.currentTrip = res.data.currentTrip;
+          }).catch((err) => {
+        console.log(err);
+      })
     },
 
     async updatePosition(position: Coordinate) {
@@ -178,36 +181,24 @@ export const useMainStore = defineStore({
     },
 
     async logout() {
-      let message = "";
+      const message = "Logged out successfully.";
 
-      this.axios.post("/auth/logout")
-        .then(
-          async (response) => {
-            message = response.data.message;
-          }
-        )
-        .catch(
-          async (error) => {
-            console.log(error)
+      await this.axios.post("/auth/logout")
 
-            message = error.data.message;
-          }
-        );
+      const toast = await this.showToast({
+        message: message,
+        duration: 1000,
+        position: "middle",
+      })
 
-        const toast = await this.showToast({
-          message: message,
-          duration: 1000,
-          position: "middle",
-        })
+      toast.onDidDismiss().then(() => {
+        this.profile = null
+        this.clearUserToken()
 
-        toast.onDidDismiss().then(() => {
-          this.profile = null
-          this.clearUserToken()
+        this.showLoading({})
 
-          this.showLoading({})
-
-          router.go(0)
-        })
+        router.go(0)
+      })
     },
 
     setHeaders()
@@ -222,20 +213,22 @@ export const useMainStore = defineStore({
     },
 
     async loadTokenFromStorage() {
-      const { value } = await Preferences.get({ key: 'token' })
-      console.log(value)
-      if (value) {
-        this.token = value
-      }
+      await Preferences.get({ key: 'token' }).then(async (result: any) => {
+        if (result.value) {
+
+          this.token = result.value
+          await this.getData()
+        }
+      })
     },
 
     async saveTokenToStorage() {
       await Preferences.set({ key: 'token', value: this.token as string })
     },
 
-    clearUserToken() {
+    async clearUserToken() {
       this.token = ""
-      this.saveTokenToStorage()
+      await Preferences.remove({ key: 'token' })
     },
 
     async getVehicles(): Promise<any> {

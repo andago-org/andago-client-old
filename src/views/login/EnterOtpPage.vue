@@ -68,19 +68,23 @@ async function login() {
       if (response.data.status == 'success') {
         const data = response.data
 
-        store.token = data.token;
-        store.profile = data.profile;
-
         const toast = await store.showToast({
           message: response.data.message,
           duration: 2000,
           position: "middle",
         });
 
-        toast.onDidDismiss().then(() => {
-          store.showLoading({});
+        toast.onDidDismiss().then(async () => {
+          store.showLoading({})
 
-          router.go(0);
+          store.token = data.token
+          await store.getData()
+              .then(() => {
+                store.saveTokenToStorage()
+                    .then(() => {
+                      router.go(0)
+                    })
+              })
         });
       }
     })

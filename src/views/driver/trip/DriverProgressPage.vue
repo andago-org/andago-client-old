@@ -12,7 +12,7 @@
 
     <ion-content>
       <ion-fab slot="fixed" vertical="top" horizontal="end" :edge="true">
-        <ion-fab-button @click="setCalling" :color="callButtonColor">
+        <ion-fab-button @click="store.setCalling(true)" color="primary">
           <ion-icon :icon="call"></ion-icon>
         </ion-fab-button>
       </ion-fab>
@@ -21,20 +21,20 @@
         <ion-item lines="none">
           <ion-icon :icon="personCircleOutline" slot="start" size="large"></ion-icon>
           <ion-label>
-            <h1>{{ currentTrip.passenger.user.name }}</h1>
+            <h1>{{ currentTrip?.passenger?.user?.name }}</h1>
           </ion-label>
         </ion-item>
 
         <ion-item lines="full">
           <ion-icon :icon="carOutline" slot="start" size="large"></ion-icon>
-          <ion-label>{{ currentTrip.passenger.selectedVehicle.plate_number }}</ion-label>
+          <ion-label>{{ currentTrip?.passenger?.selectedVehicle?.plate_number }}</ion-label>
         </ion-item>
 
         <ion-popover trigger="pickup-address" color="primary" mode="ios" side="top" :showBackdrop="false" :detail="false"
           :dismissOnSelect="true">
           <ion-content>
             <ion-list>
-              <ion-item button mode="md" color="primary" @click="store.openMap(currentTrip.pickup_place.coordinate)">
+              <ion-item button mode="md" color="primary" @click="store.openMap(currentTrip?.pickup_place?.coordinate)">
                 <ion-label class="ion-text-center">
                   <h1>Open Map</h1>
                 </ion-label>
@@ -46,8 +46,8 @@
         <ion-item button id="pickup-address">
           <ion-label>Pick-Up</ion-label>
           <ion-text>
-            <h4>{{ currentTrip.pickup_place.name }}</h4>
-            <p>{{ currentTrip.pickup_place.address }}</p>
+            <h4>{{ currentTrip?.pickup_place?.name }}</h4>
+            <p>{{ currentTrip?.pickup_place?.address }}</p>
           </ion-text>
         </ion-item>
 
@@ -55,7 +55,7 @@
           :dismissOnSelect="true">
           <ion-content>
             <ion-list>
-              <ion-item button mode="md" color="primary" @click="store.openMap(currentTrip.dropoff_place.coordinate)">
+              <ion-item button mode="md" color="primary" @click="store.openMap(currentTrip?.dropoff_place?.coordinate)">
                 <ion-label class="ion-text-center">
                   <h1>Open Map</h1>
                 </ion-label>
@@ -67,8 +67,8 @@
         <ion-item button id="dropoff-address">
           <ion-label>Drop-Off</ion-label>
           <ion-text>
-            <h4>{{ currentTrip.dropoff_place.name }}</h4>
-            <p>{{ currentTrip.dropoff_place.address }}</p>
+            <h4>{{ currentTrip?.dropoff_place?.name }}</h4>
+            <p>{{ currentTrip?.dropoff_place?.address }}</p>
           </ion-text>
         </ion-item>
 
@@ -77,14 +77,14 @@
           <ion-text>
             Trip distance
           </ion-text>
-          <ion-text slot="end">{{ currentTrip.preview.distance }}</ion-text>
+          <ion-text slot="end">{{ currentTrip?.preview?.distance }}</ion-text>
         </ion-item>
         <ion-item lines="none">
           <ion-icon :icon="cashOutline" slot="start"></ion-icon>
           <ion-text>
             Trip fare
           </ion-text>
-          <ion-text slot="end">{{ currentTrip.preview.total_fare.value }}</ion-text>
+          <ion-text slot="end">{{ currentTrip?.preview?.total_fare.value }}</ion-text>
         </ion-item>
       </ion-list>
 
@@ -215,26 +215,6 @@ function completeTrip() {
     })
 }
 
-const calling = ref(store.currentTrip.calling);
-
-const callButtonColor = computed(() => {
-  return calling.value ? 'primary' : 'secondary';
-})
-
-async function setCalling() {
-  calling.value = !calling.value;
-
-  const data = {
-    'calling': calling.value
-  }
-
-  store.axios.post('/drivers/trips/setCalling', data)
-    .then((res) => {
-      store.currentTrip = res.data.currentTrip;
-    }).catch((err) => {
-      console.log(err);
-    })
-}
 </script>
 
 <style scoped>

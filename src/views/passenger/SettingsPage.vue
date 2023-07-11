@@ -10,6 +10,7 @@
       <ion-list>
         <ion-item>
           <ion-button expand="block" @click="store.openMap(store.currentPosition)">Open Map</ion-button>
+          <ion-button expand="block" @click="clearToken">Clear Token</ion-button>
         </ion-item>
       </ion-list>
     </ion-content>
@@ -22,6 +23,7 @@ import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonButton,
 } from '@ionic/vue';
 import { useMainStore } from '@/store';
+import { Preferences } from "@capacitor/preferences";
 
 const store = useMainStore();
 
@@ -31,4 +33,7 @@ watch(fakeGeolocation, (newFakeGeolocation) => {
   store.fakeGeolocation = newFakeGeolocation;
 });
 
+async function clearToken() {
+  await Preferences.remove({ key: 'token' })
+}
 </script>

@@ -39,7 +39,7 @@ const routes: Array<RouteRecordRaw> = [
     beforeEnter: async (to, from, next) => {
       const store = useMainStore();
 
-      if (store.token)
+      if (store.loggedIn)
       {
         next('/register');
       }
@@ -53,9 +53,9 @@ const routes: Array<RouteRecordRaw> = [
     path: '/register',
     component: () => import('@/views/login/RegisterPage.vue'),
     beforeEnter: async (to, from, next) => {
-      const store = useMainStore();
+      const store = useMainStore()
 
-      if (!store.token)
+      if (!store.loggedIn)
       {
         next('/login')
       }
@@ -234,6 +234,12 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const store = useMainStore();
+
+  if (!store.tokenLoaded)
+  {
+    store.tokenLoaded = true
+    await store.loadTokenFromStorage()
+  }
 
   const splittedPath = to.path.split('/');
 

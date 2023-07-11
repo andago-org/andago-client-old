@@ -10,32 +10,50 @@
 <script setup lang="ts">
 import { IonApp, IonRouterOutlet } from '@ionic/vue'
 import { useMainStore } from './store'
-import { watch } from "vue";
-import router from './router'
+import { call, close } from 'ionicons/icons'
+import {watch} from "vue";
 
 const store = useMainStore()
 
-// store.loadTokenFromStorage()
-//
-// watch(() => store.token,
-//   async () => {
-//       console.log(store.token)
-//     await store.saveTokenToStorage()
-//
-//     if (store.loggedIn) {
-//       await store.getData()
-//           .then(() => {
-//             router.go(0)
-//           })
-//     }
-//   }
-// )
-
 setInterval(() => {
-  console.log(store.token)
   if (store.loggedIn) {
     store.getData();
   }
 }, 5000);
 
+watch(() => store.currentTrip?.calling, async (newValue, oldValue) => {
+  if (newValue == oldValue) {
+    return
+  }
+
+  const toast = await store.showToast({
+    message: 'You are on call',
+    // duration: 2000,
+    position: 'top',
+    icon: call,
+    buttons: [
+      {
+        text: 'Close',
+        role: 'cancel',
+        icon: close,
+        handler: () => {
+          console.log('Cancel clicked');
+          toast.dismiss()
+          store.setCalling(false)
+        },
+      },
+    ]
+  })
+
+  if (newValue == true) {
+    AndroidBridge.startCall(store.currentTrip?.id.toString())
+    console.log(12121212)
+
+  }
+  else
+  {
+    await toast.dismiss()
+    AndroidBridge.stopCall()
+  }
+})
 </script>

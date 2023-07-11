@@ -9,7 +9,11 @@
     </ion-header>
 
     <ion-content>
-
+      <ion-fab slot="fixed" vertical="top" horizontal="end" :edge="true">
+        <ion-fab-button @click="store.setCalling(true)" color="primary">
+          <ion-icon :icon="call"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
 
       <ion-list>
         <ion-item lines="full">
@@ -75,11 +79,11 @@
 import { ref, onMounted, watch } from 'vue';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonText, IonPage, IonIcon, IonLabel, IonFooter,
-  IonButton,
+  IonButton, IonFab, IonFabButton,
 } from '@ionic/vue';
 import { useMainStore } from '@/store';
 import googleMaps from '@/plugins/google-map';
-import { cashOutline, personCircleOutline, carOutline } from 'ionicons/icons';
+import {cashOutline, personCircleOutline, carOutline, call} from 'ionicons/icons';
 import AddWaitTimeModal from '@/components/AddWaitTimeModal.vue';
 
 const store = useMainStore();
