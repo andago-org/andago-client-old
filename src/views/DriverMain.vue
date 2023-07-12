@@ -35,8 +35,6 @@ import { watch, ref, } from 'vue';
 import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
 import { person, car, chatbox, settings } from 'ionicons/icons';
 import { useMainStore } from '@/store';
-import { Geolocation } from '@capacitor/geolocation';
-import { Coordinate } from '@/interfaces/types';
 import ReceivedTripModal from '@/components/ReceivedTripModal.vue';
 
 const store = useMainStore();
@@ -73,21 +71,4 @@ watch(
 );
 
 store.echo.join('DriverChannel');
-
-Geolocation.watchPosition({}, (position) => {
-  const data = {
-    position: {
-      lat: position?.coords.latitude,
-      lng: position?.coords.longitude
-    } as Coordinate
-  }
-
-  store.axios.post('/drivers/updatePosition', data)
-    .then(() => {
-      // console.log(response.data)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-});
 </script>

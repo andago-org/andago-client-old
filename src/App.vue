@@ -17,7 +17,11 @@ const store = useMainStore()
 
 setInterval(() => {
   if (store.loggedIn) {
-    store.getData();
+    store.getData()
+  }
+
+  if (store.profile?.userType == 'driver') {
+    store.updatePosition()
   }
 }, 5000);
 

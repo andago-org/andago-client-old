@@ -1027,11 +1027,6 @@
   dependencies:
     tslib "^2.1.0"
 
-"@capacitor/geolocation@5.0.1":
-  version "5.0.1"
-  resolved "https://registry.npmjs.org/@capacitor/geolocation/-/geolocation-5.0.1.tgz"
-  integrity sha512-0tdRvaXTXzLxCRoRgyCE8kp3LgEzF0RbvdbbGbCldU6a8hEGiDea7wT0BLe1Zr0CuQa46j87yRfqk4IylUXZTA==
-
 "@capacitor/haptics@5.0.1":
   version "5.0.1"
   resolved "https://registry.npmjs.org/@capacitor/haptics/-/haptics-5.0.1.tgz"

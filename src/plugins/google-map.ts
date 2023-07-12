@@ -75,9 +75,6 @@ if (driverPosition && passengerPosition) {
 }
 };
 
-import { Geolocation } from '@capacitor/geolocation';
-import { WifiProtectedSetupSharp } from '@vicons/material';
-
 const startNavigator = async (startCoords: any, endCoords: any, googleMap: google.maps.Map) => {
   const directionsService = new google.maps.DirectionsService();
   const directionsRequest = {

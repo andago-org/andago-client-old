@@ -51,16 +51,16 @@ export const useMainStore = defineStore({
   }),
   getters: {
     currentPosition() {
-      const currentPosition = AndroidBridge.getLocation();
+      const currentPosition = AndroidBridge.getLocation()
 
-      const position = currentPosition.split(',');
+      const position = currentPosition.split(',')
 
       const coordinate: Coordinate = {
         lat: position[0],
         lng: position[1],
       }
 
-      return coordinate;
+      return coordinate
     },
     axios() {
       axiosInstance.defaults.headers['Accept'] = 'application/json';
@@ -138,9 +138,9 @@ export const useMainStore = defineStore({
       })
     },
 
-    async updatePosition(position: Coordinate) {
+    async updatePosition() {
       const data = {
-        position: position,
+        position: this.currentPosition,
       }
 
       this.axios.post('/drivers/updatePosition', data)
