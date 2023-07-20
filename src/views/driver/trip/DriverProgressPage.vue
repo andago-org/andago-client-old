@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Head to the passenger</ion-title>
+        <ion-title>{{ title }}</ion-title>
       </ion-toolbar>
 
 
@@ -127,6 +127,19 @@ const center = store.currentTrip.pickup_place.coordinate;
 const zoom = 5;
 const driverCoordinate = ref(store.currentTrip.driver.coordinate);
 const pickUpCoordinate = ref(store.currentTrip.pickup_place.coordinate);
+
+const title = computed(() => {
+  switch (currentTrip.value.status) {
+    case 'accepted':
+      return 'Heading to pick-up point';
+    case 'arrived':
+      return 'Waiting for passenger to board';
+    case 'started':
+      return 'Heading to destination';
+    default:
+      return '';
+  }
+});
 
 onMounted(() => {
   googleMaps.load().then((maps: any) => {
