@@ -173,10 +173,10 @@ const routes: Array<RouteRecordRaw> = [
         path: '',
         redirect: '/driver/trip'
       },
-      // {
-      //   path: 'profile',
-      //   component: () => import('@/views/driver/profile/DriverProfileNav.vue'),
-      // },
+      {
+        path: 'profile',
+        component: () => import('@/views/driver/profile/DriverProfileNav.vue'),
+      },
       {
         path: 'trip',
         component: () => import('@/views/driver/trip/DriverTripNav.vue'),
