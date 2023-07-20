@@ -18,10 +18,10 @@
           <ion-label>Chat</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="tab4" href="/driver/settings">
-          <ion-icon aria-hidden="true" :icon="settings" />
-          <ion-label>Settings</ion-label>
-        </ion-tab-button>
+<!--        <ion-tab-button tab="tab4" href="/driver/settings">-->
+<!--          <ion-icon aria-hidden="true" :icon="settings" />-->
+<!--          <ion-label>Settings</ion-label>-->
+<!--        </ion-tab-button>-->
       </ion-tab-bar>
     </ion-tabs>
   </ion-page>
