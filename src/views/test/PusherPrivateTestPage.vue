@@ -14,6 +14,9 @@ store.echo.private(`PassengerChannel-${store.profile.id}`)
     console.log(data)
     // googleMaps.drawDriverProgress(data.driverCoordinate, passengerCoordinate, googleMap.value);
   })
+  .listen('.AddWaitTimeRequestEvent', (data: any) => {
+    store.addWaitTimeRequestModalOpen = true
+  })
 </script>
 
 <style></style>

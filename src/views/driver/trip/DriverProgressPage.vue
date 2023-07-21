@@ -86,6 +86,23 @@
           </ion-text>
           <ion-text slot="end">{{ currentTrip?.preview?.total_fare.value }}</ion-text>
         </ion-item>
+
+        <div v-if="currentTrip?.status == 'arrived'">
+          <ion-item v-if="calculateRemainingWaitTime() > 0">
+            <ion-icon :icon="timerOutline"></ion-icon>
+            <ion-text>
+              <h4>Remaining Wait Time: {{ remainingWaitTimeText }}</h4>
+            </ion-text>
+          </ion-item>
+          <ion-item v-else>
+            <ion-icon :icon="timerOutline"></ion-icon>
+            <ion-text color="primary">
+              <h4>Time Up! Please Add Wait Time!</h4>
+            </ion-text>
+          </ion-item>
+
+          <ion-button expand="block" @click="requestAddWaitTime">Request Add Wait Time</ion-button>
+        </div>
       </ion-list>
 
 
@@ -113,7 +130,7 @@ import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonText, IonPage, IonIcon, IonLabel, IonPopover,
   IonFooter, IonButton, IonFab, IonFabButton,
 } from '@ionic/vue';
-import { call, carOutline, cashOutline, personCircleOutline } from 'ionicons/icons';
+import {call, carOutline, cashOutline, personCircleOutline, timerOutline} from 'ionicons/icons';
 import googleMaps from '@/plugins/google-map';
 import { useMainStore } from '@/store';
 
@@ -140,6 +157,47 @@ const title = computed(() => {
       return '';
   }
 });
+
+const waitUntil = computed(() => {
+  return new Date(store.currentTrip?.waitUntil);
+});
+
+const remainingWaitTime = ref(calculateRemainingWaitTime());
+const remainingWaitTimeText = ref("");
+
+function calculateRemainingWaitTime()
+{
+  if (!waitUntil.value) return 0;
+
+  const remainingTime = Math.max(0, waitUntil.value.getTime() - new Date().getTime());
+
+  const seconds = Math.floor(remainingTime / 1000);
+  return seconds;
+}
+
+function requestAddWaitTime()
+{
+  store.axios.post('/drivers/trips/requestAddWaitTime')
+    .then(() => {
+      store.showToast({
+        message: "Successfully sent Add Wait Time Request",
+        duration: 2000,
+        position: "middle",
+      })
+    })
+}
+
+function updateRemainingWaitTimeText()
+{
+  const minutes = Math.floor(remainingWaitTime.value / 60);
+  const seconds = Math.floor((remainingWaitTime.value % 60));
+  remainingWaitTimeText.value = (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+}
+
+setInterval(() => {
+  remainingWaitTime.value = calculateRemainingWaitTime()
+  updateRemainingWaitTimeText()
+}, 1000);
 
 onMounted(() => {
   googleMaps.load().then((maps: any) => {

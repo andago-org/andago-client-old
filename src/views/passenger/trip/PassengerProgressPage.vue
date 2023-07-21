@@ -66,25 +66,30 @@
               the trip.</p>
           </ion-text>
         </ion-item>
-        <ion-item v-if="calculateRemainingWaitTime() > 0">
-          <ion-icon :icon="timerOutline"></ion-icon>
-          <ion-text>
-            <h4>Remaining Wait Time: {{ remainingWaitTimeText }}</h4>
-          </ion-text>
-        </ion-item>
-        <ion-item v-else>
-          <ion-icon :icon="timerOutline"></ion-icon>
-          <ion-text color="primary">
-            <h4>Time Up! Please Add Wait Time!</h4>
-          </ion-text>
-        </ion-item>
 
-        <ion-button expand="block" @click="getWaitPackages">Add Wait Time</ion-button>
+        <div v-if="currentTrip?.status == 'arrived'">
+          <ion-item v-if="calculateRemainingWaitTime() > 0">
+            <ion-icon :icon="timerOutline"></ion-icon>
+            <ion-text>
+              <h4>Remaining Wait Time: {{ remainingWaitTimeText }}</h4>
+            </ion-text>
+          </ion-item>
+          <ion-item v-else>
+            <ion-icon :icon="timerOutline"></ion-icon>
+            <ion-text color="primary">
+              <h4>Time Up! Please Add Wait Time!</h4>
+            </ion-text>
+          </ion-item>
+
+          <ion-button expand="block" @click="getWaitPackages">Add Wait Time</ion-button>
+        </div>
       </ion-list>
     </ion-footer>
   </ion-page>
 
-  <AddWaitTimeModal v-model:isOpen="addWaitTimeModalOpen" v-model:waitPackages="waitPackages"></AddWaitTimeModal>
+  <AddWaitTimeRequestModal v-model:is-open="store.addWaitTimeRequestModalOpen"></AddWaitTimeRequestModal>
+
+  <AddWaitTimeModal v-model:isOpen="store.addWaitTimeModalOpen" v-model:waitPackages="waitPackages"></AddWaitTimeModal>
 </template>
 
 <script setup lang="ts">
@@ -97,10 +102,12 @@ import { useMainStore } from '@/store';
 import googleMaps from '@/plugins/google-map';
 import {cashOutline, personCircleOutline, carOutline, call, timerOutline} from 'ionicons/icons';
 import AddWaitTimeModal from '@/components/AddWaitTimeModal.vue';
+import AddWaitTimeRequestModal from "@/components/AddWaitTimeRequestModal.vue";
 
 const store = useMainStore();
 
 const addWaitTimeModalOpen = ref(false);
+const addWaitTimeRequestModalOpen = ref(false);
 const waitPackages = ref([]);
 
 const googleMap = ref(null as any);

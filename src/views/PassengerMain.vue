@@ -47,6 +47,12 @@ onMounted(() => {
   {
     driverArriveModalOpen.value = true
   }
+
+  store.echo.private(`PassengerChannel-${store.profile.id}`)
+      .listen('.AddWaitTimeRequestEvent', (data: any) => {
+        store.addWaitTimeRequestModalOpen = true
+        console.log(11212)
+      })
 })
 </script>
 

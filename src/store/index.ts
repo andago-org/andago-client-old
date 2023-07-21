@@ -49,6 +49,8 @@ export const useMainStore = defineStore({
     syncedData: {} as any,
     suggestedTopUpAmount: 0 as number,
     unreadMessages: 0,
+    addWaitTimeModalOpen: false,
+    addWaitTimeRequestModalOpen: false,
   }),
   getters: {
     currentPosition() {
