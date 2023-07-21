@@ -60,10 +60,22 @@
       <ion-list>
         <ion-item>
           <ion-text>
-            <h4>The driver has arrived!</h4>
-            <p>Please start the trip before {{ currentTrip?.waitTimeUp }} or extend your wait time. Otherwise the driver
+            <h5>The driver has arrived!</h5>
+            <p>Please start the trip before <ion-text color="primary">{{ waitUntil.toLocaleTimeString() }}</ion-text> or extend your wait time. Otherwise the driver
               will be able to cancel
               the trip.</p>
+          </ion-text>
+        </ion-item>
+        <ion-item v-if="calculateRemainingWaitTime() > 0">
+          <ion-icon :icon="timerOutline"></ion-icon>
+          <ion-text>
+            <h4>Remaining Wait Time: {{ remainingWaitTimeText }}</h4>
+          </ion-text>
+        </ion-item>
+        <ion-item v-else>
+          <ion-icon :icon="timerOutline"></ion-icon>
+          <ion-text color="primary">
+            <h4>Time Up! Please Add Wait Time!</h4>
           </ion-text>
         </ion-item>
 
@@ -83,7 +95,7 @@ import {
 } from '@ionic/vue';
 import { useMainStore } from '@/store';
 import googleMaps from '@/plugins/google-map';
-import {cashOutline, personCircleOutline, carOutline, call} from 'ionicons/icons';
+import {cashOutline, personCircleOutline, carOutline, call, timerOutline} from 'ionicons/icons';
 import AddWaitTimeModal from '@/components/AddWaitTimeModal.vue';
 
 const store = useMainStore();
@@ -95,8 +107,8 @@ const googleMap = ref(null as any);
 
 const center = store.currentTrip.pickup_place.coordinate;
 const zoom = 5;
-const pickUpCoordinate = ref(store.currentTrip.pickup_place.coordinate);
-const driverCoordinate = ref(store.currentTrip.driver.coordinate);
+const pickUpCoordinate = ref(store.currentTrip?.pickup_place?.coordinate);
+const driverCoordinate = ref(store.currentTrip?.driver?.coordinate);
 
 const currentTrip = ref(store.currentTrip);
 
@@ -112,6 +124,36 @@ const title = computed(() => {
       return '';
   }
 });
+
+const waitUntil = computed(() => {
+  return new Date(store.currentTrip?.waitUntil);
+});
+
+const remainingWaitTime = ref(calculateRemainingWaitTime());
+const remainingWaitTimeText = ref("");
+
+function calculateRemainingWaitTime()
+{
+  if (!waitUntil.value) return 0;
+
+  const remainingTime = Math.max(0, waitUntil.value.getTime() - new Date().getTime());
+
+  const seconds = Math.floor(remainingTime / 1000);
+  console.log(remainingTime)
+  return seconds;
+}
+
+function updateRemainingWaitTimeText()
+{
+  const minutes = Math.floor(remainingWaitTime.value / 60);
+  const seconds = Math.floor((remainingWaitTime.value % 60));
+  remainingWaitTimeText.value = (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+}
+
+setInterval(() => {
+  remainingWaitTime.value = calculateRemainingWaitTime()
+  updateRemainingWaitTimeText()
+}, 1000);
 
 onMounted(() => {
   googleMaps.load().then((maps: any) => {

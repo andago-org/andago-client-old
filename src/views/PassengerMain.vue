@@ -25,10 +25,25 @@
       </ion-tab-bar>
     </ion-tabs>
   </ion-page>
+
+  <DriverArriveAlertModal v-model:is-open="driverArriveModalOpen"></DriverArriveAlertModal>
 </template>
 
 <script setup lang="ts">
-// import { ref, watch, } from 'vue';
-import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
-import { person, car, chatbox, settings } from 'ionicons/icons';
+import {onMounted, ref, watch} from 'vue'
+import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue'
+import { person, car, chatbox, settings } from 'ionicons/icons'
+import DriverArriveAlertModal from "@/components/DriverArriveAlertModal.vue"
+import { useMainStore } from "@/store";
+
+const store = useMainStore();
+
+const driverArriveModalOpen = ref(false)
+
+onMounted(() => {
+  if (store.currentTrip?.status == "arrived")
+  {
+    driverArriveModalOpen.value = true
+  }
+})
 </script>

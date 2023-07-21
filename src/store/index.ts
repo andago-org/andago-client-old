@@ -119,6 +119,10 @@ export const useMainStore = defineStore({
         )
         .catch(
           async (error) => {
+            if (error.response.status == 401) {
+                this.logout()
+            }
+
             console.log(error)
           }
         )
@@ -207,9 +211,9 @@ export const useMainStore = defineStore({
     },
     
     async openMap(position: any = { lat: 3.0668693359101, lng: 101.67422110225 }): Promise<void> {
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${position.lat},${position.lng}`;
+      const coordString = `${position.lat},${position.lng}`;
       
-      AndroidBrowser.open(url);
+      AndroidBridge.openMap(coordString);
     },
 
     async loadTokenFromStorage() {
