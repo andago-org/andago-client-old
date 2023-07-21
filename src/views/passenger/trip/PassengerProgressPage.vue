@@ -139,7 +139,6 @@ function calculateRemainingWaitTime()
   const remainingTime = Math.max(0, waitUntil.value.getTime() - new Date().getTime());
 
   const seconds = Math.floor(remainingTime / 1000);
-  console.log(remainingTime)
   return seconds;
 }
 

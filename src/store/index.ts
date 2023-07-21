@@ -105,7 +105,13 @@ export const useMainStore = defineStore({
   },
   actions: {
     async getData(): Promise<any> {
-      return this.axios.post('/auth/getData')
+      const oneSignalPlayerId = AndroidBridge.getOneSignalPlayerId()
+
+      const data = {
+        oneSignalPlayerId: oneSignalPlayerId
+      }
+
+      return this.axios.post('/auth/getData', data)
         .then(
           async (response) => {
             const data = response.data;
