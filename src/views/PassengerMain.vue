@@ -13,9 +13,10 @@
           <ion-label>Trip</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="tab3" href="/passenger/chat">
+        <ion-tab-button tab="tab3" href="/passenger/chat" @click="store.clearUnreadMessages">
           <ion-icon aria-hidden="true" :icon="chatbox" />
           <ion-label>Chat</ion-label>
+          <UnreadMessageBadge></UnreadMessageBadge>
         </ion-tab-button>
 
 <!--        <ion-tab-button tab="tab4" href="/passenger/settings">-->
@@ -31,8 +32,9 @@
 
 <script setup lang="ts">
 import {onMounted, ref, watch} from 'vue'
-import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue'
+import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, IonBadge } from '@ionic/vue'
 import { person, car, chatbox, settings } from 'ionicons/icons'
+import UnreadMessageBadge from "@/components/UnreadMessageBadge.vue";
 import DriverArriveAlertModal from "@/components/DriverArriveAlertModal.vue"
 import { useMainStore } from "@/store";
 
@@ -47,3 +49,10 @@ onMounted(() => {
   }
 })
 </script>
+
+<style scoped>
+ion-badge {
+  --background: rgba(0,0,0,0.7);
+  --color: white;
+}
+</style>

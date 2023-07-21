@@ -11,7 +11,8 @@
 import { IonApp, IonRouterOutlet } from '@ionic/vue'
 import { useMainStore } from './store'
 import { call, close } from 'ionicons/icons'
-import {watch} from "vue";
+import {onMounted, watch} from "vue";
+import router from "@/router";
 
 const store = useMainStore()
 
@@ -24,6 +25,21 @@ setInterval(() => {
     store.updatePosition()
   }
 }, 5000);
+
+onMounted(async () => {
+  const userId = await store.profile?.user?.id
+
+  if (userId) {
+    store.echo.private(`UserChannel-${userId}`)
+      .listen('.MessageSentEvent', async (data: any) => {
+        console.log("Message received")
+        if (router.currentRoute.value.name != "Chat") {
+          store.unreadMessages++;
+          console.log("Message received")
+        }
+      });
+  }
+})
 
 watch(() => store.currentTrip?.calling, async (newValue, oldValue) => {
   if (newValue == oldValue) {

@@ -144,6 +144,10 @@ function send(event: any) {
 
   CometChat.sendMessage(textMessage).then(
     message => {
+      const targetUserId = store.profile?.userType == "passenger" ?
+          store.currentTrip?.driver.user.id : store.currentTrip?.passenger.user.id
+
+      store.sendMessage(targetUserId, messageText)
       getConversation()
       console.log("Message sent successfully:", message);
     }, error => {
@@ -171,9 +175,13 @@ function getConversation() {
   );
 }
 
-onMounted(() => {
-  initComet()
-  login()
+onMounted(async () => {
+  const currentTrip = await store.currentTrip
+
+  if (currentTrip != null) {
+    initComet()
+    login()
+  }
 
   messagesLoaded.value = true;
 })

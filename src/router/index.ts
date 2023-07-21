@@ -158,6 +158,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'chat',
         component: () => import('@/views/ChatPage.vue'),
+        name: 'Chat',
       },
       {
         path: 'settings',

@@ -48,6 +48,7 @@ export const useMainStore = defineStore({
     ionLoading: {} as HTMLIonLoadingElement,
     syncedData: {} as any,
     suggestedTopUpAmount: 0 as number,
+    unreadMessages: 0,
   }),
   getters: {
     currentPosition() {
@@ -146,6 +147,25 @@ export const useMainStore = defineStore({
           }).catch((err) => {
         console.log(err);
       })
+    },
+
+    async sendMessage(targetUserId: string, message: string) {
+      const data = {
+        'targetUserId': targetUserId,
+        'message': message,
+      }
+
+      this.axios.post(`/users/chat/sendMessage`, data)
+          .then((res) => {
+            //
+          }).catch((err) => {
+        console.log(err);
+      })
+    },
+
+    clearUnreadMessages()
+    {
+      this.unreadMessages = 0
     },
 
     async updatePosition() {

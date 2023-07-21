@@ -13,7 +13,7 @@
           <ion-label>Job</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="tab3" href="/driver/chat">
+        <ion-tab-button tab="tab3" href="/driver/chat" @click="store.clearUnreadMessages">
           <ion-icon aria-hidden="true" :icon="chatbox" />
           <ion-label>Chat</ion-label>
         </ion-tab-button>
