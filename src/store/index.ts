@@ -140,14 +140,14 @@ export const useMainStore = defineStore({
 
     async call() {
       this.axios.post(`/${this.profile.userType}s/trips/call`)
-          .then((res) => {
+          .then(async (res) => {
             const data = res.data
 
             if (data.status == 'success') {
-              this.showToast({
+              await this.showToast({
                 message: data.message,
                 duration: 2000,
-                position: "top",
+                position: "middle",
               })
             }
           }).catch((err) => {
