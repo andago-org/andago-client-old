@@ -138,14 +138,18 @@ export const useMainStore = defineStore({
       ;
     },
 
-    async setCalling(calling: boolean) {
-      const data = {
-        'calling': calling
-      }
-
-      this.axios.post(`/${this.profile.userType}s/trips/setCalling`, data)
+    async call() {
+      this.axios.post(`/${this.profile.userType}s/trips/call`)
           .then((res) => {
-            this.currentTrip = res.data.currentTrip;
+            const data = res.data
+
+            if (data.status == 'success') {
+              this.showToast({
+                message: data.message,
+                duration: 2000,
+                position: "top",
+              })
+            }
           }).catch((err) => {
         console.log(err);
       })

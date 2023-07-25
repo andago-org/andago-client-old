@@ -40,40 +40,4 @@ onMounted(async () => {
       });
   }
 })
-
-watch(() => store.currentTrip?.calling, async (newValue, oldValue) => {
-  if (newValue == oldValue) {
-    return
-  }
-
-  // const toast = await store.showToast({
-  //   message: 'You are on call',
-  //   // duration: 2000,
-  //   position: 'top',
-  //   icon: call,
-  //   buttons: [
-  //     {
-  //       text: 'Close',
-  //       role: 'cancel',
-  //       icon: close,
-  //       handler: () => {
-  //         console.log('Cancel clicked');
-  //         toast.dismiss()
-  //         store.setCalling(false)
-  //       },
-  //     },
-  //   ]
-  // })
-
-  if (newValue == true) {
-    // AndroidBridge.startCall(store.currentTrip?.id.toString())
-    // console.log(12121212)
-
-  }
-  else
-  {
-    // await toast.dismiss()
-    // AndroidBridge.stopCall()
-  }
-})
 </script>

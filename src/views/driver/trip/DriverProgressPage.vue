@@ -12,7 +12,7 @@
 
     <ion-content>
       <ion-fab slot="fixed" vertical="top" horizontal="end" :edge="true">
-        <ion-fab-button @click="store.setCalling(true)" color="primary">
+        <ion-fab-button @click="store.call" color="primary">
           <ion-icon :icon="call"></ion-icon>
         </ion-fab-button>
       </ion-fab>
