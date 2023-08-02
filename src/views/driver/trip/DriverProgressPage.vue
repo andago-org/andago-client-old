@@ -8,12 +8,14 @@
 
     </ion-header>
 
-    <div id="driverMap" style="height: 300px"></div>
+    <div id="driverMap" style="height: 300px">
+
+    </div>
 
     <ion-content>
-      <ion-fab slot="fixed" vertical="top" horizontal="end" :edge="true">
-        <ion-fab-button @click="store.call" color="primary">
-          <ion-icon :icon="call"></ion-icon>
+      <ion-fab slot="fixed" vertical="top" horizontal="end" style="top: -70px">
+        <ion-fab-button @click="openMap" color="primary">
+          <ion-icon :icon="mapOutline"></ion-icon>
         </ion-fab-button>
       </ion-fab>
 
@@ -23,6 +25,11 @@
           <ion-label>
             <h1>{{ currentTrip?.passenger?.user?.name }}</h1>
           </ion-label>
+
+          <ion-button slot="end" size="default" @click="store.call">
+            <ion-icon slot="start" :icon="call"></ion-icon>
+            Call Passenger
+          </ion-button>
         </ion-item>
 
         <ion-item lines="full">
@@ -30,20 +37,7 @@
           <ion-label>{{ currentTrip?.passenger?.selectedVehicle?.plate_number }}</ion-label>
         </ion-item>
 
-        <ion-popover trigger="pickup-address" color="primary" mode="ios" side="top" :showBackdrop="false" :detail="false"
-          :dismissOnSelect="true">
-          <ion-content>
-            <ion-list>
-              <ion-item button mode="md" color="primary" @click="store.openMap(currentTrip?.pickup_place?.coordinate)">
-                <ion-label class="ion-text-center">
-                  <h1>Open Map</h1>
-                </ion-label>
-              </ion-item>
-            </ion-list>
-          </ion-content>
-        </ion-popover>
-
-        <ion-item button id="pickup-address">
+        <ion-item id="pickup-address">
           <ion-label>Pick-Up</ion-label>
           <ion-text>
             <h4>{{ currentTrip?.pickup_place?.name }}</h4>
@@ -51,20 +45,7 @@
           </ion-text>
         </ion-item>
 
-        <ion-popover trigger="dropoff-address" color="primary" mode="ios" side="top" :showBackdrop="false" :detail="false"
-          :dismissOnSelect="true">
-          <ion-content>
-            <ion-list>
-              <ion-item button mode="md" color="primary" @click="store.openMap(currentTrip?.dropoff_place?.coordinate)">
-                <ion-label class="ion-text-center">
-                  <h1>Open Map</h1>
-                </ion-label>
-              </ion-item>
-            </ion-list>
-          </ion-content>
-        </ion-popover>
-
-        <ion-item button id="dropoff-address">
+        <ion-item id="dropoff-address">
           <ion-label>Drop-Off</ion-label>
           <ion-text>
             <h4>{{ currentTrip?.dropoff_place?.name }}</h4>
@@ -130,7 +111,7 @@ import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonText, IonPage, IonIcon, IonLabel, IonPopover,
   IonFooter, IonButton, IonFab, IonFabButton,
 } from '@ionic/vue';
-import {call, carOutline, cashOutline, personCircleOutline, timerOutline} from 'ionicons/icons';
+import {call, carOutline, cashOutline, personCircleOutline, timerOutline, mapOutline} from 'ionicons/icons';
 import googleMaps from '@/plugins/google-map';
 import { useMainStore } from '@/store';
 
@@ -286,14 +267,14 @@ function completeTrip() {
     })
 }
 
-</script>
-
-<style scoped>
-ion-popover {
-  --background: #eb445a;
-  --backdrop-opacity: 0.6;
-  --box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.6);
-  --color: #eb445a;
-  --width: 300px;
+function openMap() {
+  switch (currentTrip.value.status) {
+    case 'accepted':
+      store.openMap(currentTrip.value.pickup_place?.coordinate)
+      break
+    default:
+      store.openMap(currentTrip.value.dropoff_place?.coordinate)
+  }
 }
-</style>
+
+</script>

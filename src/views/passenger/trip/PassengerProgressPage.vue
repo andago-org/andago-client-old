@@ -9,18 +9,17 @@
     </ion-header>
 
     <ion-content>
-      <ion-fab slot="fixed" vertical="top" horizontal="end" :edge="true">
-        <ion-fab-button @click="store.call" color="primary">
-          <ion-icon :icon="call"></ion-icon>
-        </ion-fab-button>
-      </ion-fab>
-
       <ion-list>
         <ion-item lines="full">
           <ion-icon :icon="personCircleOutline" slot="start" size="large"></ion-icon>
           <ion-label>
             <h1>{{ currentTrip?.driver?.user?.name }}</h1>
           </ion-label>
+
+          <ion-button slot="end" size="default" @click="store.call">
+            <ion-icon slot="start" :icon="call"></ion-icon>
+            Call Driver
+          </ion-button>
         </ion-item>
 
         <ion-item>
