@@ -95,7 +95,7 @@
 import { ref, onMounted, watch, computed } from 'vue';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonText, IonPage, IonIcon, IonLabel, IonFooter,
-  IonButton, IonFab, IonFabButton,
+  IonButton, IonModal,
 } from '@ionic/vue';
 import { useMainStore } from '@/store';
 import googleMaps from '@/plugins/google-map';
