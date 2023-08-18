@@ -1,0 +1,28 @@
+# Ignore git and version control
+.git
+#.gitignore
+
+# Ignore Node/NPM dependencies
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# Ignore build artifacts (if you are building inside the Docker container, you might not want to exclude the 'dist' directory)
+/dist
+
+# Ignore environment settings and sensitive data
+#.env
+#.env.local
+#.env.*.local
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE related files
+.idea/
+.vscode/
+
+# Ignore test files and directories
+/tests
+*.spec.js
