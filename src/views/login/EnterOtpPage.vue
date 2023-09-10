@@ -54,7 +54,7 @@ watch(otpCode, () => {
 });
 
 async function login() {
-  const oneSignalPlayerId = AndroidBridge.getOneSignalPlayerId()
+  const oneSignalPlayerId = store.getOneSignalPlayerId()
 
   const data = {
     phoneNumber: store.phoneNumber,

@@ -54,11 +54,17 @@ export const useMainStore = defineStore({
   }),
   getters: {
     currentPosition() {
-      const currentPosition = AndroidBridge.getLocation()
+      let currentPosition = ''
+
+      if (window.platform == 'iOS') {
+        currentPosition = window.currentLocation
+      } else {
+        currentPosition = AndroidBridge.getLocation()
+      }
 
       const position = currentPosition.split(',')
 
-      const coordinate: Coordinate = {
+      const coordinate: any = {
         lat: position[0],
         lng: position[1],
       }
@@ -108,7 +114,7 @@ export const useMainStore = defineStore({
   },
   actions: {
     async getData(): Promise<any> {
-      const oneSignalPlayerId = AndroidBridge.getOneSignalPlayerId()
+      const oneSignalPlayerId = await this.getOneSignalPlayerId()
 
       const data = {
         oneSignalPlayerId: oneSignalPlayerId
@@ -136,6 +142,19 @@ export const useMainStore = defineStore({
           }
         )
       ;
+    },
+
+    async getOneSignalPlayerId(): Promise<string> {
+      let oneSignalPlayerId = '' as string
+
+      if (window.platform == 'iOS') {
+        oneSignalPlayerId = window.oneSignalPlayerId as string
+      }
+      else {
+        oneSignalPlayerId = AndroidBridge.getOneSignalPlayerId()
+      }
+
+      return oneSignalPlayerId
     },
 
     async call() {
@@ -241,11 +260,42 @@ export const useMainStore = defineStore({
     {
       axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
     },
+
+    async openBrowser(url: string): Promise<void> {
+      if (window.platform == 'iOS') {
+        window.webkit.messageHandlers.jsBridge.postMessage({
+          "function": "openBrowser",
+          "url": url
+        })
+      }
+      else
+      {
+        AndroidBrowser.open(url)
+      }
+    },
+
+    async closeBrowser(): Promise<void> {
+        if (window.platform == 'iOS') {
+          window.webkit.messageHandlers.jsBridge.postMessage({
+            "function": "closeBrowser",
+          })
+        }
+        else
+        {
+            AndroidBrowser.close()
+        }
+    },
     
     async openMap(position: any = { lat: 3.0668693359101, lng: 101.67422110225 }): Promise<void> {
-      const coordString = `${position.lat},${position.lng}`;
-      
-      AndroidBridge.openMap(coordString);
+      const coordString = `${position.lat},${position.lng}`
+
+      if (window.platform == 'iOS') {
+        await this.openBrowser(`http://maps.apple.com/?q=${coordString}`)
+      }
+      else
+      {
+        await AndroidBridge.openMap(coordString)
+      }
     },
 
     async loadTokenFromStorage() {

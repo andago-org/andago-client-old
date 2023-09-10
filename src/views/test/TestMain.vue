@@ -7,12 +7,10 @@
     </ion-header>
 
     <ion-content>
-      <ion-button @click="modal = true">
-        Open
+      <ion-button @click="Test">
+        Test
       </ion-button>
     </ion-content>
-
-    <DriverArriveAlertModal v-model:is-open="modal"></DriverArriveAlertModal>
   </ion-page>
 </template>
 
@@ -21,7 +19,14 @@ import { ref } from 'vue';
 import {
   IonButton, IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
 } from '@ionic/vue';
-import DriverArriveAlertModal from "@/components/DriverArriveAlertModal.vue";
+import {useMainStore} from "@/store";
 
-const modal = ref(false);
+const store = useMainStore();
+
+function Test() {
+  console.log(window.oneSignalPlayerId)
+  // console.log(AndroidBridge.getOneSignalPlayerId())
+  // store.openMap()
+}
+
 </script>
