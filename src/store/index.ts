@@ -56,11 +56,29 @@ export const useMainStore = defineStore({
     isIos() {
       return /iPad|iPhone|iPod/.test(navigator.userAgent) as boolean
     },
-    async currentPosition() {
+    currentPosition() {
       let currentPosition = ''
 
       if (this.isIos) {
-        currentPosition = window.currentLocation
+        // currentPosition = window.currentLocation
+
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            console.log(`Latitude: ${lat}, Longitude: ${lng}`)
+
+            return {
+              lat: lat,
+              lng: lng,
+            }
+            // Use lat and lng as needed
+          }, function(error) {
+            console.error("Error obtaining geolocation:", error)
+          })
+        } else {
+          console.error("Geolocation is not available in this browser.")
+        }
       } else {
         currentPosition = AndroidBridge.getLocation()
       }
