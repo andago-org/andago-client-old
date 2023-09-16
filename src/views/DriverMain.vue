@@ -70,10 +70,5 @@ watch(
   }
 );
 
-onMounted(async () => {
-  console.log(await store.currentPosition)
-}
-)
-
 store.echo.join('DriverChannel');
 </script>

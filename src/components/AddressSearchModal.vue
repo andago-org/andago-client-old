@@ -96,7 +96,7 @@ const places = ref<any[]>([]);
 async function getPlaces() {
   searching.value = true;
 
-  const position = store.currentPosition;
+  const position = await store.currentPosition as any
 
   const data = {
     query: searchText.value,
