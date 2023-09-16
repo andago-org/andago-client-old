@@ -39,5 +39,21 @@ onMounted(async () => {
         }
       });
   }
+
+  if (store.isIos)
+  {
+    setInterval(() => {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        // console.log(`Latitude: ${lat}, Longitude: ${lng}`)
+        window.currentLocation = `${lat},${lng}`
+
+        // Use lat and lng as needed
+      }, function(error) {
+        console.error("Error obtaining geolocation:", error)
+      })
+    }, 5000);
+  }
 })
 </script>
