@@ -213,7 +213,7 @@ export const useMainStore = defineStore({
 
     async updatePosition() {
       const data = {
-        position: this.currentPosition,
+        position: await this.currentPosition,
       }
 
       this.axios.post('/drivers/updatePosition', data)
