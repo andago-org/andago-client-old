@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { watch, ref, } from 'vue';
+import {watch, ref, onMounted,} from 'vue';
 import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
 import { person, car, chatbox, settings } from 'ionicons/icons';
 import { useMainStore } from '@/store';
@@ -69,6 +69,11 @@ watch(
     }
   }
 );
-console.log(store.currentPosition)
+
+onMounted(async () => {
+  console.log(await store.currentPosition)
+}
+)
+
 store.echo.join('DriverChannel');
 </script>
