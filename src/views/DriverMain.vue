@@ -69,6 +69,6 @@ watch(
     }
   }
 );
-
+console.log(store.currentPosition)
 store.echo.join('DriverChannel');
 </script>
