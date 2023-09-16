@@ -63,7 +63,7 @@ export const useMainStore = defineStore({
         navigator.geolocation.getCurrentPosition(function(position) {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
-          // console.log(`Latitude: ${lat}, Longitude: ${lng}`)
+          console.log(`Latitude: ${lat}, Longitude: ${lng}`)
           currentPosition = `${lat},${lng}`
           // Use lat and lng as needed
         }, function(error) {
