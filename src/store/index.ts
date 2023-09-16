@@ -63,8 +63,13 @@ export const useMainStore = defineStore({
         navigator.geolocation.getCurrentPosition(function(position) {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
-          console.log(`Latitude: ${lat}, Longitude: ${lng}`)
-          currentPosition = `${lat},${lng}`
+          // console.log(`Latitude: ${lat}, Longitude: ${lng}`)
+          // currentPosition = `${lat},${lng}`
+
+          return {
+            lat: lat,
+            lng: lng,
+          }
           // Use lat and lng as needed
         }, function(error) {
           console.error("Error obtaining geolocation:", error)
@@ -72,7 +77,7 @@ export const useMainStore = defineStore({
       } else {
         currentPosition = AndroidBridge.getLocation()
       }
-      console.log(currentPosition) // this returns undefined, why?
+      
       const position = currentPosition.split(',')
 
       const coordinate: any = {
