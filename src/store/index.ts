@@ -57,40 +57,37 @@ export const useMainStore = defineStore({
       return /iPad|iPhone|iPod/.test(navigator.userAgent) as boolean
     },
     currentPosition() {
-      let currentPosition = ''
-
-      if (this.isIos) {
-        // currentPosition = window.currentLocation
-
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(function(position) {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            console.log(`Latitude: ${lat}, Longitude: ${lng}`)
-
-            return {
-              lat: lat,
-              lng: lng,
-            }
-            // Use lat and lng as needed
-          }, function(error) {
-            console.error("Error obtaining geolocation:", error)
-          })
+      return new Promise((resolve, reject) => {
+        if (this.isIos) {
+          if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+              const lat = position.coords.latitude;
+              const lng = position.coords.longitude;
+              console.log(`Latitude: ${lat}, Longitude: ${lng}`)
+              resolve({
+                lat: lat,
+                lng: lng,
+              });
+            }, function (error) {
+              console.error("Error obtaining geolocation:", error);
+              reject(error);
+            });
+          } else {
+            console.error("Geolocation is not available in this browser.");
+            reject(new Error("Geolocation is not available in this browser."));
+          }
         } else {
-          console.error("Geolocation is not available in this browser.")
+          const currentPosition = AndroidBridge.getLocation();
+          const position = currentPosition.split(',');
+
+          const coordinate = {
+            lat: position[0],
+            lng: position[1],
+          };
+
+          resolve(coordinate);
         }
-      } else {
-        currentPosition = AndroidBridge.getLocation()
-      }
-
-      const position = currentPosition.split(',')
-
-      const coordinate: any = {
-        lat: position[0],
-        lng: position[1],
-      }
-
-      return coordinate
+      });
     },
     axios() {
       axiosInstance.defaults.headers['Accept'] = 'application/json';
