@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import {defineProps, defineEmits, ref, watch, onMounted,} from 'vue';
+import { defineProps, defineEmits, ref, watch, onMounted } from 'vue';
 import {
   IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonNote, IonButton,
   IonGrid, IonRow, IonCol, IonText, IonIcon
@@ -75,18 +75,28 @@ const props = defineProps({
 
 const googleMap = ref(null as any);
 
-onMounted(async () => {
-    const center = await store.currentPosition as any
-    // const pickUpPostion = await store.getPickUpPosition();
+const loadMap = async () => {
+  const center = await store.currentPosition;
 
-    googleMaps.load().then((maps: any) => {
-      googleMap.value = new maps.Map(document.getElementById("map2"), {
-        center: center,
-        zoom: 5,
-        disableDefaultUI: true,
-      });
-      googleMaps.calculateRoute(center, props.receivedTrip.pickup_place, googleMap.value);
-    });
+  const maps = await googleMaps.load() as any;
+  googleMap.value = new maps.Map(document.getElementById("map2"), {
+    center: center,
+    zoom: 5,
+    disableDefaultUI: true,
+  });
+  googleMaps.calculateRoute(center, props.receivedTrip.pickup_place, googleMap.value);
+};
+
+watch(() => props.isOpen, newVal => {
+  if (newVal) {
+    loadMap();
+  }
+});
+
+onMounted(() => {
+  if (props.isOpen) {
+    loadMap();
+  }
 });
 
 const emit = defineEmits(['update:isOpen', 'accept', 'update:receivedTrip']);
