@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, watch, } from 'vue';
+import {defineProps, defineEmits, ref, watch, onMounted,} from 'vue';
 import {
   IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonNote, IonButton,
   IonGrid, IonRow, IonCol, IonText, IonIcon
@@ -75,8 +75,7 @@ const props = defineProps({
 
 const googleMap = ref(null as any);
 
-watch(() => props.isOpen, async (newVal) => {
-  if (newVal) {
+onMounted(async () => {
     const center = await store.currentPosition as any
     // const pickUpPostion = await store.getPickUpPosition();
 
@@ -88,7 +87,6 @@ watch(() => props.isOpen, async (newVal) => {
       });
       googleMaps.calculateRoute(center, props.receivedTrip.pickup_place, googleMap.value);
     });
-  }
 });
 
 const emit = defineEmits(['update:isOpen', 'accept', 'update:receivedTrip']);
