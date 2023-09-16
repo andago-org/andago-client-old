@@ -24,9 +24,18 @@ import {useMainStore} from "@/store";
 const store = useMainStore();
 
 function Test() {
-  console.log("position:", window.currentLocation)
+  // console.log("position:", window.currentLocation)
   // console.log(AndroidBridge.getOneSignalPlayerId())
   // store.openMap()
+
+  navigator.geolocation.getCurrentPosition(function(position) {
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+    console.log(`Latitude: ${lat}, Longitude: ${lng}`)
+    // Use lat and lng as needed
+  }, function(error) {
+    console.error("Error obtaining geolocation:", error)
+  })
 
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(function(position) {
