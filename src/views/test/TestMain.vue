@@ -24,7 +24,7 @@ import {useMainStore} from "@/store";
 const store = useMainStore();
 
 function Test() {
-  console.log(window.oneSignalPlayerId)
+  console.log("position:", window.currentLocation)
   // console.log(AndroidBridge.getOneSignalPlayerId())
   // store.openMap()
 }

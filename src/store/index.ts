@@ -53,15 +53,18 @@ export const useMainStore = defineStore({
     addWaitTimeRequestModalOpen: false,
   }),
   getters: {
+    isIos() {
+      return /iPad|iPhone|iPod/.test(navigator.userAgent) as boolean
+    },
     currentPosition() {
       let currentPosition = ''
 
-      if (window.platform == 'iOS') {
-        currentPosition = window.currentLocation
+      if (this.isIos) {
+        currentPosition = window.currentLocation as string
       } else {
         currentPosition = AndroidBridge.getLocation()
       }
-
+      console.log(currentPosition) // this returns undefined, why?
       const position = currentPosition.split(',')
 
       const coordinate: any = {
@@ -147,7 +150,7 @@ export const useMainStore = defineStore({
     async getOneSignalPlayerId(): Promise<string> {
       let oneSignalPlayerId = '' as string
 
-      if (window.platform == 'iOS') {
+      if (this.isIos) {
         oneSignalPlayerId = window.oneSignalPlayerId as string
       }
       else {
@@ -262,7 +265,7 @@ export const useMainStore = defineStore({
     },
 
     async openBrowser(url: string): Promise<void> {
-      if (window.platform == 'iOS') {
+      if (this.isIos) {
         window.webkit.messageHandlers.jsBridge.postMessage({
           "function": "openBrowser",
           "url": url
@@ -275,7 +278,7 @@ export const useMainStore = defineStore({
     },
 
     async closeBrowser(): Promise<void> {
-        if (window.platform == 'iOS') {
+        if (this.isIos) {
           window.webkit.messageHandlers.jsBridge.postMessage({
             "function": "closeBrowser",
           })
@@ -289,7 +292,7 @@ export const useMainStore = defineStore({
     async openMap(position: any = { lat: 3.0668693359101, lng: 101.67422110225 }): Promise<void> {
       const coordString = `${position.lat},${position.lng}`
 
-      if (window.platform == 'iOS') {
+      if (this.isIos) {
         await this.openBrowser(`http://maps.apple.com/?q=${coordString}`)
       }
       else
