@@ -54,16 +54,16 @@ watch(otpCode, () => {
 });
 
 async function login() {
-  const oneSignalPlayerId = await store.getOneSignalPlayerId()
+  // const oneSignalPlayerId = await store.getOneSignalPlayerId()
 
   const data = {
     phoneNumber: store.phoneNumber,
     code: otpCode.value,
     userType: store.userType,
-    oneSignalId: oneSignalPlayerId,
+    // oneSignalId: oneSignalPlayerId,
   };
 
-  store.axios.post("/auth/login", data)
+  await store.axios.post("/auth/login", data)
     .then(async (response) => {
       if (response.data.status == 'success') {
         const data = response.data
