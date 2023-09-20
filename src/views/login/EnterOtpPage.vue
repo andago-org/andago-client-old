@@ -54,7 +54,7 @@ watch(otpCode, () => {
 });
 
 async function login() {
-  const oneSignalPlayerId = store.getOneSignalPlayerId()
+  const oneSignalPlayerId = await store.getOneSignalPlayerId()
 
   const data = {
     phoneNumber: store.phoneNumber,
