@@ -7,37 +7,28 @@
     </ion-header>
 
     <ion-content>
-      <ion-button @click="Test">
-        Test
-      </ion-button>
+      <ion-button @click="startCall">Start</ion-button>
+      <ion-button @click="stopCall">Stop</ion-button>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import {
   IonButton, IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
 } from '@ionic/vue';
 import {useMainStore} from "@/store";
 
-const store = useMainStore();
+const store = useMainStore()
 
-async function Test() {
-  // console.log("position:", window.currentLocation)
-  console.log(await store.getOneSignalPlayerId())
-  // store.openMap()
-
-  // navigator.geolocation.getCurrentPosition(function(position) {
-  //   const lat = position.coords.latitude;
-  //   const lng = position.coords.longitude;
-  //   console.log(`Latitude: ${lat}, Longitude: ${lng}`)
-  //   // Use lat and lng as needed
-  // }, function(error) {
-  //   console.error("Error obtaining geolocation:", error)
-  // })
-
-
+function startCall()
+{
+  AndroidBridge.startCall('test')
 }
 
+function stopCall()
+{
+  AndroidBridge.stopCall()
+}
 </script>

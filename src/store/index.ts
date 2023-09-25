@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios';
 import router from '@/router';
-import { UserType, Gender, Coordinate, Vehicle, ControlMode, } from '@/interfaces/types';
+import { UserType, Gender, Vehicle, ControlMode, } from '@/interfaces/types';
 import { Preferences } from '@capacitor/preferences';
 import Pusher, { Channel } from 'pusher-js';
 import Echo from 'laravel-echo';
@@ -47,6 +47,7 @@ export const useMainStore = defineStore({
     ionToast: {} as HTMLIonToastElement,
     ionLoading: {} as HTMLIonLoadingElement,
     syncedData: {} as any,
+    topUpModalOpen: false,
     suggestedTopUpAmount: 0 as number,
     unreadMessages: 0,
     addWaitTimeModalOpen: false,

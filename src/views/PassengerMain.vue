@@ -18,25 +18,26 @@
           <ion-label>Chat</ion-label>
           <UnreadMessageBadge></UnreadMessageBadge>
         </ion-tab-button>
-
-<!--        <ion-tab-button tab="tab4" href="/passenger/settings">-->
-<!--          <ion-icon aria-hidden="true" :icon="settings" />-->
-<!--          <ion-label>Settings</ion-label>-->
-<!--        </ion-tab-button>-->
       </ion-tab-bar>
     </ion-tabs>
   </ion-page>
 
   <DriverArriveAlertModal v-model:is-open="driverArriveModalOpen"></DriverArriveAlertModal>
+
+  <TopUpModal v-model:isOpen="store.topUpModalOpen" />
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref, watch} from 'vue'
-import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, IonBadge } from '@ionic/vue'
+import { onMounted, ref, watch } from 'vue'
+import {
+  IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, IonBadge,
+  IonMenu, IonToolbar, IonContent,
+} from '@ionic/vue'
 import { person, car, chatbox, settings } from 'ionicons/icons'
 import UnreadMessageBadge from "@/components/UnreadMessageBadge.vue";
 import DriverArriveAlertModal from "@/components/DriverArriveAlertModal.vue"
 import { useMainStore } from "@/store";
+import TopUpModal from "@/components/TopUpModal.vue";
 
 const store = useMainStore();
 

@@ -13,16 +13,16 @@
         <ion-item>
           <ion-label>Pick-Up</ion-label>
           <ion-text>
-            <h4>{{ currentTrip.pickup_place.name }}</h4>
-            <p>{{ currentTrip.pickup_place.address }}</p>
+            <h4>{{ currentTrip?.pickup_place.name }}</h4>
+            <p>{{ currentTrip?.pickup_place.address }}</p>
           </ion-text>
         </ion-item>
 
         <ion-item>
           <ion-label>Drop-Off</ion-label>
           <ion-text>
-            <h4>{{ currentTrip.dropoff_place.name }}</h4>
-            <p>{{ currentTrip.dropoff_place.address }}</p>
+            <h4>{{ currentTrip?.dropoff_place.name }}</h4>
+            <p>{{ currentTrip?.dropoff_place.address }}</p>
           </ion-text>
         </ion-item>
       </ion-list>
@@ -35,35 +35,35 @@
           <ion-text>
             Wallet Balance
           </ion-text>
-          <ion-text slot="end">{{ store.profile.balanceText }}</ion-text>
+          <ion-text slot="end">{{ store.profile?.balanceText }}</ion-text>
         </ion-item>
         <ion-item lines="none">
           <ion-icon :icon="bookOutline" slot="start"></ion-icon>
           <ion-text>
-            {{ currentTrip.preview.min_fare.text }}
+            {{ currentTrip?.preview.min_fare.text }}
           </ion-text>
-          <ion-text slot="end">{{ currentTrip.preview.min_fare.value }}</ion-text>
+          <ion-text slot="end">{{ currentTrip?.preview.min_fare.value }}</ion-text>
         </ion-item>
         <ion-item lines="none">
           <ion-icon :icon="carOutline" slot="start"></ion-icon>
           <ion-text>
-            {{ currentTrip.preview.distance_addon.text }}
+            {{ currentTrip?.preview.distance_addon.text }}
           </ion-text>
-          <ion-text slot="end">{{ currentTrip.preview.distance_addon.value }}</ion-text>
+          <ion-text slot="end">{{ currentTrip?.preview.distance_addon.value }}</ion-text>
         </ion-item>
         <ion-item lines="none">
           <ion-icon :icon="timeOutline" slot="start"></ion-icon>
           <ion-text>
-            {{ currentTrip.preview.duration_addon.text }}
+            {{ currentTrip?.preview.duration_addon.text }}
           </ion-text>
-          <ion-text slot="end">{{ currentTrip.preview.duration_addon.value }}</ion-text>
+          <ion-text slot="end">{{ currentTrip?.preview.duration_addon.value }}</ion-text>
         </ion-item>
         <ion-item lines="none">
           <ion-icon :icon="cashOutline" slot="start"></ion-icon>
           <ion-text>
-            {{ currentTrip.preview.total_fare.text }}
+            {{ currentTrip?.preview.total_fare.text }}
           </ion-text>
-          <ion-text slot="end">{{ currentTrip.preview.total_fare.value }}</ion-text>
+          <ion-text slot="end">{{ currentTrip?.preview.total_fare.value }}</ion-text>
         </ion-item>
       </ion-list>
 
@@ -81,7 +81,7 @@
     </ion-footer>
   </ion-page>
 
-  <TopUpModal v-model:isOpen="topUpModalOpen" />
+<!--  <TopUpModal v-model:isOpen="topUpModalOpen" />-->
 </template>
 
 <script setup lang="ts">
@@ -93,7 +93,7 @@ import {
 import googleMaps from '@/plugins/google-map';
 import { useMainStore } from '@/store';
 import { bookOutline, cashOutline, timeOutline, carOutline, walletOutline } from 'ionicons/icons';
-import TopUpModal from '@/components/TopUpModal.vue';
+// import TopUpModal from '@/components/TopUpModal.vue';
 
 const store = useMainStore();
 
@@ -128,7 +128,7 @@ function confirmTrip() {
         store.currentTrip = data.trip;
       }
       else {
-        topUpModalOpen.value = true;
+        store.topUpModalOpen = true;
       }
 
     }).catch((error: any) => {

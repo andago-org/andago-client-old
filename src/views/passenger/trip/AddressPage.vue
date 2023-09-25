@@ -10,31 +10,47 @@
     </ion-content>
 
     <ion-footer>
+
       <ion-grid>
+<!--        <ion-row>-->
+<!--          <ion-card style="width: 100%;">-->
+<!--            <ion-card-header>-->
+<!--              <ion-card-title class="ion-text-center">Selected Car</ion-card-title>-->
+<!--            </ion-card-header>-->
+<!--            <ion-card-content>-->
+<!--              <ion-grid>-->
+<!--                <ion-row>-->
+<!--                  <ion-col size="auto">-->
+<!--                    <ion-icon :icon="car" size="large"></ion-icon>-->
+<!--                  </ion-col>-->
+<!--                  <ion-col>-->
+<!--                    <ion-card-title class="ion-text-center">{{ store.profile?.selectedVehicle.plate_number-->
+<!--                    }}</ion-card-title>-->
+<!--                  </ion-col>-->
+<!--                  <ion-col size="auto" class="ion-align-items-center">-->
+<!--                    <ion-checkbox :checked="true" :disabled="true"></ion-checkbox>-->
+<!--                  </ion-col>-->
+<!--                </ion-row>-->
+<!--              </ion-grid>-->
+<!--            </ion-card-content>-->
+<!--          </ion-card>-->
+<!--        </ion-row>-->
         <ion-row>
-          <!-- <ion-nav-link style="width: 100%;" router-direction="forward" :component="VehiclePage"> -->
           <ion-card style="width: 100%;">
-            <ion-card-header>
-              <ion-card-title class="ion-text-center">Selected Car</ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-              <ion-grid>
-                <ion-row>
-                  <ion-col size="auto">
-                    <ion-icon :icon="car" size="large"></ion-icon>
-                  </ion-col>
-                  <ion-col>
-                    <ion-card-title class="ion-text-center">{{ store.profile.selectedVehicle.plate_number
-                    }}</ion-card-title>
-                  </ion-col>
-                  <ion-col size="auto" class="ion-align-items-center">
-                    <ion-checkbox :checked="true" :disabled="true"></ion-checkbox>
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
-            </ion-card-content>
+            <ion-list>
+              <ion-item button @click="store.topUpModalOpen = true">
+                <ion-icon :icon="wallet" slot="start"></ion-icon>
+                <ion-label>Wallet Balance</ion-label>
+                <ion-text>{{ "RM " + store.profile?.balance }}</ion-text>
+              </ion-item>
+
+              <ion-item lines="none" button>
+                <ion-icon :icon="car" slot="start"></ion-icon>
+                <ion-label>Selected Car</ion-label>
+                <ion-text>{{ store.profile?.selectedVehicle.plate_number }}</ion-text>
+              </ion-item>
+            </ion-list>
           </ion-card>
-          <!-- </ion-nav-link> -->
         </ion-row>
 
         <ion-row>
@@ -70,12 +86,12 @@
 import { ref, watch, computed } from 'vue';
 import {
   IonPage, IonContent, IonButton, IonGrid, IonRow, IonCol, IonLoading, IonFooter, IonCard, IonCardHeader,
-  IonCardTitle, IonCardContent, IonIcon, IonCheckbox
+  IonCardTitle, IonCardContent, IonIcon, IonCheckbox, IonMenu, IonToolbar, IonItem, IonLabel, IonText
 } from '@ionic/vue';
 import { location, navigate } from 'ionicons/icons';
 import { useMainStore } from '@/store';
 import AddressSearchModal from '@/components/AddressSearchModal.vue';
-import { car } from 'ionicons/icons';
+import { car, wallet } from 'ionicons/icons';
 import { Splide, SplideSlide } from '@splidejs/vue-splide';
 
 const store = useMainStore();

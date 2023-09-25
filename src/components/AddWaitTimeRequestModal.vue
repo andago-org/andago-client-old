@@ -28,10 +28,10 @@
 
 <script setup lang="ts">
 import {
-  IonModal, IonButton, IonText, IonContent, IonList, IonItem, IonLabel, IonInput, IonHeader, IonToolbar, IonTitle,
+  IonModal, IonButton, IonText, IonContent, IonHeader, IonToolbar, IonTitle,
   IonButtons, IonPage,
 } from '@ionic/vue';
-import { ref, defineEmits, onMounted, watch } from 'vue';
+import { defineEmits } from 'vue';
 import { useMainStore } from '@/store';
 
 const store = useMainStore();
@@ -39,8 +39,6 @@ const store = useMainStore();
 defineProps({
   isOpen: Boolean,
 });
-
-const topUpAmount = ref(0);
 
 const emit = defineEmits(['update:isOpen']);
 

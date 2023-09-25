@@ -28,6 +28,12 @@
             value-format="yyyy-MM-dd" />
         </ion-item>
 
+        <ion-item>
+          <ion-label>Wallet Balance</ion-label>
+          <ion-button @click="store.topUpModalOpen = true">Top Up</ion-button>
+          <ion-text>{{ "RM " + store.profile?.balance }}</ion-text>
+        </ion-item>
+
         <ion-button expand="block" @click="store.logout()">Logout</ion-button>
       </ion-list>
 

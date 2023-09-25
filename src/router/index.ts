@@ -3,6 +3,10 @@ import { RouteRecordRaw } from 'vue-router';
 import { useMainStore } from '@/store'
 
 const routes: Array<RouteRecordRaw> = [
+  // {
+  //   path: '/',
+  //   redirect: '/test'
+  // },
   {
     path: '/test',
     component: () => import('@/views/test/TestMain.vue'),
