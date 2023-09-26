@@ -15,7 +15,7 @@
           </ion-card-title>
         </ion-card-header>
         <ion-card-content class="toggle-container">
-          <ion-toggle mode="ios"></ion-toggle>
+          <ion-toggle mode="ios" :checked="store.profile?.on_duty" @click="updateOnDuty"></ion-toggle>
         </ion-card-content>
       </ion-card>
 
@@ -52,8 +52,23 @@ onMounted(() => {
     //   },
     //   1000
     // );
-  });
-});
+  })
+})
+
+function updateOnDuty()
+{
+  const data = {
+    on_duty: !store.profile.on_duty,
+  }
+
+  store.axios.post('/drivers/updateOnDuty', data)
+      .then((response) => {
+        //
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+}
 
 </script>
 

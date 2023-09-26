@@ -52,6 +52,7 @@ export const useMainStore = defineStore({
     unreadMessages: 0,
     addWaitTimeModalOpen: false,
     addWaitTimeRequestModalOpen: false,
+    driverStatusOn: false,
   }),
   getters: {
     isIos() {
