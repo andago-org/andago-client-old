@@ -163,6 +163,14 @@ export const useMainStore = defineStore({
       ;
     },
 
+    async openModal(Modal: any)
+    {
+      const modal = await modalController.create({
+        component: Modal,
+      });
+      await modal.present();
+    },
+
     async getOneSignalPlayerId(): Promise<string> {
       let oneSignalPlayerId = '' as string
 

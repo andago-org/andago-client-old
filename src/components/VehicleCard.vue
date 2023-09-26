@@ -1,10 +1,22 @@
 <template>
   <ion-card>
     <ion-card-header>
-      <n-upload ref="upload" :default-upload="false" :headers="headers" @onFinish="handleUploadFinish"
-        :show-file-list="false" :on-change="submitFiles">
+      <n-upload
+        class="ion-text-center"
+        ref="upload"
+        list-type="image"
+        :default-upload="false"
+        :headers="headers"
+        :show-file-list="false"
+        :on-before-upload="handleBeforeUpload"
+      >
         <n-upload-dragger style="height: 200px">
-          <div>
+          <n-image
+            v-if="imageSrc"
+            object-fit="contain"
+            :src="imageSrc"
+          />
+          <div v-else>
             <div style="margin-bottom: 12px">
               <n-icon size="48" :depth="3">
                 <image-icon />
@@ -14,8 +26,6 @@
               Tap to Upload Image
             </n-text>
           </div>
-          <!-- <n-image object-fit="contain" src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
-            :preview-disabled="true" /> -->
         </n-upload-dragger>
       </n-upload>
 
@@ -25,8 +35,8 @@
             <ion-icon :icon="carIcon" size="large"></ion-icon>
           </ion-col>
           <ion-col>
-            <ion-item :fill="!isViewMode ? 'outline' : undefined">
-              <ion-input v-model="vehicleData.name" placeholder="Enter Car Number" :readonly="isViewMode"></ion-input>
+            <ion-item :fill="!isViewMode ? 'outline' : 'solid'">
+              <ion-input v-model="vehicleData.plate_number" placeholder="Enter Car Number" :readonly="isViewMode"></ion-input>
             </ion-item>
           </ion-col>
           <ion-col size="auto">
@@ -69,15 +79,47 @@ import {
   IonButton, IonIcon, IonGrid, IonRow, IonCol, IonCard, IonCardHeader, IonCardTitle, IonCheckbox, IonInput,
   IonItem,
 } from '@ionic/vue';
-import { ref, defineProps, defineEmits, computed, watch, reactive } from 'vue';
+import { ref, defineProps, defineEmits, computed, watch, onMounted } from 'vue';
 import { car as carIcon, image } from 'ionicons/icons';
-import { Vehicle, ControlMode } from '@/interfaces/types';
+import { ControlMode } from '@/interfaces/types';
 import { useMainStore } from '@/store';
 import { NUpload, NUploadDragger, NIcon, NText, NImage, UploadFileInfo } from 'naive-ui';
 import { Image as ImageIcon } from '@vicons/ionicons5'
 import axios from 'axios';
 
 const store = useMainStore();
+
+const props = defineProps({
+  vehicleData: {
+    type: Object as () => any,
+    required: true,
+  },
+});
+
+const storageUrl = process.env.VUE_APP_STORAGE_URL
+const imageUrl = storageUrl + '/vehicles/' + props.vehicleData?.vehicle_photo
+
+const vehiclePhoto = ref()
+const imageSrc = ref()
+
+onMounted(() => {
+  imageSrc.value = imageUrl
+})
+
+function handleBeforeUpload(file: any) {
+  const reader = new FileReader()
+  reader.onload = (event: any) => {
+    imageSrc.value = event.target.result
+  };
+  console.log("on before upload:", file.file.file)
+  reader.readAsDataURL(file.file.file)
+
+  vehiclePhoto.value = file
+
+  upload.value.clear()
+
+  return false
+}
 
 const uploadUrl = process.env.VUE_APP_API_BASE_URL + "/files/uploadImage";
 
@@ -115,12 +157,7 @@ const submitFiles = async (response: any) => {
   }
 };
 
-const props = defineProps({
-  vehicleData: {
-    type: Object as () => Vehicle,
-    required: true,
-  },
-});
+
 
 defineEmits(['update:vehicleData', 'click']);
 
@@ -128,8 +165,8 @@ const onCheckboxChange = ({ detail }: any) => {
   store.selectVehicle(vehicleData.value);
 };
 
-const vehicleData = ref<Vehicle>(props.vehicleData)
-const vehicleDataCopy = ref<Vehicle>({ ...props.vehicleData });
+const vehicleData = ref<any>(props.vehicleData)
+const vehicleDataCopy = ref<any>({ ...props.vehicleData });
 
 watch(
   () => vehicleData.value.controlMode,
