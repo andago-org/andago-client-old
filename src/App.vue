@@ -3,15 +3,15 @@
     <ion-router-outlet />
   </ion-app>
 
-  <audio id="localAudio" autoplay muted></audio>
-  <audio id="remoteAudio" autoplay></audio>
+  <PhoneCallModal v-model:is-open="phoneCallModalOpen"></PhoneCallModal>
 </template>
 
 <script setup lang="ts">
 import { IonApp, IonRouterOutlet } from '@ionic/vue'
 import { useMainStore } from './store'
-import { onMounted } from "vue";
+import { onMounted, watch, ref } from "vue";
 import router from "@/router";
+import PhoneCallModal from "@/components/PhoneCallModal.vue";
 
 const store = useMainStore()
 
@@ -39,4 +39,19 @@ onMounted(async () => {
       });
   }
 })
+
+const phoneCallModalOpen = ref(false)
+
+watch(() => store.currentTrip?.calling, (newValue, oldValue) => {
+  phoneCallModalOpen.value = newValue
+
+  if (newValue == true)
+  {
+    store.startCalling(store.currentTrip?.id.toString())
+  }
+  else
+  {
+    store.stopCalling()
+  }
+}, {deep: true})
 </script>

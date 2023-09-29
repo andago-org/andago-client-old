@@ -16,7 +16,7 @@
             <h1>{{ currentTrip?.driver?.user?.name }}</h1>
           </ion-label>
 
-          <ion-button slot="end" size="default" @click="store.call">
+          <ion-button slot="end" size="default" @click="store.setCalling(true)">
             <ion-icon slot="start" :icon="call"></ion-icon>
             Call Driver
           </ion-button>

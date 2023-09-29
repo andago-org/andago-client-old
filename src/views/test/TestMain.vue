@@ -11,24 +11,26 @@
       <ion-button @click="stopCall">Stop</ion-button>
     </ion-content>
   </ion-page>
+
+  <PhoneCallModal :is-open="true"></PhoneCallModal>
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from 'vue';
 import {
   IonButton, IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
 } from '@ionic/vue';
+import PhoneCallModal from "@/components/PhoneCallModal.vue";
 import {useMainStore} from "@/store";
 
 const store = useMainStore()
 
 function startCall()
 {
-  AndroidBridge.startCall('test')
+  store.startCalling('test')
 }
 
 function stopCall()
 {
-  AndroidBridge.stopCall()
+  store.stopCalling()
 }
 </script>

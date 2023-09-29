@@ -149,12 +149,22 @@ export const useMainStore = defineStore({
             this.currentTrip = data.currentTrip;
             this.currentPayment = data.currentPayment;
 
+            // if (this.currentTrip?.driver_id !== null) {
+            //   const tripId = this.currentTrip?.id
+            //
+            //   if (this.currentTrip?.calling) {
+            //     this.startCalling(tripId)
+            //   } else {
+            //     this.stopCalling()
+            //   }
+            // }
+
             return data
           }
         )
         .catch(
           async (error) => {
-            if (error.response.status == 401) {
+            if (error.response?.status == 401) {
                 this.logout()
             }
 
@@ -185,21 +195,43 @@ export const useMainStore = defineStore({
       return oneSignalPlayerId
     },
 
-    async call() {
-      this.axios.post(`/${this.profile.userType}s/trips/call`)
+    async setCalling(calling: boolean) {
+      const data = {
+        calling: calling,
+      }
+
+      this.axios.post(`/${this.profile.userType}s/trips/setCalling`, data)
           .then(async (res) => {
             const data = res.data
 
             if (data.status == 'success') {
-              await this.showToast({
-                message: data.message,
-                duration: 2000,
-                position: "middle",
-              })
+
+              this.currentTrip = data.currentTrip
             }
           }).catch((err) => {
         console.log(err);
       })
+    },
+
+    startCalling(tripId: string) {
+      if (this.isIos) {
+        window.webkit.messageHandlers.jsBridge.postMessage({
+          "function": "startCall",
+          "tripId": tripId
+        })
+      } else {
+        AndroidBridge.startCall(tripId)
+      }
+    },
+
+    stopCalling() {
+      if (this.isIos) {
+        window.webkit.messageHandlers.jsBridge.postMessage({
+          "function": "stopCall",
+        })
+      } else {
+        AndroidBridge.stopCall()
+      }
     },
 
     async sendMessage(targetUserId: string, message: string) {
