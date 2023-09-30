@@ -206,12 +206,15 @@ function createVehicle() {
 }
 
 function updateVehicle() {
-  const data = {
-    id: vehicleData.value.id,
-    name: vehicleData.value.name,
-  }
+  store.axios.defaults.headers['Content-Type'] = 'multipart/form-data'
 
-  store.axios.post('/passengers/vehicles/updateVehicle', data)
+  const formData = new FormData()
+
+  formData.append('id', props.vehicleData.id)
+  formData.append('plateNumber', props.vehicleData.plate_number)
+  formData.append('vehiclePhoto', vehiclePhoto.value.file.file as any)
+
+  store.axios.post('/passengers/vehicles/updateVehicle', formData)
     .then((response: any) => {
       const vehicles = response.data
 
