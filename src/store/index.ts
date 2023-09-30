@@ -39,7 +39,7 @@ export const useMainStore = defineStore({
     currentTrip: null as any || null,
     currentPayment: null as any || null,
     selectedVehicle: null as any | null,
-    vehicles: [] as Vehicle[],
+    vehicles: [] as any[],
     fakeGeolocation: false as boolean,
     pickUpPlace: {} as any | null,
     dropOffPlace: {} as any | null,
@@ -375,121 +375,6 @@ export const useMainStore = defineStore({
     async clearUserToken() {
       this.token = ""
       await Preferences.remove({ key: 'token' })
-    },
-
-    async getVehicles(): Promise<any> {
-      try {
-        this.setHeaders();
-
-        const response = await axiosInstance.get("/vehicles");
-    
-        // Check for success
-        if (response.status === 200) {
-          
-          console.log(response.data);
-
-          this.vehicles = [];
-
-          response.data.forEach((vehicle: Vehicle) => {
-            this.vehicles.push({ ...vehicle, controlMode: ControlMode.View } as Vehicle);
-          });
-
-          // return response.data as Vehicle[];
-        }
-      } catch (error) {
-        console.error('Error performing the request:', error);
-        // Handle the error (e.g., show an error message or retry the request)
-      }
-    },
-
-    async createVehicle(vehicle: Vehicle): Promise<any> {
-      try {
-        this.setHeaders();
-
-        const data = {
-            name: vehicle.name,
-        }
-
-        const response = await axiosInstance.post("/vehicles", data);
-    
-        // Check for success
-        if (response.status === 200) {
-          this.vehicles = response.data as Vehicle[];
-          
-          return response.data as Vehicle[];
-        }
-      } catch (error) {
-        console.error('Error performing the request:', error);
-        // Handle the error (e.g., show an error message or retry the request)
-      }
-    },
-
-    async updateVehicle(vehicle: Vehicle): Promise<any> {
-      try {
-        this.setHeaders();
-
-        const data = {
-            id: vehicle.id,
-            name: vehicle.name,
-        }
-
-        const response = await axiosInstance.post("/vehicles/updateVehicle", data);
-    
-        // Check for success
-        if (response.status === 200) {
-          this.vehicles = response.data as Vehicle[];
-          
-          return response.data as Vehicle[];
-        }
-      } catch (error) {
-        console.error('Error performing the request:', error);
-        // Handle the error (e.g., show an error message or retry the request)
-      }
-    },
-
-    async selectVehicle(vehicle: Vehicle): Promise<any> {
-      try {
-        this.setHeaders();
-
-        this.selectedVehicle = vehicle;
-
-        const data = {
-          id: vehicle.id,
-        }
-
-        const response = await axiosInstance.post("/vehicles/selectVehicle", data);
-
-        this.vehicles = [];
-
-        this.vehicles = response.data as Vehicle[];
-
-        return response.data as Vehicle[];
-      } catch (error) {
-        console.error('Error performing the request:', error);
-        // Handle the error (e.g., show an error message or retry the request)
-      }
-    },
-
-    async deleteVehicle(vehicle: Vehicle): Promise<any> {
-      try {
-        this.setHeaders();
-
-        const data = {
-            id: vehicle.id,
-        }
-
-        const response = await axiosInstance.post("/vehicles/deleteVehicle", data);
-    
-        // Check for success
-        if (response.status === 200) {
-          this.vehicles = response.data as Vehicle[];
-
-          return response.data as Vehicle[];
-        }
-      } catch (error) {
-        console.error('Error performing the request:', error);
-        // Handle the error (e.g., show an error message or retry the request)
-      }
     },
 
     connectChannel(channelName: string) {

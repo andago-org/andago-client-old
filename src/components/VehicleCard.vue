@@ -1,20 +1,28 @@
 <template>
   <ion-card>
     <ion-card-header>
+      <ion-button v-if="vehicleData.saved && vehicleData.status == 'approved'" :disabled="vehicleData.selected" class="ion-margin" expand="block" color="primary">
+        {{ vehicleData.selected ? 'Selected' : 'Select This Car' }}
+      </ion-button>
+
+      <ion-text v-if="vehicleData.status != 'approved'">
+        <h1>{{ warningText }}</h1>
+      </ion-text>
+
       <n-upload
         class="ion-text-center"
         ref="upload"
         list-type="image"
         :default-upload="false"
-        :headers="headers"
         :show-file-list="false"
         :on-before-upload="handleBeforeUpload"
       >
         <n-upload-dragger style="height: 200px">
           <n-image
-            v-if="imageSrc"
+            v-if="vehiclePhoto || vehicleData.saved"
             object-fit="contain"
             :src="imageSrc"
+            :preview-disabled="true"
           />
           <div v-else>
             <div style="margin-bottom: 12px">
@@ -39,9 +47,6 @@
               <ion-input v-model="vehicleData.plate_number" placeholder="Enter Car Number" :readonly="isViewMode"></ion-input>
             </ion-item>
           </ion-col>
-          <ion-col size="auto">
-            <ion-checkbox :checked="vehicleData.selected" @ion-change="onCheckboxChange"></ion-checkbox>
-          </ion-col>
         </ion-row>
       </ion-grid>
     </ion-card-header>
@@ -53,7 +58,7 @@
           </ion-button>
         </ion-col>
         <ion-col>
-          <ion-button color="secondary" expand="block" @click="deleteCar()">
+          <ion-button color="secondary" expand="block" @click="deleteVehicle()">
             Delete
           </ion-button>
         </ion-col>
@@ -81,7 +86,7 @@ import {
 } from '@ionic/vue';
 import { ref, defineProps, defineEmits, computed, watch, onMounted } from 'vue';
 import { car as carIcon, image } from 'ionicons/icons';
-import { ControlMode } from '@/interfaces/types';
+import {ControlMode, Vehicle} from '@/interfaces/types';
 import { useMainStore } from '@/store';
 import { NUpload, NUploadDragger, NIcon, NText, NImage, UploadFileInfo } from 'naive-ui';
 import { Image as ImageIcon } from '@vicons/ionicons5'
@@ -102,6 +107,18 @@ const imageUrl = storageUrl + '/vehicles/' + props.vehicleData?.vehicle_photo
 const vehiclePhoto = ref()
 const imageSrc = ref()
 
+const warningText = computed(() => {
+  switch (vehicleData.value.status)
+  {
+    case 'pending':
+      return "Under Review. Please wait"
+    case 'rejected':
+      return "Rejected. Please correct and resubmit"
+    default:
+      return ""
+  }
+})
+
 onMounted(() => {
   imageSrc.value = imageUrl
 })
@@ -121,49 +138,11 @@ function handleBeforeUpload(file: any) {
   return false
 }
 
-const uploadUrl = process.env.VUE_APP_API_BASE_URL + "/files/uploadImage";
-
 const upload = ref<any>(null);
 
 const isViewMode = computed(() => vehicleData.value.controlMode == ControlMode.View);
 
-const handleUploadFinish = (response: UploadFileInfo, file: any) => {
-  console.log('File upload finished:', response);
-};
-
-const headers = {
-  Authorization: 'Bearer ' + store.token,
-  "Accept": 'application/json',
-  "Content-Type": 'multipart/form-data',
-};
-
-const submitFiles = async (response: any) => {
-  if (upload.value) {
-    const formData = new FormData();
-    console.log(upload.value);
-    formData.append('file', response.file.file);
-
-    try {
-      const response = await axios.post(uploadUrl, formData, { headers });
-      console.log('Upload response:', response);
-
-      // Clear the file list after a successful upload
-      upload.value.clear();
-    } catch (error) {
-      console.error('Error uploading files:', error);
-    }
-  } else {
-    console.log('No files to upload.');
-  }
-};
-
-
-
 defineEmits(['update:vehicleData', 'click']);
-
-const onCheckboxChange = ({ detail }: any) => {
-  store.selectVehicle(vehicleData.value);
-};
 
 const vehicleData = ref<any>(props.vehicleData)
 const vehicleDataCopy = ref<any>({ ...props.vehicleData });
@@ -175,17 +154,13 @@ watch(
   }
 );
 
-function selectVehicle() {
-  store.selectVehicle(vehicleData.value);
-}
-
 function saveCar() {
   switch (vehicleData.value.controlMode) {
     case ControlMode.Create:
-      store.createVehicle(vehicleData.value);
+      createVehicle();
       break;
     case ControlMode.Edit:
-      store.updateVehicle(vehicleData.value);
+      updateVehicle();
       break;
   }
 
@@ -196,13 +171,98 @@ function editCar() {
   vehicleData.value.controlMode = ControlMode.Edit;
 }
 
-function deleteCar() {
-  store.deleteVehicle(vehicleData.value);
-}
-
 function cancelEdit() {
+  if (!vehicleData.value.saved)
+  {
+    store.vehicles.pop()
+  }
+
   vehicleData.value = vehicleDataCopy.value;
 
   vehicleData.value.controlMode = ControlMode.View;
+}
+
+function createVehicle() {
+  store.axios.defaults.headers['Content-Type'] = 'multipart/form-data'
+
+  const formData = new FormData()
+
+  formData.append('plateNumber', props.vehicleData.plate_number)
+  formData.append('vehiclePhoto', vehiclePhoto.value.file.file as any)
+
+  store.axios.post('/passengers/vehicles/createVehicle', formData)
+    .then((response: any) => {
+      const vehicles = response.data
+
+      store.vehicles = []
+
+      vehicles.forEach((vehicle: any) => {
+        store.vehicles.push({ ...vehicle, controlMode: ControlMode.View })
+      })
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+}
+
+function updateVehicle() {
+  const data = {
+    id: vehicleData.value.id,
+    name: vehicleData.value.name,
+  }
+
+  store.axios.post('/passengers/vehicles/updateVehicle', data)
+    .then((response: any) => {
+      const vehicles = response.data
+
+      store.vehicles = []
+
+      vehicles.forEach((vehicle: any) => {
+        store.vehicles.push({ ...vehicle, controlMode: ControlMode.View })
+      })
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+}
+
+function selectVehicle() {
+  const data = {
+    id: vehicleData.value.id,
+  }
+
+  store.axios.post('/passengers/vehicles/selectVehicle', data)
+    .then((response: any) => {
+      const vehicles = response.data
+
+      store.vehicles = []
+
+      vehicles.forEach((vehicle: any) => {
+        store.vehicles.push({ ...vehicle, controlMode: ControlMode.View })
+      })
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+}
+
+function deleteVehicle() {
+  const data = {
+    id: vehicleData.value.id,
+  }
+
+  store.axios.post('/passengers/vehicles/deleteVehicle', data)
+    .then((response: any) => {
+      const vehicles = response.data
+
+      store.vehicles = []
+
+      vehicles.forEach((vehicle: any) => {
+        store.vehicles.push({ ...vehicle, controlMode: ControlMode.View })
+      })
+    })
+    .catch((error) => {
+      console.log(error)
+    })
 }
 </script>

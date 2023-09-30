@@ -14,19 +14,19 @@
 
     <ion-content fullscreen>
       <ion-list>
-        <ion-item v-if="vehicles.length === 0">
+        <ion-item v-if="store.vehicles.length === 0">
           <ion-label>You have no car added yet.</ion-label>
         </ion-item>
 
-        <VehicleCard v-for="(vehicle, index) in vehicles" :key="index" :vehicleData="vehicle"
+        <VehicleCard v-for="(vehicle, index) in store.vehicles" :key="index" :vehicleData="vehicle"
                      @click="selectVehicle(index)">
         </VehicleCard>
       </ion-list>
 
-      <ion-grid v-if="vehicles.length < 3">
+      <ion-grid v-if="store.vehicles.length < 3 && addable">
         <ion-row class="ion-justify-content-center">
           <ion-fab>
-            <ion-fab-button class="ion-text-center" @click="addCar()">
+            <ion-fab-button class="ion-text-center ion-margin-bottom" @click="addCar()">
               <ion-icon :icon="add"></ion-icon>
             </ion-fab-button>
           </ion-fab>
@@ -42,7 +42,7 @@ import {
   IonLabel, IonText, IonFooter, IonGrid, IonRow, IonCol, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle,
   IonCardContent, IonCheckbox, IonFab, IonFabButton, IonBackButton, modalController
 } from '@ionic/vue';
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { car as carIcon, add } from 'ionicons/icons';
 import { Vehicle, ControlMode } from '@/interfaces/types';
 import VehicleCard from '@/components/VehicleCard.vue';
@@ -50,25 +50,38 @@ import { useMainStore } from '@/store';
 
 const store = useMainStore();
 
-const vehicles = ref<any>([]);
-
 const selectedVehicle = ref(null);
 
-store.profile?.vehicles.forEach((vehicle: any) => {
-  vehicle.controlMode = ControlMode.View
-  vehicle.saved = true
-
-  vehicles.value.push(vehicle)
+const addable = computed(() => {
+  return store.vehicles[store.vehicles.length - 1].saved
 })
 
-console.log(vehicles.value)
+onMounted(() => {
+  getVehicles()
+})
+
+function getVehicles() {
+  store.axios.post('/passengers/vehicles/getVehicles')
+    .then((response: any) => {
+      const vehicles = response.data
+
+      store.vehicles = []
+
+      vehicles.forEach((vehicle: any) => {
+        store.vehicles.push({ ...vehicle, controlMode: ControlMode.View, saved: true })
+      })
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+}
 
 function selectVehicle(index: any) {
   selectedVehicle.value = index;
 }
 
 function addCar() {
-  vehicles.value.push({
+  store.vehicles.push({
     name: '',
     controlMode: ControlMode.Create,
   } as Vehicle);
