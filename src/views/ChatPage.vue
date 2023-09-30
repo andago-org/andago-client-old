@@ -36,13 +36,13 @@ register()
 
 const store = useMainStore();
 
-const guid = ref(store.currentTrip?.cometGuid);
+const guid = ref(store.currentTrip?.id.toString());
 
 const currentUserId = ref();
 
 function initComet() {
-  const appID = "23694678a67dabe9" as string;
-  const region = "eu" as string;
+  const appID = process.env.VUE_APP_COMETCHAT_APP_ID as string;
+  const region = process.env.VUE_APP_COMETCHAT_REGION as string;
   const appSetting: CometChat.AppSettings = new CometChat.AppSettingsBuilder()
     .subscribePresenceForAllUsers()
     .setRegion(region)
