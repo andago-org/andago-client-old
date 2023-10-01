@@ -18,8 +18,7 @@
           <ion-label>You have no car added yet.</ion-label>
         </ion-item>
 
-        <VehicleCard v-for="(vehicle, index) in store.vehicles" :key="index" :vehicleData="vehicle"
-                     @click="selectVehicle(index)">
+        <VehicleCard v-for="(vehicle, index) in store.vehicles" :key="index" :vehicleData="vehicle">
         </VehicleCard>
       </ion-list>
 
@@ -53,32 +52,12 @@ const store = useMainStore();
 const selectedVehicle = ref(null);
 
 const addable = computed(() => {
-  return store.vehicles[store.vehicles.length - 1].saved
+  return store.vehicles[store.vehicles.length - 1]?.saved == true
 })
 
 onMounted(() => {
-  getVehicles()
+  store.getVehicles()
 })
-
-function getVehicles() {
-  store.axios.post('/passengers/vehicles/getVehicles')
-    .then((response: any) => {
-      const vehicles = response.data
-
-      store.vehicles = []
-
-      vehicles.forEach((vehicle: any) => {
-        store.vehicles.push({ ...vehicle, controlMode: ControlMode.View, saved: true })
-      })
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-}
-
-function selectVehicle(index: any) {
-  selectedVehicle.value = index;
-}
 
 function addCar() {
   store.vehicles.push({

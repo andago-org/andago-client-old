@@ -195,6 +195,22 @@ export const useMainStore = defineStore({
       return oneSignalPlayerId
     },
 
+    getVehicles() {
+      this.axios.post('/passengers/vehicles/getVehicles')
+        .then((response: any) => {
+          const vehicles = response.data
+
+          this.vehicles = []
+
+          vehicles.forEach((vehicle: any) => {
+            this.vehicles.push({ ...vehicle, controlMode: ControlMode.View, saved: true })
+          })
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+
     async setCalling(calling: boolean) {
       const data = {
         calling: calling,

@@ -1,11 +1,11 @@
 <template>
   <ion-card>
     <ion-card-header>
-      <ion-button v-if="vehicleData.saved && vehicleData.status == 'approved'" :disabled="vehicleData.selected" class="ion-margin" expand="block" color="primary">
-        {{ vehicleData.selected ? 'Selected' : 'Select This Car' }}
+      <ion-button v-if="props.vehicleData.saved && props.vehicleData.status == 'verified'" @click="selectVehicle" :disabled="props.vehicleData.selected" class="ion-margin" expand="block" color="primary">
+        {{ props.vehicleData.selected ? 'Selected' : 'Select This Car' }}
       </ion-button>
 
-      <ion-text v-if="vehicleData.status != 'approved'">
+      <ion-text v-if="props.vehicleData.status != 'approved'">
         <h1>{{ warningText }}</h1>
       </ion-text>
 
@@ -101,6 +101,9 @@ const props = defineProps({
   },
 });
 
+const vehicleData = ref<any>(props.vehicleData)
+const vehicleDataCopy = ref<any>({ ...props.vehicleData });
+
 const storageUrl = process.env.VUE_APP_STORAGE_URL
 const imageUrl = storageUrl + '/vehicles/' + props.vehicleData?.vehicle_photo
 
@@ -144,8 +147,7 @@ const isViewMode = computed(() => vehicleData.value.controlMode == ControlMode.V
 
 defineEmits(['update:vehicleData', 'click']);
 
-const vehicleData = ref<any>(props.vehicleData)
-const vehicleDataCopy = ref<any>({ ...props.vehicleData });
+
 
 watch(
   () => vehicleData.value.controlMode,
@@ -172,14 +174,13 @@ function editCar() {
 }
 
 function cancelEdit() {
-  if (!vehicleData.value.saved)
-  {
-    store.vehicles.pop()
-  }
+  store.vehicles = store.vehicles.filter((vehicle: any) => !vehicle.value.saved)
 
   vehicleData.value = vehicleDataCopy.value;
 
   vehicleData.value.controlMode = ControlMode.View;
+
+  store.getVehicles()
 }
 
 function createVehicle() {
@@ -194,11 +195,7 @@ function createVehicle() {
     .then((response: any) => {
       const vehicles = response.data
 
-      store.vehicles = []
-
-      vehicles.forEach((vehicle: any) => {
-        store.vehicles.push({ ...vehicle, controlMode: ControlMode.View })
-      })
+      refreshVehicles(vehicles)
     })
     .catch((error) => {
       console.log(error)
@@ -209,20 +206,20 @@ function updateVehicle() {
   store.axios.defaults.headers['Content-Type'] = 'multipart/form-data'
 
   const formData = new FormData()
+  console.log(vehicleData.value.plate_number)
+  formData.append('id', vehicleData.value.id)
+  formData.append('plateNumber', vehicleData.value.plate_number)
 
-  formData.append('id', props.vehicleData.id)
-  formData.append('plateNumber', props.vehicleData.plate_number)
-  formData.append('vehiclePhoto', vehiclePhoto.value.file.file as any)
+  if (vehiclePhoto.value?.file)
+  {
+    formData.append('vehiclePhoto', vehiclePhoto.value.file.file as any)
+  }
 
   store.axios.post('/passengers/vehicles/updateVehicle', formData)
     .then((response: any) => {
       const vehicles = response.data
 
-      store.vehicles = []
-
-      vehicles.forEach((vehicle: any) => {
-        store.vehicles.push({ ...vehicle, controlMode: ControlMode.View })
-      })
+      refreshVehicles(vehicles)
     })
     .catch((error) => {
       console.log(error)
@@ -238,11 +235,7 @@ function selectVehicle() {
     .then((response: any) => {
       const vehicles = response.data
 
-      store.vehicles = []
-
-      vehicles.forEach((vehicle: any) => {
-        store.vehicles.push({ ...vehicle, controlMode: ControlMode.View })
-      })
+      refreshVehicles(vehicles)
     })
     .catch((error) => {
       console.log(error)
@@ -258,14 +251,20 @@ function deleteVehicle() {
     .then((response: any) => {
       const vehicles = response.data
 
-      store.vehicles = []
-
-      vehicles.forEach((vehicle: any) => {
-        store.vehicles.push({ ...vehicle, controlMode: ControlMode.View })
-      })
+      refreshVehicles(vehicles)
     })
     .catch((error) => {
       console.log(error)
     })
+}
+
+function refreshVehicles(vehicles: any)
+{
+  store.vehicles = []
+
+  vehicles.forEach((vehicle: any) => {
+
+    store.vehicles.push({ ...vehicle, controlMode: ControlMode.View, saved: true })
+  })
 }
 </script>
