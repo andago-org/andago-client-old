@@ -162,7 +162,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'chat',
         component: () => import('@/views/ChatPage.vue'),
-        name: 'Chat',
+        name: 'Passenger_Chat',
       },
       {
         path: 'settings',
@@ -227,6 +227,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'chat',
         component: () => import('@/views/ChatPage.vue'),
+        name: 'Driver_Chat',
       },
     ],
   },

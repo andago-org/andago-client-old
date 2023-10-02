@@ -1,5 +1,5 @@
 <template>
-  <ion-badge v-if="store.unreadMessages > 0" background="secondary">{{ store.unreadMessages }}</ion-badge>
+  <ion-badge v-if="store.unreadMessages.length" background="secondary">{{ store.unreadMessages.length }}</ion-badge>
 </template>
 <script setup lang="ts">
 import {IonBadge} from "@ionic/vue";

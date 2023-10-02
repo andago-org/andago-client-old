@@ -7,6 +7,7 @@ import Pusher, { Channel } from 'pusher-js';
 import Echo from 'laravel-echo';
 import { toastController, ToastOptions, loadingController, LoadingOptions, modalController, ModalOptions } from '@ionic/vue';
 import { format, } from 'date-fns';
+import {CometChat} from "@cometchat-pro/cordova-ionic-chat";
 
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
@@ -49,10 +50,12 @@ export const useMainStore = defineStore({
     syncedData: {} as any,
     topUpModalOpen: false,
     suggestedTopUpAmount: 0 as number,
-    unreadMessages: 0,
     addWaitTimeModalOpen: false,
     addWaitTimeRequestModalOpen: false,
     driverStatusOn: false,
+    joinedUsers: [] as any[],
+    processedMessages: [] as any[],
+    unreadMessages: [] as any[],
   }),
   getters: {
     isIos() {
@@ -211,6 +214,118 @@ export const useMainStore = defineStore({
         })
     },
 
+    getConversation() {
+      const GUID = this.currentTrip?.id?.toString();
+      const limit = 30;
+      const messagesRequest = new CometChat.MessagesRequestBuilder()
+          .setType('text')
+          .setGUID(GUID)
+          .setLimit(limit)
+          .build();
+
+      messagesRequest.fetchPrevious().then(
+          messages => {
+            console.log("Message list fetched:", messages);
+            this.processMessages(messages)
+          }, error => {
+            console.log("Message fetching failed with error:", error);
+          }
+      );
+    },
+
+    getUnreadMessages() {
+      const GUID = this.currentTrip?.id?.toString();
+      const limit = 30;
+      const messagesRequest = new CometChat.MessagesRequestBuilder()
+          .setType('text')
+          .setGUID(GUID)
+          .setUnread(true)
+          .setLimit(limit)
+          .build();
+
+      messagesRequest.fetchPrevious().then(
+          messages => {
+            console.log("Message list fetched:", messages);
+            this.unreadMessages = []
+
+
+
+            messages.forEach((message) => {
+              if (router.currentRoute.value.name?.toString().split('_')[1] == "Chat")
+              {
+                CometChat.markAsRead(message).then(
+                    () => {
+                      console.log("mark as read success.");
+                    },
+                    (error: any) => {
+                      console.log("An error occurred when marking the message as read.", error);
+                    }
+                );
+              }
+              else {
+                this.unreadMessages.push(message)
+              }
+            })
+          }, error => {
+            console.log("Message fetching failed with error:", error);
+          }
+      );
+    },
+
+    clearUnreadMessages()
+    {
+      // Convert each asynchronous operation into a promise if it's not already a promise.
+      const markAsReadPromises = this.unreadMessages.map(message => {
+        return CometChat.markAsRead(message).then(
+            () => {
+              console.log("mark as read success.");
+            },
+            (error: any) => {
+              console.log("An error occurred when marking the message as read.", error);
+            }
+        );
+      });
+
+      // Wait for all the promises to resolve before clearing the unreadMessages array.
+      Promise.all(markAsReadPromises).then(() => {
+        this.unreadMessages = [];
+      }).catch(error => {
+        console.log("An error occurred with one or more mark as read operations.", error);
+      });
+    },
+
+    processMessages(messages: any[]) {
+      this.processedMessages = []
+
+      messages.forEach((message: any) => {
+        // Process message
+        const processedMessage = {
+          _id: message.id,
+          indexId: message.id,
+          content: message.text,
+          senderId: message.sender.uid,
+          username: message.sender.name,
+          avatar: '',
+          date: this.formatFromTimestamp(message.sentAt, 'dd MMM yyyy'),
+          timestamp: this.formatFromTimestamp(message.sentAt, 'HH:mm a'),
+          system: false,
+          saved: true,
+          distributed: true,
+          seen: true,
+          deleted: false,
+          failure: false,
+          disableActions: false,
+          disableReactions: false,
+          files: [
+          ],
+          reactions: {
+          },
+        }
+
+        this.processedMessages.push(processedMessage)
+      })
+    },
+
     async setCalling(calling: boolean) {
       const data = {
         calling: calling,
@@ -262,11 +377,6 @@ export const useMainStore = defineStore({
           }).catch((err) => {
         console.log(err);
       })
-    },
-
-    clearUnreadMessages()
-    {
-      this.unreadMessages = 0
     },
 
     async updatePosition() {

@@ -16,6 +16,7 @@
         <ion-tab-button tab="tab3" href="/driver/chat" @click="store.clearUnreadMessages">
           <ion-icon aria-hidden="true" :icon="chatbox" />
           <ion-label>Chat</ion-label>
+          <UnreadMessageBadge></UnreadMessageBadge>
         </ion-tab-button>
 
 <!--        <ion-tab-button tab="tab4" href="/driver/settings">-->
@@ -36,6 +37,7 @@ import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouter
 import { person, car, chatbox, settings } from 'ionicons/icons';
 import { useMainStore } from '@/store';
 import ReceivedTripModal from '@/components/ReceivedTripModal.vue';
+import UnreadMessageBadge from "@/components/UnreadMessageBadge.vue";
 
 const store = useMainStore();
 
