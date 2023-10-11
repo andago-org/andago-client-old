@@ -70,11 +70,11 @@
       <ion-grid>
         <ion-row>
           <ion-col>
-            <ion-button :strong="true" expand="block" color="primary" @click="confirmTrip">Confirm</ion-button>
+            <ion-button :strong="true" expand="block" color="secondary" @click="cancelTrip">Cancel</ion-button>
           </ion-col>
 
           <ion-col>
-            <ion-button :strong="true" expand="block" color="secondary" @click="cancelTrip">Cancel</ion-button>
+            <ion-button :strong="true" expand="block" color="primary" @click="confirmTrip">Confirm</ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
