@@ -49,6 +49,10 @@ const receivedTrips = ref([] as any[]);
 store.echo.private(`DriverChannel-${store.profile.id}`)
   .listen('.TripConfirmedEvent', async (data: any) => {
 
+    if (store.profile.on_duty == false) {
+      return
+    }
+
     if (receivedTripModalOpen.value) {
       receivedTrips.value.push(data.trip);
     }
