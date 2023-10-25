@@ -3,7 +3,7 @@
     <ion-router-outlet />
   </ion-app>
 
-  <PhoneCallModal v-model:is-open="phoneCallModalOpen"></PhoneCallModal>
+  <!-- <PhoneCallModal v-model:is-open="phoneCallModalOpen"></PhoneCallModal> -->
 </template>
 
 <script setup lang="ts">
@@ -11,7 +11,7 @@ import { IonApp, IonRouterOutlet } from '@ionic/vue'
 import { useMainStore } from './store'
 import { onMounted, watch, ref } from "vue";
 import router from "@/router";
-import PhoneCallModal from "@/components/PhoneCallModal.vue";
+// import PhoneCallModal from "@/components/PhoneCallModal.vue";
 import {CometChat} from "@cometchat-pro/cordova-ionic-chat";
 
 const store = useMainStore()
@@ -36,10 +36,10 @@ onMounted(async () => {
   }
 })
 
-const phoneCallModalOpen = ref(false)
+// const phoneCallModalOpen = ref(false)
 
 watch(() => store.currentTrip?.calling, (newValue, oldValue) => {
-  phoneCallModalOpen.value = newValue
+  // phoneCallModalOpen.value = newValue
 
   if (newValue == true)
   {
