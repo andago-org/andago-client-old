@@ -152,15 +152,15 @@ export const useMainStore = defineStore({
             this.currentTrip = data.currentTrip;
             this.currentPayment = data.currentPayment;
 
-            // if (this.currentTrip?.driver_id !== null) {
-            //   const tripId = this.currentTrip?.id
-            //
-            //   if (this.currentTrip?.calling) {
-            //     this.startCalling(tripId)
-            //   } else {
-            //     this.stopCalling()
-            //   }
-            // }
+            if (this.currentTrip?.driver_id !== null) {
+              const tripId = this.currentTrip?.id
+            
+              // if (this.currentTrip?.calling) {
+              //   this.startCalling(tripId)
+              // } else {
+              //   this.stopCalling()
+              // }
+            }
 
             return data
           }
